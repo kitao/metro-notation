@@ -1,0 +1,22 @@
+[HOGE Perm]
+RU'R URUR U'R'U' R2
+
+[HOGE2 Perm]
+U'R'U' RURD R'U'RD' R'U2R'
+
+[HOGE2 Perm]
+
+RUR'F' RUR'U' R'FR2 U'R'
+
+----
+
+[HOGE3 Perm]
+x' RU'R'D RUR'D' RUR'D RU'R'D'
+
+[4444 Perm]
+F'U'F R2UwR'U RU'RUw' R2'
+
+  [555]
+  M2'U'M2' U2' M2'U'M2'
+
+RUB' U'R'U LwULw'
