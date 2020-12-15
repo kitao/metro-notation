@@ -3,10 +3,10 @@ from routemap import (TGT_AL, TGT_BM, TGT_BT, TGT_MD, TGT_TM, TGT_TP, Node,
                       Route, RouteMap)
 
 CANVAS_COLOR = "white"
-CANVAS_L_MARGIN = 300
-CANVAS_R_MARGIN = 300
-CANVAS_T_MARGIN = 150
-CANVAS_B_MARGIN = 200
+CANVAS_L_MARGIN = 400
+CANVAS_R_MARGIN = 400
+CANVAS_T_MARGIN = 250
+CANVAS_B_MARGIN = 300
 CANVAS_SCALE = 4
 
 ROUTEMAP_V_MARGIN = 300
@@ -22,7 +22,7 @@ NOTATION_FONT_SIZE = 130
 NOTATION_COLOR = "black"
 NOTATION_V_MARGIN = 100
 
-ROUTE_H_MARGIN = 250
+ROUTE_H_MARGIN = 300
 
 NODE_LENGTH = 400
 NODE_WIDTH = 65
@@ -170,3 +170,18 @@ class Renderer:
         renderer.canvas.scale(1 / CANVAS_SCALE)
 
         return renderer
+
+    def merge(renderers):
+        width = height =0
+        for renderer in renderers:
+            width += renderer.canvas.image.width
+            height = max(renderer.canvas.image.height, height)
+
+        merged_renderer = Renderer(width, height)
+
+        x = 0
+        for renderer in renderers:
+            merged_renderer.canvas.image.paste(renderer.canvas.image, (x, 0))
+            x += renderer.canvas.image.width
+
+        return merged_renderer
