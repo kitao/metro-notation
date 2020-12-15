@@ -1,22 +1,66 @@
-[HOGE Perm]
-RU'R URUR U'R'U' R2
+[Ua Perm]
+RU'RU RU RU'R'U' R2
 
-[HOGE2 Perm]
-U'R'U' RURD R'U'RD' R'U2R'
+[Ub Perm]
+R2U RUR'U' R'U' R'UR'
 
-[HOGE2 Perm]
+[Z Perm]
+M2'U'M2'U' M'U2' M2'U2'M'
 
-RUR'F' RUR'U' R'FR2 U'R'
+[H Perm]
+M2'U'M2' U2' M2'U'M2'
+
+[Aa Perm]
+x' R2D2 R'U'R D2 R'UR'
+
+[Ab Perm]
+x' RU'R D2 R'UR D2R2'
 
 ----
 
-[HOGE3 Perm]
+[E Perm]
 x' RU'R'D RUR'D' RUR'D RU'R'D'
 
-[4444 Perm]
+[Ra Perm]
+y RU'R'U' RURD R'U'RD' R'U2R'
+
+[Rb Perm]
+R'U2RU2' R'F RUR'U' R'F'R2
+
+[Ja Perm]
+y' R'UL'U2 RU'R' U2LR
+
+[Jb Perm]
+RUR'F' RUR'U' R'FR2 U'R'
+
+[T Perm]
+RUR'U' R'FR2U' R'U' RUR'F'
+
+[F Perm]
+R'U'F' RUR'U' R'FR2U' R'U'RU R'UR
+
+[V Perm]
+R'UR'U' y R'F'R2U' R'UR'F RF
+
+----
+
+[Y Perm]
+F RU'R'U' RUR'F' RUR'U' R'FRF'
+
+[Na Perm]
+RUR'U RUR'F' RUR'U' R'FR2U' R'U2 RU'R'
+
+[Nb Perm]
+R'URU' R'F'U'F RUR'F R'F' RU'R
+
+[Ga Perm]
+R2U R'UR'U' RU'R2 U'D R'URD'
+
+[Gb Perm]
 F'U'F R2UwR'U RU'RUw' R2'
 
-  [555]
-  M2'U'M2' U2' M2'U'M2'
+[Gc Perm]
+y' R2'U' RU'RU R'UR2 UD' RU'R'D
 
-RUB' U'R'U LwULw'
+[Gd Perm]
+D' RUR'U' D R2U'RU' R'UR'U R2
