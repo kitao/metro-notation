@@ -49,10 +49,14 @@ def load_algorithm(filename):
 
 def render_algorithms(filename):
     algo_lists = load_algorithm(filename)
+    renderers = [Renderer.from_algorithm(alst) for alst in algo_lists]
 
-    for algo_list in algo_lists:
-        renderer = Renderer.from_algorithm(algo_list)
+    for renderer in renderers:
         renderer.show()
+
+    if len(renderers) > 1:
+        merged_renderer = Renderer.merge(renderers)
+        merged_renderer.show()
 
 
 def main():
