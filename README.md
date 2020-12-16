@@ -6,7 +6,6 @@ Visualize the Rubik's cube algorithms in a notation like a train route map that 
 ルービックキューブのアルゴリズムを、私が **「メトロ記法」** と呼んでいる、電車の路線図のような表記法で可視化します。<br>
 **「メトロ記法」** は各指の力を加える方向に注目した表記法です。
 
-
 ## Installation
 
 ```sh
