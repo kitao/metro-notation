@@ -9,5 +9,6 @@ metro-notation [filename]
 
 ## Output examples
 
-** PLL algorithms **
+**PLL algorithms**
+
 <img src="images/pll.png">
