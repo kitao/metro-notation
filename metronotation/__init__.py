@@ -1,8 +1,10 @@
 import math
 import sys
 
-from canvas import Canvas
-from renderer import Renderer
+from .canvas import Canvas
+from .renderer import Renderer
+
+VERSION = "0.1.0"
 
 
 def split_algorithm(algo_list):
@@ -59,7 +61,7 @@ def render_algorithms(filename):
         merged_renderer.show()
 
 
-def main():
+def run():
     if len(sys.argv) != 2:
         print("metro-notation [filename]")
         return
@@ -67,4 +69,5 @@ def main():
     render_algorithms(sys.argv[1])
 
 
-main()
+if __name__ == "__main__":
+    run()

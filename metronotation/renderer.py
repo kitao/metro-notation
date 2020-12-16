@@ -1,5 +1,5 @@
-from canvas import Canvas
-from routemap import (
+from .canvas import Canvas
+from .routemap import (
     TGT_AL,
     TGT_BM,
     TGT_BT,
