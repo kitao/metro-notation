@@ -1,6 +1,13 @@
 # metro-notation
  Rubik's cube algorithm visualizer
 
-<a href="images/pll.png" target="_blank">
+## Usage
+
+```sh
+metro-notation [filename]
+```
+
+## Output examples
+
+** PLL algorithms **
 <img src="images/pll.png">
-</a>
