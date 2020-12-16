@@ -1,6 +1,15 @@
 from canvas import Canvas
-from routemap import (TGT_AL, TGT_BM, TGT_BT, TGT_MD, TGT_TM, TGT_TP, Node,
-                      Route, RouteMap)
+from routemap import (
+    TGT_AL,
+    TGT_BM,
+    TGT_BT,
+    TGT_MD,
+    TGT_TM,
+    TGT_TP,
+    Node,
+    Route,
+    RouteMap,
+)
 
 CANVAS_COLOR = "white"
 CANVAS_L_MARGIN = 400
@@ -31,10 +40,10 @@ NODE_THIN_WIDTH = 17
 NODE_POINT_WIDTH = 41
 NODE_COLOR = {
     TGT_TP: "black",
-    TGT_MD: "seagreen",
-    TGT_BT: "gray",
+    TGT_MD: "limegreen",
+    TGT_BT: "skyblue",
     TGT_TM: "black",
-    TGT_BM: "gray",
+    TGT_BM: "skyblue",
     TGT_AL: "darkorange",
 }
 
@@ -172,7 +181,7 @@ class Renderer:
         return renderer
 
     def merge(renderers):
-        width = height =0
+        width = height = 0
         for renderer in renderers:
             width += renderer.canvas.image.width
             height = max(renderer.canvas.image.height, height)
