@@ -1,5 +1,23 @@
 # metro-notation
- Rubik's cube algorithm visualizer
+
+Visualize the Rubik's cube algorithms in a notation like a train route map that I call **"Metro notation"**.<br>
+**"Metro notation"** is a notation that focuses on the direction in which the force of each finger is applied.
+
+ルービックキューブのアルゴリズムを、私が **「メトロ記法」** と呼んでいる、電車の路線図のような表記法で可視化します。<br>
+**「メトロ記法」** は各指の力を加える方向に注目した表記法です。
+
+
+## Installation
+
+```sh
+pip3 install metro-notation
+```
+
+or
+
+```sh
+pip install metro-notation
+```
 
 ## Usage
 
