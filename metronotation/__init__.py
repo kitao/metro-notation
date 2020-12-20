@@ -4,54 +4,58 @@ import sys
 from .canvas import Canvas
 from .renderer import Renderer
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
-def split_algorithm(algo_list):
-    algos_lists = []
+def split_algorithms(algos):
+    algos_list = []
     index = 0
 
-    for i, algo in enumerate(algo_list + [None]):
+    for i, algo in enumerate(algos + [None]):
         if algo:
             continue
 
-        alst = algo_list[index:i]
+        sub_algos = algos[index:i]
         index = i + 1
 
-        if alst:
-            algos_lists.append(alst)
+        if sub_algos:
+            algos_list.append(sub_algos)
 
-    return algos_lists
+    return algos_list
 
 
-def load_algorithm(filename):
+def load_algorithm_file(filename):
     with open(filename, "r") as f:
         lines = map(lambda s: s.strip(), f.read().splitlines())
 
-    algo_list = []
-    name = None
+    algos = []
+    name = cube = None
 
     for line in lines:
         if not line or line[0] == "#":
             continue
 
         if line[0] == "-":
-            algo_list.append(None)
+            algos.append(None)
             continue
 
         if line[0] == "[" and line[-1] == "]":
             name = line[1:-1]
             continue
 
-        algo_list.append((name or "NONAME", line))
-        name = None
+        if line[0] == "@":
+            cube = line[1:]
+            continue
 
-    return split_algorithm(algo_list)
+        algos.append((name, cube, line))
+        name = cube = None
+
+    return split_algorithms(algos)
 
 
-def render_algorithms(filename):
-    algo_lists = load_algorithm(filename)
-    renderers = [Renderer.from_algorithm(alst) for alst in algo_lists]
+def visualize_algorithm_file(filename):
+    algos_list = load_algorithm_file(filename)
+    renderers = [Renderer.render_algorithms(algos) for algos in algos_list]
 
     for renderer in renderers:
         renderer.show()
@@ -67,4 +71,4 @@ def run():
         print("usage: metro-notation [filename]")
         return
 
-    render_algorithms(sys.argv[1])
+    visualize_algorithm_file(sys.argv[1])
