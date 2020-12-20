@@ -38,10 +38,11 @@ NAME_FONT_SIZE = 130
 NAME_COLOR = "gray"
 NAME_V_MARGIN = 80
 
-CUBE_BLOCK_WIDTH = 130
+CUBE_Y_OFFSET = 30
+CUBE_BLOCK_WIDTH = 150
 CUBE_BLOCK_MARGIN = 15
-CUBE_EDGE_WIDTH = 45
-CUBE_LINE_THICKNESS = 10
+CUBE_EDGE_WIDTH = 50
+CUBE_LINE_THICKNESS = 13
 CUBE_TOTAL_WIDTH = CUBE_BLOCK_WIDTH * 3 + CUBE_EDGE_WIDTH * 2 + CUBE_BLOCK_MARGIN * 4
 CUBE_COLOR = {
     CUBE_RF: ("red", "red"),
@@ -57,12 +58,12 @@ CUBE_COLOR = {
     CUBE_WB: ("lightgray", "white"),
     CUBE_YB: ("yellow", "white"),
 }
-CUBE_H_MARGIN = 350
+CUBE_H_MARGIN = 380
 
 LETTERS_FONT_NAME = "Helvetica.ttc"
 LETTERS_FONT_SIZE = 130
 LETTERS_COLOR = "black"
-LETTERS_V_MARGIN = 100
+LETTERS_V_MARGIN = 150
 
 ROUTE_H_MARGIN = 300
 
@@ -100,16 +101,16 @@ class Renderer:
 
             if i == 0:
                 if node.is_start_hit:
-                    x = x * 0.8 + x2 * 0.8
-                    y = y * 0.8 + y2 * 0.8
+                    x = x * 0.8 + x2 * 0.2
+                    y = y * 0.8 + y2 * 0.2
 
                 start_color = color
                 start_x = x
                 start_y = y
 
             if i == node.count - 1 and node.is_end_hit:
-                x2 = x * 0.8 + x2 * 0.8
-                y2 = y * 0.8 + y2 * 0.8
+                x2 = x * 0.2 + x2 * 0.8
+                y2 = y * 0.2 + y2 * 0.8
 
             if node.layer == LAYER_MD:
                 self.canvas.line(x, y, x2, y2, NODE_THIN_WIDTH, color)
@@ -241,11 +242,15 @@ class Renderer:
 
         if routemap.cube:
             y_offset = (
-                LETTERS_FONT_SIZE
-                + LETTERS_V_MARGIN
-                + routemap.height * NODE_LENGTH
-                - CUBE_TOTAL_WIDTH
-            ) / 2
+                CUBE_Y_OFFSET
+                + (
+                    LETTERS_FONT_SIZE
+                    + LETTERS_V_MARGIN
+                    + routemap.height * NODE_LENGTH
+                    - CUBE_TOTAL_WIDTH
+                )
+                / 2
+            )
             self.render_cube(x, y + y_offset, routemap.cube)
 
             x += CUBE_TOTAL_WIDTH + CUBE_H_MARGIN
