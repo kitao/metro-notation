@@ -4,7 +4,7 @@ import sys
 from .canvas import Canvas
 from .renderer import Renderer
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 
 def split_algorithms(algos):
