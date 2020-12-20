@@ -3,71 +3,89 @@
 #
 
 [Ua Perm]
-@GGGRoRBwBObOwwwwwwwww
+@GGGRoRBrBObOwwwwwwwww
 RU'RU RU RU'R'U' R2
 
 [Ub Perm]
-@YYWYYWWWWYWWWWWYYWWYY
+@GGGRbRBoBOrOwwwwwwwww
 R2U RUR'U' R'U' R'UR'
 
 [Z Perm]
+@GrGRgRBoBObOwwwwwwwww
 M2'U'M2'U' M'U2' M2'U2'M'
 
 [H Perm]
+@GbGRoRBgBOrOwwwwwwwww
 M2'U'M2' U2' M2'U'M2'
 
 [Aa Perm]
+@GGwBwBwwwwOOwwwwwwwww
 x' R2D2 R'U'R D2 R'UR'
 
 [Ab Perm]
+@GGwwwwRwRwOOwwwwwwwww
 x' RU'R D2 R'UR D2R2'
 
 ----
 
 [E Perm]
-@oGrwRwrBowOwwwwwwwwww
+@OwRwwwRwOwwwwwwwwwwww
 x' RU'R'D RUR'D' RUR'D RU'R'D'
 
 [Ra Perm]
-y RU'R'U' RURD R'U'RD' R'U2R'
+@OwwwwwwRRBwBwwwwwwwww
+RU'R'U' RURD R'U'RD' R'U2R'
 
 [Rb Perm]
+@wwwwwRBwBOOwwwwwwwwww
 R'U2RU2' R'F RUR'U' R'F'R2
 
 [Ja Perm]
-y' R'UL'U2 RU'R' U2LR
+@wwwwBBOOOGwwwwwwwwwww
+R'UL'U2 RU'R' U2LR
 
 [Jb Perm]
+@GGwwwwwwBOOOwwwwwwwww
 RUR'F' RUR'U' R'FR2 U'R'
 
 [T Perm]
+@GGwwwwwBBOwOwwwwwwwww
 RUR'U' R'FR2U' R'U' RUR'F'
 
 [F Perm]
+@GwwwwwwwBOOOwwwwwwwww
 R'U'F' RUR'U' R'FR2U' R'U'RU R'UR
 
 [V Perm]
+@wwwwwwwBBOOwwwwwwwwww
 R'UR'U' y R'F'R2U' R'UR'F RF
 
 ----
 
 [Y Perm]
+@wwwRRwwBBwwwwwwwwwwww
 F RU'R'U' RUR'F' RUR'U' R'FRF'
 
 [Na Perm]
+@GGwOOwBBwRRwwwwwwwwww
 RUR'U RUR'F' RUR'U' R'FR2U' R'U2 RU'R'
 
 [Nb Perm]
+@wGGwOOwBBwRRwwwwwwwww
 R'URU' R'F'U'F RUR'F R'F' RU'R
 
 [Ga Perm]
+@wwwwwwBBwGwGwwwwwwwww
 R2U R'UR'U' RU'R2 U'D R'URD'
 
 [Gb Perm]
+@OwOwwwBBwwwwwwwwwwwww
 F'U'F R2UwR'U RU'RUw' R2'
 
 [Gc Perm]
+@wRRwwwwwwOwOwwwwwwwww
 y' R2'U' RU'RU R'UR2 UD' RU'R'D
 
 [Gd Perm]
+@wwwwRRwwwGwGwwwwwwwww
 D' RUR'U' D R2U'RU' R'UR'U R2
