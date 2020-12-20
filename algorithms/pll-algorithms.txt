@@ -3,9 +3,11 @@
 #
 
 [Ua Perm]
+@GGGRoRBwBObOwwwwwwwww
 RU'RU RU RU'R'U' R2
 
 [Ub Perm]
+@YYWYYWWWWYWWWWWYYWWYY
 R2U RUR'U' R'U' R'UR'
 
 [Z Perm]
@@ -23,6 +25,7 @@ x' RU'R D2 R'UR D2R2'
 ----
 
 [E Perm]
+@oGrwRwrBowOwwwwwwwwww
 x' RU'R'D RUR'D' RUR'D RU'R'D'
 
 [Ra Perm]
