@@ -54,4 +54,4 @@ F'U'F R2UwR'U RU'RUw' R2'
 
 **PLL algorithms**
 
-<img src="images/pll.png">
+<img src="images/pll-algorithms.png">

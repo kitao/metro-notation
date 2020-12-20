@@ -2,6 +2,7 @@
 
 ## 0.3.0
 - Enabled to draw cube images
+- Updated the PLL algorithms image
 
 ## 0.2.0
 - Modified the usage message
