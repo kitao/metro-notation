@@ -57,12 +57,8 @@ def visualize_algorithm_file(filename):
     algos_list = load_algorithm_file(filename)
     renderers = [Renderer.render_algorithms(algos) for algos in algos_list]
 
-    for renderer in renderers:
-        renderer.show()
-
-    if len(renderers) > 1:
-        merged_renderer = Renderer.merge(renderers)
-        merged_renderer.show()
+    merged_renderer = Renderer.merge(renderers)
+    merged_renderer.show()
 
 
 def run():
