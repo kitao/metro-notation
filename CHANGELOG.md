@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.4.0
+- Modified the layout
+
 ## 0.3.0
 - Enabled to draw cube images
 - Updated the PLL algorithms image
