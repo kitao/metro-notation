@@ -37,17 +37,21 @@ metro-notation [filename]
 #
 
 [Ua Perm]
+@GGGRoRBrBObOwwwwwwwww
 RU'RU RU RU'R'U' R2
 
 [Z Perm]
+@GrGRgRBoBObOwwwwwwwww
 M2'U'M2'U' M'U2' M2'U2'M'
 
 ----
 
 [Ra Perm]
-y RU'R'U' RURD R'U'RD' R'U2R'
+@OwwwwwwRRBwBwwwwwwwww
+RU'R'U' RURD R'U'RD' R'U2R'
 
 [Gb Perm]
+@OwOwwwBBwwwwwwwwwwwww
 F'U'F R2UwR'U RU'RUw' R2'
 ```
 
