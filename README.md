@@ -57,6 +57,11 @@ F'U'F R2UwR'U RU'RUw' R2'
 
 ## Output examples
 
-**PLL algorithms**
+**PLL Algorithms**
 
 <img src="images/pll-algorithms.png">
+
+**OLL Algorithms**
+
+<img src="images/oll-algorithms1.png">
+<img src="images/oll-algorithms2.png">
