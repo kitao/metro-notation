@@ -95,9 +95,15 @@ def routemap_drawing_size(routemap):
 
 class Renderer:
     def __init__(self, width, height):
-        self.width = width
-        self.height = height
         self.canvas = Canvas(width, height, CANVAS_COLOR)
+
+    @property
+    def width(self):
+        return self.canvas.width
+
+    @property
+    def height(self):
+        return self.canvas.height
 
     def draw_node(self, x, y, node, is_start):
         color = NODE_COLOR[node.layer]
@@ -306,8 +312,6 @@ class Renderer:
             y += h + ROUTEMAP_V_MARGIN
 
         renderer.canvas.scale(1 / CANVAS_SCALE)
-        renderer.width = renderer.canvas.width
-        renderer.height = renderer.canvas.height
 
         return renderer
 
