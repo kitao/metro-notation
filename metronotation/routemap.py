@@ -123,7 +123,7 @@ class Node:
             if letters.startswith(l):
                 return Node(l, *n), letters[len(l) :]
 
-        raise ValueError(letters)
+        raise ValueError
 
 
 class Route:
@@ -132,6 +132,7 @@ class Route:
         min_x = min_y = 0
         max_x = max_y = 0
         route_count = {(0, 0): 1}
+        last_dir = (0, 0)
 
         for node in nodes:
             for i in range(node.distance):
@@ -159,10 +160,26 @@ class Route:
 
     def from_letters(letters):
         nodes = []
+        last_dir = (0, 0)
 
-        while letters:
-            node, letters = Node.from_letters(letters)
+        rest = letters
+
+        while rest:
+            try:
+                node, rest = Node.from_letters(rest)
+
+                dx = node.direction[0] + last_dir[0]
+                dy = node.direction[1] + last_dir[1]
+
+                if dx == 0 and dy == 0:
+                    raise ValueError
+
+            except ValueError as error:
+                raise ValueError(letters)
+
             nodes.append(node)
+
+            last_dir = node.direction
 
         return Route(nodes)
 
@@ -182,10 +199,14 @@ class RouteMap:
         if not cube:
             cube = "w" * 21
         elif len(cube) != 21:
-            raise KeyError(cube)
+            raise ValueError(cube)
 
-        name = name or "NONAME"
-        cube = [CUBE_TABLE[c] for c in cube]
+        try:
+            cube = [CUBE_TABLE[c] for c in cube]
+        except KeyError:
+            raise ValueError(cube)
+
+        name = name or "no name"
         routes = [Route.from_letters(l) for l in letters.split()]
 
         return RouteMap(name, cube, routes)
