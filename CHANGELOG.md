@@ -2,6 +2,7 @@
 
 ## 0.4.0
 - Modified the layout
+- Added an instruction to the README
 
 ## 0.3.0
 - Enabled to draw cube images
