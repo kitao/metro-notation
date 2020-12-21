@@ -24,26 +24,22 @@ from .routemap import (
 )
 
 CANVAS_COLOR = "white"
-CANVAS_L_MARGIN = 400
-CANVAS_T_MARGIN = 280
-CANVAS_R_MARGIN = 400
-CANVAS_B_MARGIN = 330
+CANVAS_MARGIN = 400
 CANVAS_SCALE = 4
 
 ROUTEMAP_V_MARGIN = 300
 
-NAME_X_OFFSET = -30
-NAME_FONT_NAME = "Helvetica.ttc"
-NAME_FONT_SIZE = 130
-NAME_COLOR = "black"
-NAME_V_MARGIN = 80
+TEXT_X_OFFSET = -10
+TEXT_FONT_NAME = "Helvetica.ttc"
+TEXT_FONT_SIZE = 130
+TEXT_COLOR = "black"
+TEXT_V_MARGIN = 150
 
-CUBE_Y_OFFSET = 20
 CUBE_BLOCK_WIDTH = 150
 CUBE_BLOCK_MARGIN = 15
 CUBE_EDGE_WIDTH = 50
 CUBE_LINE_THICKNESS = 13
-CUBE_TOTAL_WIDTH = CUBE_BLOCK_WIDTH * 3 + CUBE_EDGE_WIDTH * 2 + CUBE_BLOCK_MARGIN * 4
+CUBE_TOTAL_SIZE = CUBE_BLOCK_WIDTH * 3 + CUBE_EDGE_WIDTH * 2 + CUBE_BLOCK_MARGIN * 4
 CUBE_COLOR = {
     CUBE_RF: ("red", "red"),
     CUBE_OF: ("orange", "orange"),
@@ -58,12 +54,7 @@ CUBE_COLOR = {
     CUBE_WB: ("lightgray", "white"),
     CUBE_YB: ("yellow", "white"),
 }
-CUBE_H_MARGIN = 400
-
-LETTERS_FONT_NAME = "Helvetica.ttc"
-LETTERS_FONT_SIZE = 130
-LETTERS_COLOR = "black"
-LETTERS_V_MARGIN = 150
+CUBE_H_MARGIN = 450
 
 ROUTE_H_MARGIN = 300
 
@@ -86,16 +77,32 @@ START_POINT_INNER_WIDTH = 73
 START_POINT_COLOR = "gold"
 
 
+def routemap_drawing_size(routemap):
+    width = (
+        CUBE_TOTAL_SIZE
+        + CUBE_H_MARGIN
+        + routemap.width * NODE_LENGTH
+        + ROUTE_H_MARGIN * (len(routemap.routes) - 1)
+    )
+    height = (
+        TEXT_FONT_SIZE
+        + TEXT_V_MARGIN
+        + max(CUBE_TOTAL_SIZE, routemap.height * NODE_LENGTH)
+    )
+
+    return width, height
+
+
 class Renderer:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.canvas = Canvas(width, height, CANVAS_COLOR)
 
-    def render_node(self, x, y, node, is_start):
+    def draw_node(self, x, y, node, is_start):
         color = NODE_COLOR[node.layer]
 
-        for i in range(node.count):
+        for i in range(node.distance):
             x2 = x + node.direction[0] * NODE_LENGTH
             y2 = y + node.direction[1] * NODE_LENGTH
 
@@ -108,7 +115,7 @@ class Renderer:
                 start_x = x
                 start_y = y
 
-            if i == node.count - 1 and node.is_end_hit:
+            if i == node.distance - 1 and node.is_end_hit:
                 x2 = x * 0.2 + x2 * 0.8
                 y2 = y * 0.2 + y2 * 0.8
 
@@ -135,25 +142,17 @@ class Renderer:
                 start_x, start_y, START_POINT_INNER_WIDTH, START_POINT_COLOR
             )
 
-    def render_route(self, x, y, route):
-        letters = "".join([node.letters for node in route.nodes])
-        nw = self.canvas.text_size(letters, LETTERS_FONT_NAME, LETTERS_FONT_SIZE)[0]
-        nx = x + (route.width * NODE_LENGTH - nw) / 2
-
-        self.canvas.text(
-            nx, y, letters, LETTERS_FONT_NAME, LETTERS_FONT_SIZE, LETTERS_COLOR
-        )
-
+    def draw_route(self, x, y, route):
         x += route.start_x * NODE_LENGTH
-        y += LETTERS_FONT_SIZE + LETTERS_V_MARGIN + route.start_y * NODE_LENGTH
+        y += route.start_y * NODE_LENGTH
 
         for i, node in enumerate(route.nodes):
-            self.render_node(x, y, node, i == 0)
+            self.draw_node(x, y, node, i == 0)
 
-            x += node.direction[0] * node.count * NODE_LENGTH
-            y += node.direction[1] * node.count * NODE_LENGTH
+            x += node.direction[0] * node.distance * NODE_LENGTH
+            y += node.direction[1] * node.distance * NODE_LENGTH
 
-    def render_cube_edge(self, left, top, index, cube):
+    def draw_cube_edge(self, left, top, index, cube):
         if index < 3:
             x = (
                 left
@@ -163,7 +162,7 @@ class Renderer:
             )
             y = top
         elif index < 6:
-            x = left + CUBE_TOTAL_WIDTH - CUBE_EDGE_WIDTH
+            x = left + CUBE_TOTAL_SIZE - CUBE_EDGE_WIDTH
             y = (
                 top
                 + CUBE_EDGE_WIDTH
@@ -177,7 +176,7 @@ class Renderer:
                 + CUBE_BLOCK_MARGIN
                 + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * (8 - index)
             )
-            y = top + CUBE_TOTAL_WIDTH - CUBE_EDGE_WIDTH
+            y = top + CUBE_TOTAL_SIZE - CUBE_EDGE_WIDTH
         else:
             x = left
             y = (
@@ -203,7 +202,7 @@ class Renderer:
             CUBE_COLOR[cube][1],
         )
 
-    def render_cube_block(self, left, top, index_x, index_y, cube):
+    def draw_cube_block(self, left, top, index_x, index_y, cube):
         x = y = CUBE_EDGE_WIDTH + CUBE_BLOCK_MARGIN
         x += left + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * index_x
         y += top + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * index_y
@@ -219,86 +218,91 @@ class Renderer:
             CUBE_COLOR[cube][1],
         )
 
-    def render_cube(self, x, y, cube):
+    def draw_cube(self, x, y, cube):
         for i in range(12):
-            self.render_cube_edge(x, y, i, cube[i])
+            self.draw_cube_edge(x, y, i, cube[i])
 
         for i in range(3):
             for j in range(3):
-                self.render_cube_block(x, y, j, i, cube[12 + i * 3 + j])
+                self.draw_cube_block(x, y, j, i, cube[12 + i * 3 + j])
 
-    def render_routemap(self, x, y, routemap):
-        if routemap.name:
-            self.canvas.text(
-                x + NAME_X_OFFSET,
-                y,
-                "[" + routemap.name + "]",
-                NAME_FONT_NAME,
-                NAME_FONT_SIZE,
-                NAME_COLOR,
-            )
+    def draw_letters(self, x, y, route):
+        route_width = route.width * NODE_LENGTH
+        letters = "".join([node.letters for node in route.nodes])
+        letter_width, _ = self.canvas.text_size(letters, TEXT_FONT_NAME, TEXT_FONT_SIZE)
 
-            y += NAME_FONT_SIZE + NAME_V_MARGIN
+        self.canvas.text(
+            x + (route_width - letter_width) / 2,
+            y,
+            letters,
+            TEXT_FONT_NAME,
+            TEXT_FONT_SIZE,
+            TEXT_COLOR,
+        )
 
-        if routemap.cube:
-            y_offset = (
-                CUBE_Y_OFFSET
-                + (
-                    LETTERS_FONT_SIZE
-                    + LETTERS_V_MARGIN
-                    + routemap.height * NODE_LENGTH
-                    - CUBE_TOTAL_WIDTH
-                )
-                / 2
-            )
-            self.render_cube(x, y + y_offset, routemap.cube)
+    def draw_routemap(self, x, y, routemap):
+        #
+        # draw name
+        #
+        self.canvas.text(
+            x + TEXT_X_OFFSET,
+            y,
+            "[" + routemap.name + "]",
+            TEXT_FONT_NAME,
+            TEXT_FONT_SIZE,
+            TEXT_COLOR,
+        )
 
-            x += CUBE_TOTAL_WIDTH + CUBE_H_MARGIN
+        #
+        # calculate offset
+        #
+        offset = (routemap.height * NODE_LENGTH - CUBE_TOTAL_SIZE) / 2
+        cube_offset = max(offset, 0)
+        route_offset = max(-offset, 0)
+
+        #
+        # draw cube
+        #
+        cube_y = TEXT_FONT_SIZE + TEXT_V_MARGIN + y + cube_offset
+        self.draw_cube(x, cube_y, routemap.cube)
+
+        #
+        # draw letters and routes
+        #
+        x += CUBE_TOTAL_SIZE + CUBE_H_MARGIN
 
         for route in routemap.routes:
-            self.render_route(x, y, route)
+            self.draw_letters(x, y, route)
+
+            route_y = TEXT_FONT_SIZE + TEXT_V_MARGIN + y + route_offset
+            self.draw_route(x, route_y, route)
 
             x += route.width * NODE_LENGTH + ROUTE_H_MARGIN
-
-    def get_routemap_drawing_size(routemap):
-        width = (
-            routemap.width * NODE_LENGTH + (len(routemap.routes) - 1) * ROUTE_H_MARGIN
-        )
-        if routemap.cube:
-            width += CUBE_TOTAL_WIDTH + CUBE_H_MARGIN
-
-        height = LETTERS_FONT_SIZE + LETTERS_V_MARGIN + routemap.height * NODE_LENGTH
-        if routemap.name:
-            height += NAME_FONT_SIZE + NAME_V_MARGIN
-
-        return width, height
 
     def show(self):
         self.canvas.show()
 
-    def render_algorithms(algo_list):
-        routemaps = [RouteMap.from_letters(*algo) for algo in algo_list]
+    def render_algorithms(algos):
+        routemaps = [RouteMap.from_letters(*algo) for algo in algos]
 
         width = height = 0
 
         for i, routemap in enumerate(routemaps):
-            w, h = Renderer.get_routemap_drawing_size(routemap)
-
+            w, h = routemap_drawing_size(routemap)
             width = max(w, width)
             height += h + (ROUTEMAP_V_MARGIN if i > 0 else 0)
 
-        width += CANVAS_L_MARGIN + CANVAS_R_MARGIN
-        height += CANVAS_T_MARGIN + CANVAS_B_MARGIN
+        width += CANVAS_MARGIN * 2
+        height += CANVAS_MARGIN * 2
 
         renderer = Renderer(width, height)
 
-        x = CANVAS_L_MARGIN
-        y = CANVAS_T_MARGIN
+        x = y = CANVAS_MARGIN
 
         for routemap in routemaps:
-            renderer.render_routemap(x, y, routemap)
+            renderer.draw_routemap(x, y, routemap)
 
-            _, h = Renderer.get_routemap_drawing_size(routemap)
+            _, h = routemap_drawing_size(routemap)
             y += h + ROUTEMAP_V_MARGIN
 
         renderer.canvas.scale(1 / CANVAS_SCALE)
@@ -313,8 +317,10 @@ class Renderer:
         merged_renderer = Renderer(width, height)
 
         x = 0
+
         for renderer in renderers:
             merged_renderer.canvas.copy(x, 0, renderer.canvas)
-            x += renderer.canvas.image.width
+
+            x += renderer.width
 
         return merged_renderer

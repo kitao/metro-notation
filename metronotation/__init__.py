@@ -1,33 +1,17 @@
-import math
 import sys
 
-from .canvas import Canvas
 from .renderer import Renderer
 
 VERSION = "0.4.0"
-
-
-def split_algorithms(algos):
-    algos_list = []
-    index = 0
-
-    for i, algo in enumerate(algos + [None]):
-        if algo:
-            continue
-
-        sub_algos = algos[index:i]
-        index = i + 1
-
-        if sub_algos:
-            algos_list.append(sub_algos)
-
-    return algos_list
 
 
 def load_algorithm_file(filename):
     with open(filename, "r") as f:
         lines = map(lambda s: s.strip(), f.read().splitlines())
 
+    #
+    # parse algorithm file
+    #
     algos = []
     name = cube = None
 
@@ -50,14 +34,30 @@ def load_algorithm_file(filename):
         algos.append((name, cube, line))
         name = cube = None
 
-    return split_algorithms(algos)
+    #
+    # split algorithm list
+    #
+    algos_list = []
+    algos_index = 0
+
+    for i, algo in enumerate(algos + [None]):
+        if algo:
+            continue
+
+        sub_algos = algos[algos_index:i]
+        algos_index = i + 1
+
+        if sub_algos:
+            algos_list.append(sub_algos)
+
+    return algos_list
 
 
 def visualize_algorithm_file(filename):
     algos_list = load_algorithm_file(filename)
     renderers = [Renderer.render_algorithms(algos) for algos in algos_list]
-
     merged_renderer = Renderer.merge(renderers)
+
     merged_renderer.show()
 
 

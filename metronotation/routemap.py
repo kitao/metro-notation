@@ -109,19 +109,19 @@ CUBE_TABLE = {
 
 
 class Node:
-    def __init__(self, letters, layer, direction, count):
+    def __init__(self, letters, layer, direction, distance):
         self.letters = letters
         self.layer = layer
         self.direction = direction
-        self.count = count
+        self.distance = distance
 
         self.is_start_hit = False
         self.is_end_hit = False
 
     def from_letters(letters):
-        for lt, nd in LETTER_TABLE:
-            if letters.startswith(lt):
-                return Node(lt, *nd), letters[len(lt) :]
+        for l, n in LETTER_TABLE:
+            if letters.startswith(l):
+                return Node(l, *n), letters[len(l) :]
 
         raise ValueError(letters)
 
@@ -134,7 +134,7 @@ class Route:
         route_count = {(0, 0): 1}
 
         for node in nodes:
-            for i in range(node.count):
+            for i in range(node.distance):
                 x += node.direction[0]
                 y += node.direction[1]
 
@@ -179,7 +179,13 @@ class RouteMap:
             route.start_y += (self.height - route.height) / 2
 
     def from_letters(name, cube, letters):
-        cube = [CUBE_TABLE[c] for c in cube] if cube else None
-        routes = [Route.from_letters(nt) for nt in letters.split()]
+        if not cube:
+            cube = "w" * 21
+        elif len(cube) != 21:
+            raise KeyError(cube)
+
+        name = name or "NONAME"
+        cube = [CUBE_TABLE[c] for c in cube]
+        routes = [Route.from_letters(l) for l in letters.split()]
 
         return RouteMap(name, cube, routes)
