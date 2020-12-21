@@ -42,7 +42,7 @@ R'U2RU2' R'F RUR'U' R'F'R2
 
 [Ja Perm]
 @wwwwBBOOOGwwwwwwwwwww
-R'UL'U2 RU'R' U2LR
+R'UL'U2 RU'R' U2L R
 
 [Jb Perm]
 @GGwwwwwwBOOOwwwwwwwww
