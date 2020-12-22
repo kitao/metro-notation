@@ -17,32 +17,40 @@ LETTER_TABLE = [
     ("M", (LAYER_MD, DIR_DN, 1)),
     ("L", (LAYER_BT, DIR_DN, 1)),
     ("U", (LAYER_TP, DIR_RT, 1)),
+    ("E", (LAYER_MD, DIR_LT, 1)),
     ("D", (LAYER_BT, DIR_LT, 1)),
     ("F", (LAYER_TP, DIR_RD, 1)),
+    ("S", (LAYER_MD, DIR_RD, 1)),
     ("B", (LAYER_BT, DIR_LU, 1)),
     #
     ("R2", (LAYER_TP, DIR_UP, 2)),
     ("M2", (LAYER_MD, DIR_DN, 2)),
     ("L2", (LAYER_BT, DIR_DN, 2)),
     ("U2", (LAYER_TP, DIR_RT, 2)),
+    ("E2", (LAYER_MD, DIR_LT, 2)),
     ("D2", (LAYER_BT, DIR_LT, 2)),
     ("F2", (LAYER_TP, DIR_RD, 2)),
+    ("S2", (LAYER_MD, DIR_RD, 2)),
     ("B2", (LAYER_BT, DIR_LU, 2)),
     #
     ("R'", (LAYER_TP, DIR_DN, 1)),
     ("M'", (LAYER_MD, DIR_UP, 1)),
     ("L'", (LAYER_BT, DIR_UP, 1)),
     ("U'", (LAYER_TP, DIR_LT, 1)),
+    ("E'", (LAYER_MD, DIR_RT, 1)),
     ("D'", (LAYER_BT, DIR_RT, 1)),
     ("F'", (LAYER_TP, DIR_LU, 1)),
+    ("S'", (LAYER_MD, DIR_LU, 1)),
     ("B'", (LAYER_BT, DIR_RD, 1)),
     #
     ("R2'", (LAYER_TP, DIR_DN, 2)),
     ("M2'", (LAYER_MD, DIR_UP, 2)),
     ("L2'", (LAYER_BT, DIR_UP, 2)),
     ("U2'", (LAYER_TP, DIR_LT, 2)),
+    ("E2'", (LAYER_MD, DIR_RT, 2)),
     ("D2'", (LAYER_BT, DIR_RT, 2)),
     ("F2'", (LAYER_TP, DIR_LU, 2)),
+    ("S2'", (LAYER_MD, DIR_LU, 2)),
     ("B2'", (LAYER_BT, DIR_RD, 2)),
     #
     ("Rw", (LAYER_TM, DIR_UP, 1)),
@@ -73,9 +81,12 @@ LETTER_TABLE = [
     ("Fw2'", (LAYER_TM, DIR_LU, 2)),
     ("Bw2'", (LAYER_BM, DIR_RD, 2)),
     #
+    ("x", (LAYER_AL, DIR_UP, 1)),
     ("x'", (LAYER_AL, DIR_DN, 1)),
     ("y", (LAYER_AL, DIR_RT, 1)),
     ("y'", (LAYER_AL, DIR_LT, 1)),
+    ("z", (LAYER_AL, DIR_RD, 1)),
+    ("z'", (LAYER_AL, DIR_LU, 1)),
 ]
 LETTER_TABLE.sort(key=lambda x: len(x[0]), reverse=True)
 
