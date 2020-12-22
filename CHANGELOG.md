@@ -4,6 +4,7 @@
 - Modified the layout
 - Added an instruction to the README
 - Added error checking and error messages
+- Updated the algorithm files
 
 ## 0.3.0
 - Enabled to draw cube images

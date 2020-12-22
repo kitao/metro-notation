@@ -42,11 +42,11 @@ R'U2RU2' R'F RUR'U' R'F'R2
 
 [Ja Perm]
 @wwwwBBOOOGwwwwwwwwwww
-R'UL'U2 RU'R' U2L R
+R'UL'U2 RU'R'U2R L
 
 [Jb Perm]
 @GGwwwwwwBOOOwwwwwwwww
-RUR'F' RUR'U' R'FR2 U'R'
+RUR'F' RUR'U' R'FR2U' R'
 
 [T Perm]
 @GGwwwwwBBOwOwwwwwwwww
@@ -84,7 +84,7 @@ F'U'F R2UwR'U RU'RUw' R2'
 
 [Gc Perm]
 @wRRwwwwwwOwOwwwwwwwww
-R2'U' RU'RU R'UR2 UD' RU'R'D
+R2'U' RU'RU R'UR2 UD' RU'R' D
 
 [Gd Perm]
 @wwwwRRwwwGwGwwwwwwwww
