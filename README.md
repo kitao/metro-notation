@@ -26,10 +26,10 @@ metro-notation [filename]
 
 - ``#`` ignores up to the end of the line as a comment
 - ``[name]`` specifies the name of the following algorithm
-- ``@``+``ROBGWYrobgwy`` specifies the arrangement of the cube faces
+- ``@``+``ROBGWYrobgwy`` describes the arrangement of the cube faces
 - ``RMLUDFBw2xy'`` describes the algorithm
 - ``whitespace`` splits the algorithm into triggers
-- ``----`` splits the following description into separate columns
+- ``----`` splits the following algorithms into separate columns
 
 ```
 #
