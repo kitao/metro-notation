@@ -132,9 +132,22 @@ class Route:
         min_x = min_y = 0
         max_x = max_y = 0
         route_count = {(0, 0): 1}
-        last_dir = (0, 0)
+
+        last_direction = (0, 0)
+        last_layer = -1
 
         for node in nodes:
+            if (
+                node.direction == last_direction
+                and node.layer == last_layer
+                or node.direction[0] + last_direction[0] == 0
+                and node.direction[1] + last_direction[1] == 0
+            ):
+                raise ValueError
+
+            last_direction = node.direction
+            last_layer = node.layer
+
             for i in range(node.distance):
                 x += node.direction[0]
                 y += node.direction[1]
@@ -149,6 +162,10 @@ class Route:
                 else:
                     route_count[(x, y)] = 1
 
+        for pos, count in route_count.items():
+            if count >= 3 or count >= 2 and pos != (0, 0) and pos != (x, y):
+                raise ValueError
+
         self.nodes = nodes
         self.width = max_x - min_x
         self.height = max_y - min_y
@@ -159,29 +176,20 @@ class Route:
         nodes[-1].is_end_hit = route_count[(x, y)] > 1
 
     def from_letters(letters):
-        nodes = []
-        last_dir = (0, 0)
+        try:
+            nodes = []
+            rest = letters
 
-        rest = letters
-
-        while rest:
-            try:
+            while rest:
                 node, rest = Node.from_letters(rest)
+                nodes.append(node)
 
-                dx = node.direction[0] + last_dir[0]
-                dy = node.direction[1] + last_dir[1]
+            route = Route(nodes)
 
-                if dx == 0 and dy == 0:
-                    raise ValueError
+        except ValueError:
+            raise ValueError(letters)
 
-            except ValueError as error:
-                raise ValueError(letters)
-
-            nodes.append(node)
-
-            last_dir = node.direction
-
-        return Route(nodes)
+        return route
 
 
 class RouteMap:
