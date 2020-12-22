@@ -55,7 +55,7 @@ RU'R'U' RURD R'U'RD' R'U2R'
 F'U'F R2UwR'U RU'RUw' R2'
 ```
 
-## Output examples
+## Outputs
 
 **PLL Algorithms**
 
