@@ -24,22 +24,23 @@ from .routemap import (
 )
 
 CANVAS_COLOR = "white"
-CANVAS_MARGIN = 400
-CANVAS_SCALE = 4
+CANVAS_H_MARGIN = 100
+CANVAS_V_MARGIN = 100
 
-ROUTEMAP_V_MARGIN = 300
+ROUTEMAP_H_MARGIN = 150
+ROUTEMAP_V_MARGIN = 80
 
-TEXT_X_OFFSET = -10
+TEXT_X_OFFSET = -2
 TEXT_FONT_NAME = "Helvetica.ttc"
-TEXT_FONT_SIZE = 130
+TEXT_FONT_SIZE = 32
 TEXT_COLOR = "black"
-TEXT_V_MARGIN = 150
+TEXT_V_MARGIN = 35
 
-CUBE_BLOCK_WIDTH = 150
-CUBE_BLOCK_MARGIN = 15
-CUBE_EDGE_WIDTH = 50
-CUBE_LINE_THICKNESS = 13
-CUBE_TOTAL_SIZE = CUBE_BLOCK_WIDTH * 3 + CUBE_EDGE_WIDTH * 2 + CUBE_BLOCK_MARGIN * 4
+CUBE_BLOCK_SIZE = 37
+CUBE_BLOCK_MARGIN = 4
+CUBE_SIDE_SIZE = 12
+CUBE_LINE_THICKNESS = 3
+CUBE_TOTAL_SIZE = CUBE_BLOCK_SIZE * 3 + CUBE_SIDE_SIZE * 2 + CUBE_BLOCK_MARGIN * 4
 CUBE_COLOR = {
     CUBE_RF: ("red", "red"),
     CUBE_OF: ("orange", "orange"),
@@ -54,15 +55,15 @@ CUBE_COLOR = {
     CUBE_WB: ("lightgray", "white"),
     CUBE_YB: ("yellow", "white"),
 }
-CUBE_H_MARGIN = 450
+CUBE_H_MARGIN = 110
 
-ROUTE_H_MARGIN = 330
+ROUTE_H_MARGIN = 80
 
-NODE_LENGTH = 400
-NODE_WIDTH = 65
-NODE_DOUBLE_WIDTH = 31
-NODE_THIN_WIDTH = 17
-NODE_POINT_WIDTH = 41
+NODE_LENGTH = 100
+NODE_THICKNESS = 15
+NODE_DOUBLE_THICKNESS = 7
+NODE_THIN_THICKNESS = 3
+NODE_POINT_SIZE = 9
 NODE_COLOR = {
     LAYER_TP: "black",
     LAYER_MD: "limegreen",
@@ -72,9 +73,9 @@ NODE_COLOR = {
     LAYER_AL: "darkorange",
 }
 
-START_POINT_OUTER_WIDTH = 107
-START_POINT_INNER_WIDTH = 73
-START_POINT_COLOR = "gold"
+NODE_START_OUTER_SIZE = 27
+NODE_START_INNER_SIZE = 19
+NODE_START_COLOR = "gold"
 
 
 def routemap_drawing_size(routemap):
@@ -126,26 +127,26 @@ class Renderer:
                 y2 = y * 0.2 + y2 * 0.8
 
             if node.layer == LAYER_MD:
-                self.canvas.line(x, y, x2, y2, NODE_THIN_WIDTH, color)
+                self.canvas.line(x, y, x2, y2, NODE_THIN_THICKNESS, color)
             else:
-                self.canvas.line(x, y, x2, y2, NODE_WIDTH, color)
+                self.canvas.line(x, y, x2, y2, NODE_THICKNESS, color)
 
                 if node.layer == LAYER_TM or node.layer == LAYER_BM:
-                    self.canvas.line(x, y, x2, y2, NODE_DOUBLE_WIDTH, CANVAS_COLOR)
+                    self.canvas.line(x, y, x2, y2, NODE_DOUBLE_THICKNESS, CANVAS_COLOR)
 
-            self.canvas.circle(x, y, NODE_WIDTH, color)
-            self.canvas.circle(x, y, NODE_POINT_WIDTH, CANVAS_COLOR)
+            self.canvas.circle(x, y, NODE_THICKNESS, color)
+            self.canvas.circle(x, y, NODE_POINT_SIZE, CANVAS_COLOR)
 
-            self.canvas.circle(x2, y2, NODE_WIDTH, color)
-            self.canvas.circle(x2, y2, NODE_POINT_WIDTH, CANVAS_COLOR)
+            self.canvas.circle(x2, y2, NODE_THICKNESS, color)
+            self.canvas.circle(x2, y2, NODE_POINT_SIZE, CANVAS_COLOR)
 
             x = x2
             y = y2
 
         if is_start:
-            self.canvas.circle(start_x, start_y, START_POINT_OUTER_WIDTH, start_color)
+            self.canvas.circle(start_x, start_y, NODE_START_OUTER_SIZE, start_color)
             self.canvas.circle(
-                start_x, start_y, START_POINT_INNER_WIDTH, START_POINT_COLOR
+                start_x, start_y, NODE_START_INNER_SIZE, NODE_START_COLOR
             )
 
     def draw_route(self, x, y, route):
@@ -158,46 +159,46 @@ class Renderer:
             x += node.direction[0] * node.distance * NODE_LENGTH
             y += node.direction[1] * node.distance * NODE_LENGTH
 
-    def draw_cube_edge(self, left, top, index, cube):
+    def draw_cube_side(self, left, top, index, cube):
         if index < 3:
             x = (
                 left
-                + CUBE_EDGE_WIDTH
+                + CUBE_SIDE_SIZE
                 + CUBE_BLOCK_MARGIN
-                + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * index
+                + (CUBE_BLOCK_SIZE + CUBE_BLOCK_MARGIN) * index
             )
             y = top
         elif index < 6:
-            x = left + CUBE_TOTAL_SIZE - CUBE_EDGE_WIDTH
+            x = left + CUBE_TOTAL_SIZE - CUBE_SIDE_SIZE
             y = (
                 top
-                + CUBE_EDGE_WIDTH
+                + CUBE_SIDE_SIZE
                 + CUBE_BLOCK_MARGIN
-                + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * (index - 3)
+                + (CUBE_BLOCK_SIZE + CUBE_BLOCK_MARGIN) * (index - 3)
             )
         elif index < 9:
             x = (
                 left
-                + CUBE_EDGE_WIDTH
+                + CUBE_SIDE_SIZE
                 + CUBE_BLOCK_MARGIN
-                + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * (8 - index)
+                + (CUBE_BLOCK_SIZE + CUBE_BLOCK_MARGIN) * (8 - index)
             )
-            y = top + CUBE_TOTAL_SIZE - CUBE_EDGE_WIDTH
+            y = top + CUBE_TOTAL_SIZE - CUBE_SIDE_SIZE
         else:
             x = left
             y = (
                 top
-                + CUBE_EDGE_WIDTH
+                + CUBE_SIDE_SIZE
                 + CUBE_BLOCK_MARGIN
-                + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * (11 - index)
+                + (CUBE_BLOCK_SIZE + CUBE_BLOCK_MARGIN) * (11 - index)
             )
 
         if index < 3 or 5 < index < 9:
-            w = CUBE_BLOCK_WIDTH
-            h = CUBE_EDGE_WIDTH
+            w = CUBE_BLOCK_SIZE
+            h = CUBE_SIDE_SIZE
         else:
-            w = CUBE_EDGE_WIDTH
-            h = CUBE_BLOCK_WIDTH
+            w = CUBE_SIDE_SIZE
+            h = CUBE_BLOCK_SIZE
 
         self.canvas.rect(x, y, w, h, CUBE_COLOR[cube][0])
         self.canvas.rect(
@@ -209,11 +210,11 @@ class Renderer:
         )
 
     def draw_cube_block(self, left, top, index_x, index_y, cube):
-        x = y = CUBE_EDGE_WIDTH + CUBE_BLOCK_MARGIN
-        x += left + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * index_x
-        y += top + (CUBE_BLOCK_WIDTH + CUBE_BLOCK_MARGIN) * index_y
-        w = CUBE_BLOCK_WIDTH
-        h = CUBE_BLOCK_WIDTH
+        x = y = CUBE_SIDE_SIZE + CUBE_BLOCK_MARGIN
+        x += left + (CUBE_BLOCK_SIZE + CUBE_BLOCK_MARGIN) * index_x
+        y += top + (CUBE_BLOCK_SIZE + CUBE_BLOCK_MARGIN) * index_y
+        w = CUBE_BLOCK_SIZE
+        h = CUBE_BLOCK_SIZE
 
         self.canvas.rect(x, y, w, h, CUBE_COLOR[cube][0])
         self.canvas.rect(
@@ -226,7 +227,7 @@ class Renderer:
 
     def draw_cube(self, x, y, cube):
         for i in range(12):
-            self.draw_cube_edge(x, y, i, cube[i])
+            self.draw_cube_side(x, y, i, cube[i])
 
         for i in range(3):
             for j in range(3):
@@ -288,43 +289,48 @@ class Renderer:
     def show(self):
         self.canvas.show()
 
-    def render_algorithms(algos):
-        routemaps = [RouteMap.from_letters(*algo) for algo in algos]
+    def from_algorithm(algos_list):
+        routemaps_list = [
+            [RouteMap.from_letters(*algo) for algo in algos] for algos in algos_list
+        ]
 
-        width = height = 0
+        #
+        # create renderer
+        #
+        renderer_width = renderer_height = 0
 
-        for i, routemap in enumerate(routemaps):
-            w, h = routemap_drawing_size(routemap)
-            width = max(w, width)
-            height += h + (ROUTEMAP_V_MARGIN if i > 0 else 0)
+        for i, routemaps in enumerate(routemaps_list):
+            width = height = 0
 
-        width += CANVAS_MARGIN * 2
-        height += CANVAS_MARGIN * 2
+            for j, routemap in enumerate(routemaps):
+                w, h = routemap_drawing_size(routemap)
+                width = max(w, width)
+                height += h + (ROUTEMAP_V_MARGIN if j > 0 else 0)
 
-        renderer = Renderer(width, height)
+            renderer_width += width + (ROUTEMAP_H_MARGIN if i > 0 else 0)
+            renderer_height = max(height, renderer_height)
 
-        x = y = CANVAS_MARGIN
+        renderer_width += CANVAS_H_MARGIN * 2
+        renderer_height += CANVAS_V_MARGIN * 2
 
-        for routemap in routemaps:
-            renderer.draw_routemap(x, y, routemap)
+        renderer = Renderer(renderer_width, renderer_height)
 
-            _, h = routemap_drawing_size(routemap)
-            y += h + ROUTEMAP_V_MARGIN
+        #
+        # draw routemaps
+        #
+        x = CANVAS_H_MARGIN
 
-        renderer.canvas.scale(1 / CANVAS_SCALE)
+        for routemaps in routemaps_list:
+            y = CANVAS_V_MARGIN
+            width = 0
+
+            for routemap in routemaps:
+                renderer.draw_routemap(x, y, routemap)
+
+                w, h = routemap_drawing_size(routemap)
+                width = max(w, width)
+                y += h + ROUTEMAP_V_MARGIN
+
+            x += width + ROUTEMAP_H_MARGIN
 
         return renderer
-
-    def merge(renderers):
-        width = sum([renderer.width for renderer in renderers])
-        height = max([renderer.height for renderer in renderers])
-        merged_renderer = Renderer(width, height)
-
-        x = 0
-
-        for renderer in renderers:
-            merged_renderer.canvas.copy(x, 0, renderer.canvas)
-
-            x += renderer.width
-
-        return merged_renderer
