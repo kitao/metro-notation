@@ -57,8 +57,5 @@ class Canvas:
 
         return round(text_size[0] / SCALE), round(text_size[1] / SCALE)
 
-    def copy(self, x, y, canvas):
-        self.image.paste(canvas.image, (x * SCALE, y * SCALE))
-
     def show(self):
         self.image.resize((self.width, self.height), SCALE_FILTER).show()
