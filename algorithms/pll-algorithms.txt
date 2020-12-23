@@ -84,7 +84,7 @@ F'U'F R2UwR'U RU'RUw' R2'
 
 [Gc Perm]
 @wRRwwwwwwOwOwwwwwwwww
-R2'U' RU'RU R'UR2 UD' RU'R' D
+R2'U' RU'RU R'UR2 UD' RU'R'D
 
 [Gd Perm]
 @wwwwRRwwwGwGwwwwwwwww
