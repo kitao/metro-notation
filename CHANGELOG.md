@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.5.0
+- Changed the layouts
+- Fixed algorithms
+
 ## 0.4.0
 - Modified the layout
 - Added an instruction to the README
