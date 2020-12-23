@@ -1,7 +1,7 @@
 # Change Log
 
 ## 0.5.0
-- Changed the layouts
+- Change the way of anti-aliasing
 - Fixed algorithms
 
 ## 0.4.0
