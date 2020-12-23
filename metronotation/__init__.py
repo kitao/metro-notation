@@ -2,7 +2,7 @@ import sys
 
 from .renderer import Renderer
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 
 
 def load_algorithm_file(filename):
@@ -55,10 +55,8 @@ def load_algorithm_file(filename):
 
 def visualize_algorithm_file(filename):
     algos_list = load_algorithm_file(filename)
-    renderers = [Renderer.render_algorithms(algos) for algos in algos_list]
-    merged_renderer = Renderer.merge(renderers)
-
-    merged_renderer.show()
+    renderer = Renderer.from_algorithm(algos_list)
+    renderer.show()
 
 
 def run():
