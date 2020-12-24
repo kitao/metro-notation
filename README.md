@@ -59,11 +59,11 @@ F'U'F R2UwR'U RU'RUw' R2'
 
 - Standard algorithms in Metro notation ([pdf](images/metro-notation.pdf), [pptx](images/metro-notation.pptx))
 
-**PLL Algorithms**
+### PLL Algorithms
 
 <img src="images/pll-algorithms.png">
 
-**OLL Algorithms**
+### OLL Algorithms
 
 <img src="images/oll-algorithms1.png">
 <img src="images/oll-algorithms2.png">
