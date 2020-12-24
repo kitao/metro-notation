@@ -57,6 +57,8 @@ F'U'F R2UwR'U RU'RUw' R2'
 
 ## Outputs
 
+- Standard algorithms in Metro notation ([pdf](images/metro-notation.pdf), [pptx](images/metro-notation.pptx))
+
 **PLL Algorithms**
 
 <img src="images/pll-algorithms.png">

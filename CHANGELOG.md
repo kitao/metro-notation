@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.6.0
+- Added the pdf and pptx files
+
 ## 0.5.0
 - Change the way of anti-aliasing
 - Fixed algorithms
