@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.7.0
+- Modified a PLL algorithm
+
 ## 0.6.0
 - Added the pdf and pptx files
 

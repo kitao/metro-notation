@@ -29,7 +29,7 @@ x' RU'R D2 R'UR D2R2'
 ----
 
 [E Perm]
-@OwRwwwRwOwwwwwwwwwwww
+@OwRwRwRwOwOwwwwwwwwww
 x' RU'R'D RUR'D' RUR'D RU'R'D'
 
 [Ra Perm]
@@ -68,7 +68,7 @@ F RU'R'U' RUR'F' RUR'U' R'FRF'
 
 [Na Perm]
 @GGwOOwBBwRRwwwwwwwwww
-RUR'U RUR'F' RUR'U' R'FR2U' R'U2 RU'R'
+RUR'U RUR'F' RUR'U' R'FR2U' R'U2RU'R'
 
 [Nb Perm]
 @wGGwOOwBBwRRwwwwwwwww
