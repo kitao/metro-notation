@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.8.0
+- Modified OLL algorithms
+
 ## 0.7.0
 - Modified a PLL algorithm
 

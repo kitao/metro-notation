@@ -2,7 +2,7 @@ import sys
 
 from .renderer import Renderer
 
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 
 
 def load_algorithm_file(filename):
