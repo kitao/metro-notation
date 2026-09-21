@@ -6,7 +6,9 @@
 
 ## PDF
 
-**[4 pages / 全4ページ](sheets/metro-notation.pdf)**
+**[Download PDF (4 pages)](https://github.com/kitao/metro-notation/raw/refs/heads/main/sheets/metro-notation.pdf)**
+
+**[PDFをダウンロード（全4ページ）](https://github.com/kitao/metro-notation/raw/refs/heads/main/sheets/metro-notation.pdf)**
 
 ## PNG
 

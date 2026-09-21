@@ -69,8 +69,8 @@ checks both the generated and published PDFs, and retains the generated files
 as the `metro-notation` artifact for seven days.
 
 Review those files, then copy them into `sheets/` and commit them with the source
-change. The README opens the PDF on GitHub and links its thumbnails directly to
-the full PNGs. Keep tagged release attachments unchanged. Intermediate HTML is
+change. The README links directly to the PDF download and full PNGs.
+Keep tagged release attachments unchanged. Intermediate HTML is
 built in a temporary directory and is not distributed.
 
 To build the Python package, run `python -m build`. Its bundled data includes
