@@ -1,0 +1,46 @@
+name: Publish cheat sheets
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/configure-pages@v5
+      - run: python -m pip install '.[pdf,dev]'
+      - run: python -m playwright install --with-deps chromium
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: ruff check metronotation scripts tests
+      - run: ruff format --check metronotation scripts tests
+      - run: python scripts/check_reference.py --require-complete --photos
+      - run: python -m unittest discover -s tests -v
+      - run: python scripts/update_rhythm_review.py --check
+      - run: python scripts/build_site.py
+      - run: python scripts/check_pdf.py _site/metro-notation.pdf
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

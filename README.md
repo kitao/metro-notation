@@ -1,69 +1,43 @@
-# metro-notation
+# Metro Notation 1.0
 
-Visualize the Rubik's cube algorithms in a notation like a train route map that I call **"Metro notation (メトロ記法)"**.
+**Remember cube algorithms as shapes.**
 
-**"Metro notation"** focuses on the direction in which the force of each finger is applied.
+A metro-map cheat sheet for **41 F2L · 57 OLL · 21 PLL** cases.
+Follow each route from its yellow start; the move notation sits below it.
+Browse all four sheets online or print the PDF on A3 landscape paper.
 
-## Installation
+### [View the cheat sheets →](https://kitao.github.io/metro-notation/)
 
-```sh
-pip3 install metro-notation
-```
+[Download PDF](https://kitao.github.io/metro-notation/metro-notation.pdf) · [日本語](#日本語)
 
-or
+## More
 
-```sh
-pip install metro-notation
-```
+- [Source algorithms](data/tribox-cfop-b-1.0/README.md) · [Notation guide](docs/notation.md)
+- [Design policy](docs/design-policy.md) · [Verification](docs/verification.md)
+- [Generate locally / contribute](docs/maintaining.md) · [Changelog](CHANGELOG.md)
 
-## Usage
+Created by **Takashi Kitao**. Algorithms from [tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973), selected by 野村優希・田中隆喜・清野克己; produced by げぶげぶ (tribox).
+The [MIT license](LICENSE) covers this project's software; original sheets and photographs are excluded.
 
-```sh
-metro-notation [filename]
-```
+---
 
-## Algorithm notation format
+## 日本語
 
-- ``#`` ignores up to the end of the line as a comment
-- ``[name]`` specifies the name of the following algorithm
-- ``@``+``ROBGWYrobgwy`` describes the arrangement of the cube faces
-- ``RMLUDFBw2xy'`` describes the algorithm
-- ``whitespace`` splits the algorithm into triggers
-- ``----`` splits the following algorithms into separate columns
+**キューブの手順を、図形として覚える。**
 
-```
-#
-# PLL algorithms
-#
+**F2L 41件・OLL 57件・PLL 21件**を路線図のようにまとめたチートシートです。
+黄色い始点からたどり、下の回転記号で確認できます。
+全4枚をWebで閲覧でき、PDFをA3横で印刷して使えます。
 
-[Ua Perm]
-@GGGRoRBrBObOwwwwwwwww
-RU'RU RU RU'R'U' R2
+### [チートシートを見る →](https://kitao.github.io/metro-notation/)
 
-[Z Perm]
-@GrGRgRBoBObOwwwwwwwww
-M2'U'M2'U' M'U2' M2'U2'M'
+[PDFをダウンロード](https://kitao.github.io/metro-notation/metro-notation.pdf)
 
-----
+### 詳しく知る・変更する
 
-[Ra Perm]
-@OwwwwwwRRBwBwwwwwwwww
-RU'R'U' RURD R'U'RD' R'U2R'
+- [元の手順・出典](data/tribox-cfop-b-1.0/README.md) · [記法ガイド](docs/notation.md)
+- [デザイン方針](docs/design-policy.md) · [検証結果](docs/verification.md)
+- [手元で生成・開発する](docs/maintaining.md) · [変更履歴](CHANGELOG.md)
 
-[Gb Perm]
-@OwOwwwBBwwwwwwwwwwwww
-F'U'F R2UwR'U RU'RUw' R2'
-```
-
-## Outputs
-
-- Standard algorithms in Metro notation ([pdf](images/metro-notation.pdf), [pptx](images/metro-notation.pptx))
-
-### PLL Algorithms
-
-<img src="images/pll-algorithms.png">
-
-### OLL Algorithms
-
-<img src="images/oll-algorithms1.png">
-<img src="images/oll-algorithms2.png">
+制作：**Takashi Kitao**。手順：[tribox CFOP 手順表 B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)。手順選定：野村優希・田中隆喜・清野克己。企画製作：げぶげぶ (tribox)。
+[MITライセンス](LICENSE)は本プロジェクトのソフトウェアが対象です。原紙・写真は対象に含みません。
