@@ -10,11 +10,15 @@
 
 ## PNG
 
-<img src="sheets/f2l.png" width="49%" alt="F2L">
-<img src="sheets/oll-01-30.png" width="49%" alt="OLL 01–30">
+<p>
+  <img src="sheets/f2l.png" width="49%" alt="F2L">
+  <img src="sheets/oll-01-30.png" width="49%" alt="OLL 01–30">
+</p>
 
-<img src="sheets/oll-31-57.png" width="49%" alt="OLL 31–57">
-<img src="sheets/pll.png" width="49%" alt="PLL">
+<p>
+  <img src="sheets/oll-31-57.png" width="49%" alt="OLL 31–57">
+  <img src="sheets/pll.png" width="49%" alt="PLL">
+</p>
 
 ## Credits / クレジット
 
