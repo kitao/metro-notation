@@ -30,6 +30,8 @@ colors, line widths and double-rail separation. It also checks:
 
 - A single yellow start and no goal marker per route; a 1.20-unit minimum visible
   endpoint-to-edge gap that accounts for circle size and diagonal edges.
+- Deterministic grouping across Python versions, with negligible floating-point
+  width differences treated as ties.
 - Equal columns and row rhythm, consistent route scale, case bounds, clipping,
   long-case wrapping and clearance below H perm.
 - All 41 fixed F2L masks, 24 equal diamond markers and source recognition colors.

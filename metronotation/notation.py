@@ -255,7 +255,10 @@ def group_moves(moves, boundaries=(), max_moves=None, measure=None, fits=None, p
             cost = (
                 1 + suffix_cost[0],
                 int(end - start == 1) + suffix_cost[1],
-                (measure(candidate) if measure else 0) + suffix_cost[2],
+                # Ignore floating-point noise when widths are visually identical.
+                # Python versions use different summation algorithms; tied routes
+                # must keep the same deterministic longer-first choice everywhere.
+                round((measure(candidate) if measure else 0) + suffix_cost[2], 6),
             )
             group = tuple((i, moves[i]) for i in range(start, end))
             options.append((cost, -len(candidate), (group, *suffix)))
