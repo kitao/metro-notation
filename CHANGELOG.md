@@ -1,22 +1,16 @@
-# Change Log
+# Changelog
 
-## 1.0 (unreleased)
+## 1.0 — 2026-09-21
 
-- Publish a four-page PDF and 300 dpi PNGs, with linked thumbnails in the README. Keep HTML/SVG as the rendering pipeline.
-- Simplify the bilingual README and consolidate development and design documentation.
-
-- Review all 119 reading groups; protect extraction/insertion units, wide R/U
-  units and E-perm repetition while retaining every source regrip.
-- Embed licensed Cabin and Arimo typefaces for consistent offline HTML and PDF.
-- Adopt the photo-transcribed tribox CFOP B-1.0 master: 119 cases as the sole master.
-- Preserve prime direction, wide moves, R3 and regrip positions in new route maps.
-- Replace Pillow image rendering with portable HTML and inline SVG; no required runtime dependencies.
-- Restore minimal overview sheets with uniform route geometry, yellow origins and no goal markers or study controls; add optional PDF export.
-- Add exact source-to-output, cube-state, photo top-face and display-geometry verification.
-- Identify every sheet as METRO NOTATION 1.0; keep the sheet and software versions synchronized.
-- Remove all legacy inputs, outputs, compatibility parsers and raster APIs.
-- Document the design contract and add reproducible GitHub Pages/PDF builds.
-- Breaking: the CLI reads the Markdown master and writes HTML; automatic PDF export is optional.
+- Redesign all four sheets with consistent route geometry, compact illustrated
+  legends, embedded typefaces and photo-based F2L recognition diagrams.
+- Adopt all 119 algorithms from tribox CFOP Sheet B-1.0. Preserve exact move
+  spelling, including R3, prime directions, wide moves and source regrips.
+- Group routes around familiar move sequences and highlight common triggers.
+- Publish a four-page PDF and 300 dpi PNGs, with linked thumbnails in the
+  concise English/Japanese README.
+- Replace the legacy renderer with HTML/SVG and a reproducible PDF/PNG build.
+  Record the design specification and verify source data, cube states and output.
 
 ## 0.8.0
 - Modified OLL algorithms

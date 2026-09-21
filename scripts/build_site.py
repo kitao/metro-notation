@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--output", type=Path, default=ROOT / "_site")
     args = parser.parse_args()
     output = args.output.resolve()
-    # Keep publication output away from source directories and private photos.
+    # Keep publication output away from source directories and reference photos.
     if (
         output == ROOT
         or ROOT in output.parents

@@ -1,12 +1,28 @@
 # Development
 
-Python 3.10 or later is required. The published sheets are a four-page PDF and four 300 dpi PNG images.
+The published sheets are a four-page PDF and four 300 dpi PNG images.
 HTML and SVG are intermediate formats for rendering and local inspection.
 
+## Build the sheets
+
+Use Python 3.10 or later and Poppler (`brew install poppler` on macOS;
+`apt install poppler-utils` on Ubuntu).
+
 ```sh
-python -m pip install -e .
-metro-notation --open
-metro-notation --category PLL -o output/pll.html
+python -m pip install -e '.[pdf,dev]'
+python -m playwright install chromium
+python scripts/build_site.py --output output
+```
+
+The PDF is written to `output/metro-notation.pdf`, with full-size PNGs in
+`output/images/` and README thumbnails in `output/images/thumbnails/`.
+All images are rendered from the PDF. Generated files are excluded from Git.
+
+For a quick local preview of selected cases:
+
+```sh
+metro-notation --category PLL -o output/pll.html --open
+metro-notation --case OLL-25 --case OLL-37 -o output/cases.html --open
 ```
 
 ## Source files
@@ -23,19 +39,6 @@ metro-notation --category PLL -o output/pll.html
 The Markdown master is the single source of algorithm text. Preserve its spelling,
 move order and regrip positions when changing the presentation. Algorithm
 corrections require source comparison before updating the regression hash.
-
-## Build HTML and PDF
-
-```sh
-python -m pip install -e '.[pdf,dev]'
-python -m playwright install chromium
-python -m metronotation -o output/metro-notation.html --pdf output/metro-notation.pdf
-python scripts/build_review.py output/metro-notation.pdf
-```
-
-PNG export and the local review gallery require Poppler (`brew install poppler` on macOS;
-`apt install poppler-utils` on Ubuntu). Open `output/review.html` to compare all
-four sheets. Generated files belong in `output/`; they are excluded from Git.
 
 ## Check a change
 
@@ -62,14 +65,11 @@ Repeat the visual check on the deployed PDF after publishing.
 ```sh
 python scripts/build_site.py
 python scripts/check_pdf.py _site/metro-notation.pdf
-python -m http.server 8769 --directory _site
 ```
 
-The README links directly to `metro-notation.pdf`. The website root redirects to
-that PDF. PNG images in `images/` and 1000-pixel thumbnails in `images/thumbnails/`
-are rendered from the same PDF with Poppler. Intermediate HTML is built in a
-temporary directory and is not published. Run **Publish cheat sheets** in GitHub Actions
-to deploy `_site/`.
+Run **Publish cheat sheets** in GitHub Actions to build, check and deploy `_site/`.
+The README links directly to the PDF and PNGs; the website root redirects to the
+PDF. Intermediate HTML is built in a temporary directory and is not published.
 
 To build the Python package, run `python -m build`. Its bundled data includes
 the master, CSS, fonts and font licenses. Keep the version in

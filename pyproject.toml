@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "metro-notation"
 dynamic = ["version"]
-description = "Learn Rubik's Cube algorithms through SVG metro maps"
+description = "Remember Rubik's Cube algorithms as metro-style diagrams"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
