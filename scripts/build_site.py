@@ -4,6 +4,7 @@
 import argparse
 from pathlib import Path
 import sys
+import subprocess
 from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,6 +33,29 @@ def main():
         html = Path(temporary) / "metro-notation.html"
         html.write_text(render_html(records), encoding="utf-8")
         export_pdf(html, output / "metro-notation.pdf")
+    images = output / "images"
+    thumbnails = images / "thumbnails"
+    thumbnails.mkdir(parents=True, exist_ok=True)
+    for page, name in enumerate(("f2l", "oll-01-30", "oll-31-57", "pll"), 1):
+        for destination, resolution in (
+            (images / name, ["-r", "300"]),
+            (thumbnails / name, ["-scale-to", "1000"]),
+        ):
+            subprocess.run(
+                [
+                    "pdftoppm",
+                    "-f",
+                    str(page),
+                    "-l",
+                    str(page),
+                    *resolution,
+                    "-png",
+                    "-singlefile",
+                    str(output / "metro-notation.pdf"),
+                    str(destination),
+                ],
+                check=True,
+            )
     (output / "index.html").write_text(
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta http-equiv="refresh" content="0;url=metro-notation.pdf">'
@@ -41,7 +65,7 @@ def main():
         encoding="utf-8",
     )
     (output / ".nojekyll").write_text("", encoding="utf-8")
-    print(f"Site: {output} (PDF and direct redirect)")
+    print(f"Site: {output} (PDF, four PNGs and thumbnails)")
     return 0
 
 

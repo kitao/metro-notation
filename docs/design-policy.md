@@ -60,7 +60,8 @@ thickness is measured perpendicular to the track, including diagonal segments.
 | Learn first dot | radius 3.24; `#38b000`; at least 14 clear units before the cube |
 | Footer | 10.5; below the frame, aligned right |
 
-Distribute the four-page PDF. HTML/SVG is the rendering source; its local preview
+Distribute the four-page PDF and PNG images rendered from it at 300 dpi.
+README thumbnails link to the full PNGs. HTML/SVG is the rendering source; its local preview
 keeps the same columns, margins and legend as the PDF.
 
 Long cases wrap between complete routes at the same scale. OLL 41 and 42 use two
@@ -77,7 +78,7 @@ Familiar move units use one orange text color, `#c94f00`.
 - Preserve all source regrips as route boundaries. Ra's initial U remains separate.
 - Keep four-move triggers intact, including their caption spacing. Recognize them
   before shorter insertions inside them; R U' R' U must not become 3+1.
-- Adjacent complete units can share one shape. Use an em-space between the units
+- Adjacent complete units can share one shape. Use an en-space between the units
   in its caption. There is no fixed four-move limit.
 - Sune and Anti-Sune keep their seven-move identity across 3+4 reading shapes.
   OLL 25 and 37 use 4+4.

@@ -2,7 +2,7 @@
 
 ## 1.0 (unreleased)
 
-- Publish one four-page PDF, linked directly from the README and website. Keep HTML/SVG as the rendering pipeline.
+- Publish a four-page PDF and 300 dpi PNGs, with linked thumbnails in the README. Keep HTML/SVG as the rendering pipeline.
 - Simplify the bilingual README and consolidate development and design documentation.
 
 - Review all 119 reading groups; protect extraction/insertion units, wide R/U

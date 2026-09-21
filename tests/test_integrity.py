@@ -92,6 +92,18 @@ class Integrity(unittest.TestCase):
             "2548fef68def591bdc3ab4504de2ce43e707060617fc57bc83ef2ece369a4240",
         )
 
+    def test_photo_reviewed_annotations_are_unchanged(self):
+        # P1/P3/P4/P5/P6 review: 117 colored hints, 26 regrips and 18
+        # priority marks. Guard their exact positions, not only their counts.
+        reviewed = "".join(
+            f"{r.key}\t{sorted(r.hints.items())}\t{sorted(r.regrips.items())}\t{r.beginner}\n"
+            for r in self.records
+        )
+        self.assertEqual(
+            hashlib.sha256(reviewed.encode()).hexdigest(),
+            "62dea3a692f3a66dcc2c8d272b048fe3e0b66e46da53c586d49e3efe39da96ff",
+        )
+
     def test_cube_conventions_and_all_stage_invariants(self):
         self_check()
         for kind in ("F2L", "OLL", "PLL"):

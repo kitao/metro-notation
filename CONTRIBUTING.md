@@ -1,6 +1,6 @@
 # Development
 
-Python 3.10 or later is required. The published document is a four-page PDF.
+Python 3.10 or later is required. The published sheets are a four-page PDF and four 300 dpi PNG images.
 HTML and SVG are intermediate formats for rendering and local inspection.
 
 ```sh
@@ -33,7 +33,7 @@ python -m metronotation -o output/metro-notation.html --pdf output/metro-notatio
 python scripts/build_review.py output/metro-notation.pdf
 ```
 
-The local review gallery requires Poppler (`brew install poppler` on macOS;
+PNG export and the local review gallery require Poppler (`brew install poppler` on macOS;
 `apt install poppler-utils` on Ubuntu). Open `output/review.html` to compare all
 four sheets. Generated files belong in `output/`; they are excluded from Git.
 
@@ -66,8 +66,9 @@ python -m http.server 8769 --directory _site
 ```
 
 The README links directly to `metro-notation.pdf`. The website root redirects to
-that PDF. Only the PDF, redirect and `.nojekyll` are published; intermediate HTML
-is built in a temporary directory. Run **Publish cheat sheets** in GitHub Actions
+that PDF. PNG images in `images/` and 1000-pixel thumbnails in `images/thumbnails/`
+are rendered from the same PDF with Poppler. Intermediate HTML is built in a
+temporary directory and is not published. Run **Publish cheat sheets** in GitHub Actions
 to deploy `_site/`.
 
 To build the Python package, run `python -m build`. Its bundled data includes

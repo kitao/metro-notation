@@ -20,6 +20,7 @@ jobs:
       - uses: actions/configure-pages@v5
       - run: python -m pip install '.[pdf,dev]'
       - run: python -m playwright install --with-deps chromium
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - run: ruff check metronotation scripts tests
       - run: ruff format --check metronotation scripts tests
       - run: python scripts/check_reference.py --require-complete --photos

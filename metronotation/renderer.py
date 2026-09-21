@@ -85,7 +85,7 @@ def route_size(group, caption_breaks=()):
     ) * UNIT + 2 * PAD
 
 
-def route_svg(group, hints=None, caption_breaks=()):
+def route_svg(group, caption_breaks=()):
     """Solid tracks, small white stations and one yellow origin. No decorations.
 
     A closed path has a small gap at its origin, as in the original renderer.
