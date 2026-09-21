@@ -6,18 +6,19 @@
 
 ## PDF
 
-**[4 pages / 全4ページ](https://kitao.github.io/metro-notation/metro-notation.pdf)**
+**[4 pages / 全4ページ](sheets/metro-notation.pdf)**
 
 ## PNG
 
-Click an image to open the high-resolution version.<br>
+Click an image to open the high-resolution version.
+
 画像をクリックすると高解像度版が開きます。
 
-<a href="https://kitao.github.io/metro-notation/images/f2l.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/f2l.png" width="49%" alt="F2L"></a>
-<a href="https://kitao.github.io/metro-notation/images/oll-01-30.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/oll-01-30.png" width="49%" alt="OLL 01–30"></a>
+<a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/f2l.png"><img src="sheets/thumbnails/f2l.png" width="49%" alt="F2L"></a>
+<a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/oll-01-30.png"><img src="sheets/thumbnails/oll-01-30.png" width="49%" alt="OLL 01–30"></a>
 
-<a href="https://kitao.github.io/metro-notation/images/oll-31-57.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/oll-31-57.png" width="49%" alt="OLL 31–57"></a>
-<a href="https://kitao.github.io/metro-notation/images/pll.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/pll.png" width="49%" alt="PLL"></a>
+<a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/oll-31-57.png"><img src="sheets/thumbnails/oll-31-57.png" width="49%" alt="OLL 31–57"></a>
+<a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/pll.png"><img src="sheets/thumbnails/pll.png" width="49%" alt="PLL"></a>
 
 ## Source / 出典
 

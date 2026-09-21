@@ -11,12 +11,13 @@ Use Python 3.10 or later and Poppler (`brew install poppler` on macOS;
 ```sh
 python -m pip install -e '.[pdf,dev]'
 python -m playwright install chromium
-python scripts/build_site.py --output output
+python scripts/build_sheets.py
 ```
 
 The PDF is written to `output/metro-notation.pdf`, with full-size PNGs in
-`output/images/` and README thumbnails in `output/images/thumbnails/`.
-All images are rendered from the PDF. Generated files are excluded from Git.
+`output/` and README thumbnails in `output/thumbnails/`.
+All images are rendered from the PDF. Local builds are excluded from Git;
+the reviewed distribution files are kept in `sheets/`.
 
 For a quick local preview of selected cases:
 
@@ -29,6 +30,7 @@ metro-notation --case OLL-25 --case OLL-37 -o output/cases.html --open
 
 | Content | Location |
 | --- | --- |
+| Published PDF, PNGs and thumbnails | [sheets/](sheets/) |
 | Algorithms and photographs | [data/tribox-cfop-b-1.0](data/tribox-cfop-b-1.0/README.md) |
 | Parsing and cube simulation | `metronotation/catalog.py`, `cube.py` |
 | Move groups and route geometry | `metronotation/learning.py`, `notation.py` |
@@ -60,16 +62,16 @@ row spacing, color distinction, endpoint openings and text bounds. Include
 T / H / Aa, OLL 14 / 25 / 37 / 41 / 42 and F2L 7 / 8 / 26 / 37 in close-ups.
 Repeat the visual check on the deployed PDF after publishing.
 
-## Publish
+## Update the distribution
 
-```sh
-python scripts/build_site.py
-python scripts/check_pdf.py _site/metro-notation.pdf
-```
+**Check sheets** runs on pushes and pull requests. It builds the PDF and PNGs,
+checks both the generated and published PDFs, and retains the generated files
+as the `metro-notation` artifact for seven days.
 
-Run **Publish cheat sheets** in GitHub Actions to build, check and deploy `_site/`.
-The README links directly to the PDF and PNGs; the website root redirects to the
-PDF. Intermediate HTML is built in a temporary directory and is not published.
+Review those files, then copy them into `sheets/` and commit them with the source
+change. The README opens the PDF on GitHub and links its thumbnails directly to
+the full PNGs. Keep tagged release attachments unchanged. Intermediate HTML is
+built in a temporary directory and is not distributed.
 
 To build the Python package, run `python -m build`. Its bundled data includes
 the master, CSS, fonts and font licenses. Keep the version in

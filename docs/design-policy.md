@@ -61,7 +61,8 @@ thickness is measured perpendicular to the track, including diagonal segments.
 | Footer | 10.5; below the frame, aligned right |
 
 Distribute the four-page PDF and PNG images rendered from it at 300 dpi.
-README thumbnails link to the full PNGs. HTML/SVG is the rendering source; its local preview
+Keep reviewed files in `sheets/`; README thumbnails link to the full PNGs.
+HTML/SVG is the rendering source; its local preview
 keeps the same columns, margins and legend as the PDF.
 
 Long cases wrap between complete routes at the same scale. OLL 41 and 42 use two

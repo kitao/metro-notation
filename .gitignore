@@ -9,7 +9,6 @@ build/
 dist/
 *.egg-info/
 output/
-_site/
 
 # Test and editor caches
 .pytest_cache/

@@ -15,11 +15,10 @@ dependencies = []
 classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent"]
 
 [project.urls]
-Homepage = "https://kitao.github.io/metro-notation/"
 Repository = "https://github.com/kitao/metro-notation"
 
 [project.optional-dependencies]
-pdf = ["playwright>=1.49,<2"]
+pdf = ["playwright==1.63.0"]
 dev = ["build>=1.2", "pypdf>=5,<7", "ruff==0.16.8"]
 
 [project.scripts]
