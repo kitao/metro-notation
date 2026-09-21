@@ -62,7 +62,7 @@ thickness is measured perpendicular to the track, including diagonal segments.
 
 Distribute the four-page PDF and PNG images rendered from it at 300 dpi.
 Keep the PDF and four PNGs in `sheets/`. The README displays those PNGs at a
-reduced size, with GitHub's automatic links opening them in a separate tab.
+reduced size, using GitHub's automatic links to its image viewer.
 HTML/SVG is the rendering source; its local preview
 keeps the same columns, margins and legend as the PDF.
 

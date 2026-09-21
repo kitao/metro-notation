@@ -69,7 +69,7 @@ Use this artifact for distribution: local font shaping can differ from the
 workflow's output. After a visual change, the comparison with `sheets/` will fail;
 review the artifact, copy its five files into `sheets/`, and commit them.
 The README displays the full PNGs at a reduced size; GitHub supplies
-the image links that open in a separate tab.
+the links to its image viewer, with repository navigation available.
 Keep tagged release attachments unchanged. Intermediate HTML is
 built in a temporary directory and is not distributed.
 
