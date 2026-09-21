@@ -4,10 +4,7 @@ __pycache__/
 .venv/
 .env
 
-# Packaging and generated deliverables
-build/
-dist/
-*.egg-info/
+# Local generated sheets
 output/
 
 # Test and editor caches

@@ -24,25 +24,25 @@ jobs:
           python-version: '3.12'
       - name: Install build tools
         run: |
-          python -m pip install '.[pdf,dev]'
+          python -m pip install --upgrade pip
+          python -m pip install --group dev
           python -m playwright install --with-deps chromium
           sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Check source and geometry
         run: |
-          ruff check metronotation scripts tests
-          ruff format --check metronotation scripts tests
-          python scripts/check_reference.py --require-complete --photos
+          ruff check src scripts tests
+          ruff format --check src scripts tests
+          python scripts/check_algorithms.py --require-complete --photos
           python -m unittest discover -s tests -v
-          python scripts/update_rhythm_review.py --check
-      - name: Build and check sheets
+          python scripts/update_grouping.py --check
+      - name: Build sheets
         run: |
           python scripts/build_sheets.py
-          python scripts/check_pdf.py output/metro-notation.pdf
       - uses: actions/upload-artifact@v7
         with:
           name: metro-notation
           path: output/
           if-no-files-found: error
           retention-days: 7
-      - name: Check published PDF
-        run: python scripts/check_pdf.py sheets/metro-notation.pdf
+      - name: Check generated and published sheets
+        run: python scripts/check_sheets.py output sheets

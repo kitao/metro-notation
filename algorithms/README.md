@@ -11,8 +11,8 @@ Metro Notationの手順データです。[tribox CFOP 手順表 B-1.0](https://s
 | F2L | 41 | [f2l.md](f2l.md) |
 | OLL | 57 | [oll.md](oll.md) |
 | PLL | 21 | [pll.md](pll.md) |
-| F2Lの識別図 | 41 | [f2l-diagrams.md](f2l-diagrams.md) |
-| OLLの上面 | 57 | [oll-up-faces.md](oll-up-faces.md) |
+| F2Lの識別図 | 41 | [f2l-patterns.md](f2l-patterns.md) |
+| OLLの上面 | 57 | [oll-patterns.md](oll-patterns.md) |
 
 ## 記録形式
 
@@ -20,7 +20,7 @@ Metro Notationの手順データです。[tribox CFOP 手順表 B-1.0](https://s
 
 - `r` と `R`、`l` と `L`を区別します。
 - `U2'`、`R3`をそのまま記録します。
-- `<br>`は原紙の改行です。表示上の区切りは`metronotation/learning.py`で扱います。
+- `<br>`は原紙の改行です。表示上の区切りは[learning.py](../src/metronotation/learning.py)で扱います。
 - `P3:U`は3手目のUに付くプッシュ、`T3:U`はトリガーの注記です。
 - `REGRIP→n`はn手目の直前の持ち替えです。左手の指定も記録します。
 - 若葉マークはLearn firstの選定に使います。
@@ -56,5 +56,5 @@ F2Lは写真の配色、OLL上面は写真のマスクを使い、OLL側面とPL
 | PLL T・Y | 2行目をP2の拡大表示で照合 |
 | PLL Gc・Nb・Rb | P4で全文を照合。Rbの1行目末尾は`D R` |
 
-更新時の検査は[CONTRIBUTING.md](../../CONTRIBUTING.md)を参照してください。
+更新時の検査は[CONTRIBUTING.md](../CONTRIBUTING.md)を参照してください。
 原紙・写真はソフトウェアのMITライセンスの対象外です。

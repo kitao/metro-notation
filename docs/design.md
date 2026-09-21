@@ -61,7 +61,8 @@ thickness is measured perpendicular to the track, including diagonal segments.
 | Footer | 10.5; below the frame, aligned right |
 
 Distribute the four-page PDF and PNG images rendered from it at 300 dpi.
-Keep reviewed files in `sheets/`; README thumbnails link to the full PNGs.
+Keep the PDF and four PNGs in `sheets/`. The README displays those PNGs at a
+reduced size, with GitHub's automatic links opening them in a separate tab.
 HTML/SVG is the rendering source; its local preview
 keeps the same columns, margins and legend as the PDF.
 
@@ -89,7 +90,7 @@ Familiar move units use one orange text color, `#c94f00`.
   same style. U U must remain distinguishable from U2.
 - Give whole-cube rotations their own route.
 
-The [grouping table](rhythm-review.md) records all 119 cases. Additional graphical
+The [grouping table](grouping.md) records all 119 cases. Additional graphical
 breaks organize reading; only the original regrip annotations specify a grip change.
 
 ## Legend and recognition cubes
@@ -112,7 +113,7 @@ Place this outside the frame, at the lower right:
 `© 2020–2026 Takashi Kitao (github.com/kitao/metro-notation) | Algorithm source: tribox CFOP Sheet B-1.0`
 
 Use HTTPS for the project link and the official tribox product page for the source.
-Source records belong with the [algorithm data](../data/tribox-cfop-b-1.0/README.md).
+Source records belong with the [algorithm data](../algorithms/README.md).
 
 ## Visual review
 

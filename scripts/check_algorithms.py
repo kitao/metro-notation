@@ -16,10 +16,10 @@ import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data" / "tribox-cfop-b-1.0"
+DATA = ROOT / "algorithms"
 import sys
 
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "src"))
 from metronotation.cube import TOKEN, apply, solved_cube, self_check
 
 
@@ -114,7 +114,7 @@ def main():
     pending = []
     face_rows = re.findall(
         r"^\| (\d{2}) \| `([01]{3}/[01]{3}/[01]{3})` \|$",
-        (DATA / "oll-up-faces.md").read_text(encoding="utf-8"),
+        (DATA / "oll-patterns.md").read_text(encoding="utf-8"),
         re.MULTILINE,
     )
     faces = dict(face_rows)

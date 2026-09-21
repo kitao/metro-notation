@@ -1,6 +1,9 @@
-"""Optional Chromium printing of the same self-contained HTML document."""
+"""Print self-contained HTML with Chromium and render its PDF with Poppler."""
 
 from pathlib import Path
+import subprocess
+
+SHEET_NAMES = ("f2l", "oll-01-30", "oll-31-57", "pll")
 
 
 def export_pdf(html_path, pdf_path):
@@ -8,7 +11,7 @@ def export_pdf(html_path, pdf_path):
         from playwright.sync_api import sync_playwright, Error
     except ImportError as exc:
         raise RuntimeError(
-            'PDF export needs: pip install "metro-notation[pdf]" && python -m playwright install chromium'
+            "PDF export needs: python -m pip install --group dev && python -m playwright install chromium"
         ) from exc
     html_path, pdf_path = Path(html_path).resolve(), Path(pdf_path).resolve()
     if html_path == pdf_path:
@@ -36,3 +39,26 @@ def export_pdf(html_path, pdf_path):
             + str(exc)
         ) from exc
     return pdf_path
+
+
+def export_pngs(pdf_path, output_directory):
+    """Render each PDF page as a 300 dpi PNG."""
+    pdf_path, output = Path(pdf_path).resolve(), Path(output_directory).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    for page, name in enumerate(SHEET_NAMES, 1):
+        subprocess.run(
+            [
+                "pdftoppm",
+                "-f",
+                str(page),
+                "-l",
+                str(page),
+                "-r",
+                "300",
+                "-png",
+                "-singlefile",
+                str(pdf_path),
+                str(output / name),
+            ],
+            check=True,
+        )

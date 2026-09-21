@@ -1,10 +1,9 @@
 """Read the canonical Markdown without duplicating the master in code or JSON."""
 
 from dataclasses import dataclass, field, replace
-from importlib.resources import files
-from pathlib import Path
 import re
 
+from . import ALGORITHMS
 from .notation import Move, parse_moves
 from .recognition import Recognition, load_f2l_diagrams
 
@@ -93,15 +92,13 @@ def read_markdown(text, category):
 
 def load_master():
     result = []
-    local = Path(__file__).resolve().parents[1] / "data" / "tribox-cfop-b-1.0"
-    resource = local if (local / "f2l.md").is_file() else files("metronotation.reference")
     for category, expected in (
         ("F2L", {f"{i:02}" for i in range(1, 42)}),
         ("OLL", {f"{i:02}" for i in range(1, 58)}),
         ("PLL", set("Aa Ab E F Ga Gb Gc Gd H Ja Jb Na Nb Ra Rb T Ua Ub V Y Z".split())),
     ):
         records = read_markdown(
-            resource.joinpath(category.lower() + ".md").read_text(encoding="utf-8"), category
+            (ALGORITHMS / (category.lower() + ".md")).read_text(encoding="utf-8"), category
         )
         if {record.id for record in records} != expected:
             raise ValueError(f"{category}: master case IDs are incomplete or unexpected")

@@ -1,23 +1,45 @@
 #!/usr/bin/env python3
-"""Check full-master PDF labels and exact move order, with titles, notation keys and attribution.
+"""Check the PDF and PNGs in one or more sheet directories.
 
-Optional dependency: pypdf. This content check complements rendered-page review;
-it does not establish the geometry or readability of the drawing by itself.
+Directories must contain the same drawing, independent of PDF metadata.
+Requires pypdf and Poppler. This complements, rather than replaces, visual review.
 """
 
 import argparse
 from pathlib import Path
 import re
+import subprocess
 import sys
+from tempfile import TemporaryDirectory
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from metronotation import __version__
 from metronotation.catalog import load_master
+from metronotation.pdf import SHEET_NAMES, export_pngs
+
+IMAGE_PATHS = tuple(Path(f"{name}.png") for name in SHEET_NAMES)
+
+
+def check_images(directory, reference=None):
+    """Check every supplied image against its PDF and the first checked drawing."""
+    with TemporaryDirectory(prefix="metro-sheet-check-") as temporary:
+        rendered = Path(temporary)
+        export_pngs(directory / "metro-notation.pdf", rendered)
+        current = {}
+        for relative in IMAGE_PATHS:
+            current[relative] = (rendered / relative).read_bytes()
+            if (directory / relative).read_bytes() != current[relative]:
+                raise ValueError(f"{directory / relative}: image does not match its PDF")
+            if reference is not None and reference[relative] != current[relative]:
+                raise ValueError(
+                    f"{directory / relative}: drawing differs from the first directory"
+                )
+    return current
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("pdfs", nargs="+", type=Path)
+    parser.add_argument("directories", nargs="+", type=Path)
     args = parser.parse_args()
     try:
         from pypdf import PdfReader
@@ -25,7 +47,9 @@ def main():
         parser.error("PDF auditing requires the optional pypdf package")
     records = load_master()
     batches = [records[:41], records[41:71], records[71:98], records[98:]]
-    for path in args.pdfs:
+    reference = None
+    for directory in args.directories:
+        path = directory / "metro-notation.pdf"
         reader = PdfReader(path)
         if len(reader.pages) != 4:
             raise ValueError(f"{path}: expected four pages")
@@ -108,15 +132,19 @@ def main():
                 a.get_object().get("/Subtype") != "/Link" for a in page.get("/Annots", [])
             ):
                 raise ValueError(f"{path}: unexpected interactive fields or annotations")
+        reference = check_images(directory, reference)
         print(
             f"{path}: 4 A3 pages; 119 case labels; 1208 exact moves; 6 mm frame margins; footer outside frame; embedded typefaces; no form fields"
         )
+        print(f"{directory}: four 300 dpi PNGs match the PDF")
+    if len(args.directories) > 1:
+        print("All directories contain the same rendered sheets.")
     return 0
 
 
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (ValueError, OSError) as exc:
-        print(f"PDF audit failed: {exc}", file=sys.stderr)
+    except (ValueError, OSError, subprocess.CalledProcessError) as exc:
+        print(f"Sheet check failed: {exc}", file=sys.stderr)
         sys.exit(1)

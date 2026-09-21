@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "src"))
 from metronotation.catalog import load_master
 from metronotation.learning import READING_PHRASES, idiom_tokens, sequence_tokens
 from metronotation.renderer import diagram_groups
@@ -16,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    path = ROOT / "docs/rhythm-review.md"
+    path = ROOT / "docs/grouping.md"
     old = path.read_text(encoding="utf-8")
     preface = old.split("| ケース |", 1)[0]
     rows = [
@@ -36,13 +36,13 @@ def main():
     if args.check:
         if old != new:
             print(
-                "Rhythm review is stale: run python scripts/update_rhythm_review.py",
+                "Grouping table is stale: run python scripts/update_grouping.py",
                 file=sys.stderr,
             )
             return 1
     else:
         path.write_text(new, encoding="utf-8")
-    print("Rhythm review: 119 cases match the renderer")
+    print("Grouping table: 119 cases match the renderer")
     return 0
 
 

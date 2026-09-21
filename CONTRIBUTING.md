@@ -5,38 +5,35 @@ HTML and SVG are intermediate formats for rendering and local inspection.
 
 ## Build the sheets
 
-Use Python 3.10 or later and Poppler (`brew install poppler` on macOS;
+Use Python 3.10 or later, pip 25.1 or later, and Poppler (`brew install poppler` on macOS;
 `apt install poppler-utils` on Ubuntu).
 
 ```sh
-python -m pip install -e '.[pdf,dev]'
+python -m pip install --group dev
 python -m playwright install chromium
 python scripts/build_sheets.py
 ```
 
-The PDF is written to `output/metro-notation.pdf`, with full-size PNGs in
-`output/` and README thumbnails in `output/thumbnails/`.
-All images are rendered from the PDF. Local builds are excluded from Git;
-the reviewed distribution files are kept in `sheets/`.
+The PDF and four PNGs are written to `output/`. Each PNG is rendered from the PDF.
+Local builds are excluded from Git; reviewed files are kept in `sheets/`.
 
 For a quick local preview of selected cases:
 
 ```sh
-metro-notation --category PLL -o output/pll.html --open
-metro-notation --case OLL-25 --case OLL-37 -o output/cases.html --open
+python src/metronotation --category PLL -o output/pll.html --open
+python src/metronotation --case OLL-25 --case OLL-37 -o output/cases.html --open
 ```
 
 ## Source files
 
 | Content | Location |
 | --- | --- |
-| Published PDF, PNGs and thumbnails | [sheets/](sheets/) |
-| Algorithms and photographs | [data/tribox-cfop-b-1.0](data/tribox-cfop-b-1.0/README.md) |
-| Parsing and cube simulation | `metronotation/catalog.py`, `cube.py` |
-| Move groups and route geometry | `metronotation/learning.py`, `notation.py` |
-| Drawing, layout and typography | `metronotation/renderer.py`, `typography.py`, `assets/` |
-| Design specification | [docs/design-policy.md](docs/design-policy.md) |
-| Algorithm groups | [docs/rhythm-review.md](docs/rhythm-review.md) |
+| Published PDF and PNGs | [sheets/](sheets/) |
+| Canonical algorithms and source photographs | [algorithms/](algorithms/README.md) |
+| Parsing, cube simulation and rendering | [src/metronotation/](src/metronotation/) |
+| Build and validation commands | [scripts/](scripts/) |
+| Design and grouping specifications | [docs/design.md](docs/design.md), [docs/grouping.md](docs/grouping.md) |
+| Regression tests | [tests/](tests/) |
 
 The Markdown master is the single source of algorithm text. Preserve its spelling,
 move order and regrip positions when changing the presentation. Algorithm
@@ -45,17 +42,17 @@ corrections require source comparison before updating the regression hash.
 ## Check a change
 
 ```sh
-ruff check metronotation scripts tests
-ruff format --check metronotation scripts tests
-python scripts/check_reference.py --require-complete --photos
+ruff check src scripts tests
+ruff format --check src scripts tests
+python scripts/check_algorithms.py --require-complete --photos
 python -m unittest discover -s tests -v
-python scripts/update_rhythm_review.py --check
-python scripts/check_pdf.py output/metro-notation.pdf
+python scripts/update_grouping.py --check
+python scripts/check_sheets.py output
 ```
 
-After changing grouping rules, run `python scripts/update_rhythm_review.py` and
+After changing grouping rules, run `python scripts/update_grouping.py` and
 review its diff. These checks cover source tokens, cube states, diagram geometry
-and PDF content.
+and PDF content. The sheet check renders the PDF and compares all four PNGs.
 
 Inspect all four sheets at full-page and reading sizes. Check column alignment,
 row spacing, color distinction, endpoint openings and text bounds. Include
@@ -65,14 +62,15 @@ Repeat the visual check on the published PDF.
 ## Update the distribution
 
 **Check sheets** runs on pushes and pull requests. It builds the PDF and PNGs,
-checks both the generated and published PDFs, and retains the generated files
-as the `metro-notation` artifact for seven days.
+checks that generated and published drawings match, and retains the generated
+files as the `metro-notation` artifact for seven days.
 
-Review those files, then copy them into `sheets/` and commit them with the source
-change. The README links to the PDF viewer and full PNGs.
+Use this artifact for distribution: local font shaping can differ from the
+workflow's output. After a visual change, the comparison with `sheets/` will fail;
+review the artifact, copy its five files into `sheets/`, and commit them.
+The README displays the full PNGs at a reduced size; GitHub supplies
+the image links that open in a separate tab.
 Keep tagged release attachments unchanged. Intermediate HTML is
 built in a temporary directory and is not distributed.
 
-To build the Python package, run `python -m build`. Its bundled data includes
-the master, CSS, fonts and font licenses. Keep the version in
-`metronotation/__init__.py` and `CHANGELOG.md` in sync.
+Keep the version in `src/metronotation/__init__.py` and `CHANGELOG.md` in sync.

@@ -1,9 +1,9 @@
 """Fixed F2L recognition diagrams visually checked against the source closeups."""
 
 from dataclasses import dataclass
-from importlib.resources import files
-from pathlib import Path
 import re
+
+from . import ALGORITHMS
 
 
 @dataclass(frozen=True)
@@ -13,9 +13,7 @@ class Recognition:
 
 
 def load_f2l_diagrams():
-    local = Path(__file__).resolve().parents[1] / "data" / "tribox-cfop-b-1.0"
-    resource = local if (local / "f2l-diagrams.md").is_file() else files("metronotation.reference")
-    text = resource.joinpath("f2l-diagrams.md").read_text(encoding="utf-8")
+    text = (ALGORITHMS / "f2l-patterns.md").read_text(encoding="utf-8")
     records = {}
     for id_, side_, u, f, s, hidden in re.findall(
         r"^\| (\d{2}) \| (-?1) \| `([BRW./]+)` \| `([BRW./]+)` \| `([BRW./]+)` \| `([^`]+)` \|$",

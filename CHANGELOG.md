@@ -7,10 +7,12 @@
 - Adopt all 119 algorithms from tribox CFOP Sheet B-1.0. Preserve exact move
   spelling, including R3, prime directions, wide moves and source regrips.
 - Group routes around familiar move sequences and highlight common triggers.
-- Publish a four-page PDF and 300 dpi PNGs, with linked thumbnails in the
+- Publish a four-page PDF and 300 dpi PNGs, with image previews in the
   concise English/Japanese README.
 - Replace the legacy renderer with HTML/SVG and a reproducible PDF/PNG build.
   Record the design specification and verify source data, cube states and output.
+- Organize the repository around the sheets, canonical algorithms, renderer and
+  specifications. Check that published PDF and PNG drawings match the build.
 
 ## 0.8.0
 - Modified OLL algorithms

@@ -8,9 +8,13 @@ import io
 import math
 from pathlib import Path
 import re
+import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
 
 from metronotation.catalog import Algorithm, load_master, read_markdown
 from metronotation.cli import main
@@ -24,9 +28,7 @@ from metronotation.renderer import (
     layer_cube,
     UNIT,
 )
-from scripts.check_reference import read_records, check_structure, up_face
-
-ROOT = Path(__file__).resolve().parents[1]
+from scripts.check_algorithms import read_records, check_structure, up_face
 
 
 class Document(HTMLParser):
@@ -115,7 +117,7 @@ class Integrity(unittest.TestCase):
         masks = dict(
             re.findall(
                 r"^\| (\d{2}) \| `([01/]+)` \|$",
-                (ROOT / "data/tribox-cfop-b-1.0/oll-up-faces.md").read_text(encoding="utf-8"),
+                (ROOT / "algorithms/oll-patterns.md").read_text(encoding="utf-8"),
                 re.M,
             )
         )
@@ -303,7 +305,7 @@ class Integrity(unittest.TestCase):
         for blob, name in zip(encoded, ("cabin-medium", "cabin-semibold", "arimo-regular")):
             self.assertEqual(
                 base64.b64decode(blob),
-                (ROOT / f"metronotation/assets/fonts/{name}.ttf").read_bytes(),
+                (ROOT / f"src/metronotation/assets/fonts/{name}.ttf").read_bytes(),
             )
         self.assertIn("The Cabin Project Authors", css)
         self.assertIn("The Arimo Project Authors", css)
@@ -666,7 +668,7 @@ class Integrity(unittest.TestCase):
             group_moves(square, boundaries=(1,), protected=((0, 2),))
 
     def test_master_errors_fail_closed(self):
-        raw = (ROOT / "data/tribox-cfop-b-1.0/f2l.md").read_text(encoding="utf-8")
+        raw = (ROOT / "algorithms/f2l.md").read_text(encoding="utf-8")
         for bad in (
             raw.replace("転記済", "要確認", 1),
             raw.replace("P3:U", "P999:U", 1),
@@ -691,7 +693,7 @@ class Integrity(unittest.TestCase):
             self.assertEqual(Document(output.read_text(encoding="utf-8")).cards, ["PLL-Ub"])
             self.assertEqual(main(["--case", "PLL-nonexistent", "-o", str(output)]), 2)
             self.assertEqual(main(["-o", str(output), "--pdf", str(output)]), 2)
-            master = ROOT / "data/tribox-cfop-b-1.0/f2l.md"
+            master = ROOT / "algorithms/f2l.md"
             original = master.read_bytes()
             self.assertEqual(main(["-o", str(master)]), 2)
             self.assertEqual(master.read_bytes(), original)

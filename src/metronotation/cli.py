@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 import webbrowser
 
-from . import __version__
+from . import ALGORITHMS, __version__
 from .catalog import load_master
 from .renderer import render_html
 
@@ -13,7 +13,7 @@ from .renderer import render_html
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-o", "--output", type=Path, default=Path("output/metro-notation.html"))
-    parser.add_argument("--pdf", type=Path, help="Also print the same HTML to PDF (optional extra)")
+    parser.add_argument("--pdf", type=Path, help="Also print the generated HTML to PDF")
     parser.add_argument("--lang", choices=("en", "ja"), default="en")
     parser.add_argument("--category", action="append", choices=("F2L", "OLL", "PLL"))
     parser.add_argument(
@@ -45,10 +45,7 @@ def main(argv=None):
             print(f"{len(records)} cases parsed; master move spelling preserved.")
             return 0
         output = args.output.resolve()
-        # Protect both the repository master and installed package resources.
-        package = Path(__file__).resolve().parent
-        masters = (package.parent / "data" / "tribox-cfop-b-1.0", package / "reference")
-        sources = {p.resolve() for master in masters for p in master.glob("*.md")}
+        sources = {p.resolve() for p in ALGORITHMS.glob("*.md")}
         destinations = [output] + ([args.pdf.resolve()] if args.pdf else [])
         if any(path in sources for path in destinations):
             raise ValueError("Output must not overwrite an input or master file")
