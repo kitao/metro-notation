@@ -22,9 +22,9 @@
 
 ## Credits / クレジット
 
-Metro Notation was created by [Takashi Kitao](https://github.com/kitao). The algorithms are from [tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973).
+Metro Notation was created by [Takashi Kitao](https://x.com/kitao). The algorithms are from [tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973).
 
-路線図記法の考案者は[Takashi Kitao](https://github.com/kitao)です。回転手順は[tribox CFOP 手順表 B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)から転記しています。
+路線図記法の考案者は[Takashi Kitao](https://x.com/kitao)です。回転手順は[tribox CFOP 手順表 B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)から転記しています。
 
 ## License / ライセンス
 
