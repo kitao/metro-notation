@@ -4,9 +4,13 @@
 
 **Metro Notation**は、ルービックキューブの手順を路線図のような図形で表す記法です。一連の動きを形で覚えられます。
 
-## Sheets / 手順表
+## PDF
 
-**[PDF (4 pages / 全4ページ)](https://kitao.github.io/metro-notation/metro-notation.pdf)**
+**[4 pages / 全4ページ](https://kitao.github.io/metro-notation/metro-notation.pdf)**
+
+## PNG
+
+Click an image to open the high-resolution version. / 画像をクリックすると高解像度版が開きます。
 
 <a href="https://kitao.github.io/metro-notation/images/f2l.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/f2l.png" width="49%" alt="F2L"></a>
 <a href="https://kitao.github.io/metro-notation/images/oll-01-30.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/oll-01-30.png" width="49%" alt="OLL 01–30"></a>
