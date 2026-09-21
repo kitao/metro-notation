@@ -83,9 +83,12 @@ reading opposite layers: do not claim monochrome or color-vision accessibility
 without separate validation. Inspect black / blue at reduced size, not just as
 large swatches. Keep the two actual narrow rails and the thin middle track.
 
-Titles use Gill Sans, Trebuchet MS and sans-serif fallbacks; captions use Arial,
-Helvetica and sans-serif fallbacks. Font availability can change appearance.
-Check actual PDF text bounds after a font or platform change. Do not assume
+Titles use embedded Cabin Medium / SemiBold; captions, labels and credits use
+embedded Arimo Regular. These static fonts preserve the transit-signage character
+and the same metrics across platforms, including offline use. Each PDF must embed
+all three typefaces without system-font substitution. Source files and SIL OFL
+licenses are [bundled with the assets](../metronotation/assets/fonts/README.md).
+Check actual PDF text bounds after a font change. Do not assume
 character counts equal proportional text widths. Never simplify lowercase `l`,
 `R3` or primes for typographic convenience.
 

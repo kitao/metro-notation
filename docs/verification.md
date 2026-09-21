@@ -15,8 +15,15 @@ properties from work that remains; it does not claim universal cuber approval.
 - All 119 inverse states satisfy their stage invariants. All 57 independently
   transcribed OLL upper-face masks match. Negative tests detect known F2L 26 and
   PLL Rb transcription errors.
+- An independent local cross-check with [cubing.js](https://js.cubing.net/cubing/kpuzzle/)
+  0.63.6 matches all 54 sticker colors after each of the 1,208 forward moves and
+  for all 119 inverse starting states. The comparison uses Reid edge/corner
+  ordering and includes center positions; logo orientation is intentionally
+  excluded. This validates the simulator; the photo checks validate transcription.
 - Source regrips are mandatory group boundaries. Named learning units and curated
-  reading phrases are checked against the unchanged master. The generated
+  reading phrases are checked against the unchanged master. Final boundary checks
+  cover pair extraction/insertion, wide R/U units, slice restores and the
+  repeated D/D' units in E perm. The generated
   [119-case rhythm review](rhythm-review.md) records the resulting divisions.
 
 These checks complement photo comparison. Inverse-then-forward simulation alone
@@ -24,7 +31,7 @@ would not prove transcription accuracy and is not treated as that proof here.
 
 ## Drawing and layout
 
-The automated suite contains 23 tests. It checks actual SVG geometry, rather than
+The automated suite contains 25 tests. It checks actual SVG geometry, rather than
 only drawing metadata, for all 1,208 moves: directions, quarter-turn counts,
 colors, line widths and double-rail separation. It also checks:
 
@@ -41,6 +48,10 @@ colors, line widths and double-rail separation. It also checks:
 
 All four PDF sheets are rendered for visual review. Numeric checks do not replace
 inspection of alignment, optical balance, small-size clarity and whitespace.
+The 1.0 render was reviewed as four complete sheets and in the browser gallery.
+Browser measurements at 1,440 and 694 px found no case-text or drawing overflow;
+the wide layout retained equal 330-unit F2L/OLL and 448-unit PLL columns.
+The four-sheet gallery also fits a 390 px viewport without horizontal overflow.
 The design values and rationale live in [design-policy.md](design-policy.md).
 
 ## Output and packaging
@@ -48,11 +59,13 @@ The design values and rationale live in [design-policy.md](design-policy.md).
 The PDF audit checks four A3 landscape pages, all 119 labels and 1,208 exact move
 tokens, every title/version/key/credit, 6 mm frame margins on every edge, and a
 footer outside the lower frame. Only link annotations are allowed; no forms or
-progress checkboxes are inserted. Routes remain vector artwork.
+progress checkboxes are inserted. Routes remain vector artwork. All three static
+typefaces (Cabin Medium / SemiBold and Arimo Regular) must be embedded in the PDF
+without substitution; exact text extraction remains mandatory.
 
 HTML generation uses the Python standard library. PDF conversion uses optional
 Playwright/Chromium; gallery previews use Poppler. The wheel includes its Markdown
-master and CSS. A clean installation is exercised outside the source checkout.
+master, CSS, fonts and licenses. A clean installation is exercised outside the source checkout.
 The retired text-format reader and duplicate legacy algorithm files are removed.
 CI checks Linux and Windows on Python 3.10 and 3.14; consult the repository's
 Actions results for the status of a particular commit.

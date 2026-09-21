@@ -256,6 +256,48 @@ class Integrity(unittest.TestCase):
         ub = next(r for r in self.records if r.key == "PLL-Ub")
         self.assertFalse(sequence_tokens(ub))
 
+    def test_reviewed_motor_phrases_and_required_geometric_splits(self):
+        expected = {
+            "F2L-09": [4, 3],
+            "F2L-10": [4, 3],
+            "F2L-23": [1, 4, 4, 3],
+            "OLL-03": [1, 3, 4, 2],
+            "OLL-04": [1, 3, 4, 2],
+            "OLL-11": [2, 3, 4, 2],
+            "OLL-12": [2, 3, 4, 2],
+            "OLL-23": [2, 4, 3],
+            "OLL-24": [1, 4, 4],
+            "OLL-28": [4, 1, 1, 4],
+            "PLL-E": [4, 4, 4, 4, 1],
+            "PLL-T": [4, 4, 2, 4],
+        }
+        for record in self.records:
+            if record.key in expected:
+                self.assertEqual(
+                    [len(g) for g in diagram_groups(record)], expected[record.key], record.key
+                )
+        # Exact photo spelling makes these reversals unavoidable. Do not merge
+        # them into retracing strokes or silently replace R r' by a slice move.
+        self.assertFalse(safe_route(parse_moves("R r'")))
+        self.assertFalse(safe_route(parse_moves("R U R' D R2")))
+
+    def test_typefaces_are_embedded_for_offline_use(self):
+        import base64
+        from metronotation.typography import stylesheet
+
+        css = stylesheet()
+        encoded = re.findall(r"data:font/ttf;base64,([A-Za-z0-9+/=]+)", css)
+        self.assertEqual(len(encoded), 3)
+        for blob, name in zip(encoded, ("cabin-medium", "cabin-semibold", "arimo-regular")):
+            self.assertEqual(
+                base64.b64decode(blob),
+                (ROOT / f"metronotation/assets/fonts/{name}.ttf").read_bytes(),
+            )
+        self.assertIn("The Cabin Project Authors", css)
+        self.assertIn("The Arimo Project Authors", css)
+        self.assertEqual(css.count("SIL OPEN FONT LICENSE Version 1.1"), 2)
+        self.assertNotRegex(css, r"url\(['\"]?https?://")
+
     def test_minimal_overview_and_uniform_geometry(self):
         html = render_html(self.records)
         self.assertNotRegex(html, r"<(?:input|button|select|script|marker)\b")

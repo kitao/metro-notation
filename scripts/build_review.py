@@ -14,11 +14,16 @@ from metronotation import __version__
 
 def build_gallery(pdf, output_name="review.html"):
     pdf = Path(pdf).resolve()
-    labels = ("F2L", "OLL 01–30", "OLL 31–57", "PLL")
+    pages = (
+        ("F2L", "f2l.svg"),
+        ("OLL 01–30", "oll-01-30.svg"),
+        ("OLL 31–57", "oll-31-57.svg"),
+        ("PLL", "pll.svg"),
+    )
     figures = []
     fingerprint = hashlib.sha256(pdf.read_bytes()).hexdigest()[:12]
-    for index, label in enumerate(labels, 1):
-        svg = pdf.parent / f"preview-{index}.svg"
+    for index, (label, filename) in enumerate(pages, 1):
+        svg = pdf.parent / filename
         subprocess.run(
             ["pdftocairo", "-f", str(index), "-l", str(index), "-svg", str(pdf), str(svg)],
             check=True,
@@ -36,7 +41,7 @@ header{display:flex;gap:24px;align-items:baseline;justify-content:space-between;
 h1{font-size:18px;font-weight:500;margin:0}a{color:inherit}nav{display:flex;gap:20px}
 main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 figure{margin:0}figcaption{margin-bottom:8px}img{display:block;width:100%;height:auto;background:white}
-@media(max-width:600px){body{padding:12px}main{grid-template-columns:1fr;gap:24px}header{gap:12px}}
+@media(max-width:900px){body{padding:12px}main{grid-template-columns:1fr;gap:24px}header{gap:12px}}
 </style></head><body><header><h1>Cube Algorithms · Metro Notation VERSION</h1><nav>
 <a href="metro-notation.html">HTML</a><a href="PDF_NAME">PDF</a>
 <a href="https://github.com/kitao/metro-notation">GitHub</a></nav></header><main>"""

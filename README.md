@@ -17,7 +17,7 @@ Browse all four sheets online or print the PDF on A3 landscape paper.
 - [Generate locally / contribute](docs/maintaining.md) · [Changelog](CHANGELOG.md)
 
 Created by **Takashi Kitao**. Algorithms from [tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973), selected by 野村優希・田中隆喜・清野克己; produced by げぶげぶ (tribox).
-The [MIT license](LICENSE) covers this project's software; original sheets and photographs are excluded.
+Software: [MIT](LICENSE). Fonts: [SIL OFL](metronotation/assets/fonts/README.md). Original sheets and photographs are excluded.
 
 ---
 
@@ -40,4 +40,4 @@ The [MIT license](LICENSE) covers this project's software; original sheets and p
 - [手元で生成・開発する](docs/maintaining.md) · [変更履歴](CHANGELOG.md)
 
 制作：**Takashi Kitao**。手順：[tribox CFOP 手順表 B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)。手順選定：野村優希・田中隆喜・清野克己。企画製作：げぶげぶ (tribox)。
-[MITライセンス](LICENSE)は本プロジェクトのソフトウェアが対象です。原紙・写真は対象に含みません。
+ソフトウェア：[MIT](LICENSE)。フォント：[SIL OFL](metronotation/assets/fonts/README.md)。原紙・写真は対象に含みません。

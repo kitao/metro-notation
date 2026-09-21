@@ -55,6 +55,19 @@ def main():
                 or abs(float(page.mediabox.height) - 841.89) > 2
             ):
                 raise ValueError(f"{path}: page {index}: not A3 landscape")
+            embedded = set()
+            for resource in page["/Resources"]["/Font"].values():
+                font = resource.get_object()
+                name = str(font["/BaseFont"]).split("+")[-1]
+                descendants = font.get("/DescendantFonts", [])
+                descriptor = (
+                    descendants[0].get_object().get("/FontDescriptor") if descendants else None
+                )
+                if not descriptor or "/FontFile2" not in descriptor.get_object():
+                    raise ValueError(f"{path}: page {index}: unexpected unembedded font {name}")
+                embedded.add(name)
+            if embedded != {"Cabin-Medium", "Cabin-SemiBold", "Arimo-Regular"}:
+                raise ValueError(f"{path}: page {index}: substituted fonts {embedded}")
             frames = []
             footer_y = []
 
@@ -96,7 +109,7 @@ def main():
             ):
                 raise ValueError(f"{path}: unexpected interactive fields or annotations")
         print(
-            f"{path}: 4 A3 pages; 119 case labels; 1208 exact moves; 6 mm frame margins; footer outside frame; no form fields"
+            f"{path}: 4 A3 pages; 119 case labels; 1208 exact moves; 6 mm frame margins; footer outside frame; embedded typefaces; no form fields"
         )
     return 0
 

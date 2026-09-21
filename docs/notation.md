@@ -36,8 +36,8 @@ No unconfirmed finger motion or regrip direction is invented.
 ## Cube setups
 
 A 54-sticker model applies the inverse of each exact algorithm. Centers normalize
-colors after whole-cube rotations. F2L shows its active front slot from the appropriate
-side, highlighting the target pair while masking irrelevant upper pieces. OLL shows
+colors after whole-cube rotations. The master's F2L diagrams instead use fixed
+photo-reviewed masks of the active front slot, including hidden-side stickers. OLL shows
 yellow orientation, PLL surrounding top-layer colors. The bottom of a top view is
 its front edge. These are valid inverse-algorithm examples, not copies of all printed
 source stickers or permutation arrows.
@@ -49,7 +49,7 @@ The left-hand priority green dot follows the source young-leaf selection: 10 OLL
 F2L master diagrams use fixed photo-reviewed blue/red/white/gray recognition data,
 including hidden-side sticker tiles. They are not ordinary six-color cube views.
 Orange move text identifies recurring units, including R/U triggers,
-Sledgehammer/Hedgehammer, J triggers and Sune families.
+Sledgehammer/Hedgeslammer, J triggers and Sune families.
 Four-move triggers stay in one route and caption; seven-move Sune families
 retain their identity across 3+4 reading shapes. This text color is separate
 from the layer colors on metro tracks. See [the full rhythm review](rhythm-review.md).

@@ -1,10 +1,10 @@
 """Minimal reference sheets, faithful to the original metro-map visual language."""
 
 from html import escape
-from importlib.resources import files
 import math
 
 from . import __version__
+from .typography import stylesheet
 from .catalog import SOURCE
 from .learning import idiom_tokens, learning_breaks, learning_units, reading_breaks, sequence_tokens
 from .cube import starting_state
@@ -34,7 +34,7 @@ BODY_HEIGHT = 870
 IDIOM_COLOR = "#c94f00"
 
 
-# Arial advances in em; proportional widths avoid gratuitous line wrapping.
+# Arimo advances in em (compatible with Arial); proportional widths avoid gratuitous line wrapping.
 MOVE_ADVANCE = dict(
     zip(
         "RLUDFBMESrludfbxyz23' w",
@@ -596,12 +596,12 @@ def page_identity(category, batch):
     footer = (
         svg_open(1440, 24, "Attribution", "sheet-footer")
         + '<text x="1440" y="16" font-size="10.5" text-anchor="end">© 2020–2026 Takashi Kitao ('
-        + '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>)　|　Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></text></svg>'
+        + '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>) | Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></text></svg>'
     )
     heading += f'<header class="screen-heading"><h1>Cube Algorithms: {escape(label)}</h1><p class="project-kind">METRO NOTATION {escape(__version__)}</p></header>'
     footer += (
         '<footer class="screen-footer"><span>© 2020–2026 Takashi Kitao ('
-        '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>)　|　Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></span></footer>'
+        '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>) | Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></span></footer>'
     )
     return heading, footer
 
@@ -650,11 +650,12 @@ def column_layout(records):
     return columns, width, pitch, max(loads), gap, first_height
 
 
-def render_html(records, lang="en", title="Metro notation"):
+def render_html(records, lang="en", title=None):
     if lang not in ("en", "ja"):
         raise ValueError("Supported languages: en, ja")
     if not records or len({r.key for r in records}) != len(records):
         raise ValueError("A document needs unique, non-empty case IDs")
+    title = title or f"Cube Algorithms — Metro Notation {__version__}"
     scale = 1.0
     sheets = []
     for category in dict.fromkeys(r.category for r in records):
@@ -703,7 +704,7 @@ def render_html(records, lang="en", title="Metro notation"):
             )
             offset += count
             number += 1
-    css = files("metronotation").joinpath("assets/style.css").read_text(encoding="utf-8")
+    css = stylesheet()
     source = SOURCE if all(r.source == SOURCE for r in records) else "User algorithms"
     return f'''<!doctype html>
 <html lang="{lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="source" content="{escape(source, quote=True)}"><title>{escape(title)}</title><style>{css}</style></head>

@@ -2,6 +2,9 @@
 
 ## 1.0 (unreleased)
 
+- Review all 119 reading groups; protect extraction/insertion units, wide R/U
+  units and E-perm repetition while retaining every source regrip.
+- Embed licensed Cabin and Arimo typefaces for consistent offline HTML and PDF.
 - Adopt the photo-transcribed tribox CFOP B-1.0 master: 119 cases as the sole master.
 - Preserve prime direction, wide moves, R3 and regrip positions in new route maps.
 - Replace Pillow image rendering with portable HTML and inline SVG; no required runtime dependencies.
@@ -35,7 +38,7 @@
 - Enabled to draw cube images
 - Updated the PLL algorithms image
 
-## 0.1.0
+## 0.2.0
 - Modified the usage message
 - Change the module to be directly executable
 

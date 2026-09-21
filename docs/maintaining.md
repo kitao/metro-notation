@@ -18,7 +18,7 @@ export, install the optional tools shown under “Change and verify” below.
 
 ```text
 metronotation/                  Python implementation and bundled CSS
-  assets/
+  assets/                      CSS and licensed, embedded typefaces
 data/tribox-cfop-b-1.0/         Canonical Markdown data and source photographs
   photos/
 docs/                          Design, notation, verification and maintenance
@@ -49,6 +49,7 @@ outputs, not input data. Keep temporary audits and screenshots outside the repo.
 | Idioms and source-specific reading phrases | `metronotation/learning.py` |
 | SVG, legend, layout and print geometry | `metronotation/renderer.py` |
 | Screen / print presentation | `metronotation/assets/style.css` |
+| Offline typography and licenses | `metronotation/typography.py`, `assets/fonts/` |
 | Visual contract and rationale | [design-policy.md](design-policy.md) |
 | Current checks and limitations | [verification.md](verification.md) |
 
@@ -117,7 +118,7 @@ cd /tmp
 ```
 
 On Windows use the environment's `Scripts/python.exe`. The installed package
-must contain its Markdown master and CSS and generate all 119 cases without
+must contain its Markdown master, CSS, fonts and licenses and generate all 119 cases without
 accessing this checkout. CI exercises Python 3.10 and 3.14 on Linux and Windows.
 A local run does not establish that those hosted CI jobs have passed.
 
@@ -130,11 +131,12 @@ python -m http.server 8769 --directory _site
 ```
 
 The generated `_site/` contains `index.html`, the self-contained HTML,
-`metro-notation.pdf`, four vector previews and `.nojekyll`. It contains no source
-photographs. Gallery links are relative so repository-subpath hosting works.
+`metro-notation.pdf`, `f2l.svg`, `oll-01-30.svg`, `oll-31-57.svg`, `pll.svg`
+and `.nojekyll`. It contains no source photographs.
+Gallery links are relative so repository-subpath hosting works.
 The build does not upload or publish anything.
 
-Intended addresses:
+Website:
 
 - Web: https://kitao.github.io/metro-notation/
 - PDF: https://kitao.github.io/metro-notation/metro-notation.pdf

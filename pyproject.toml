@@ -12,10 +12,11 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "Takashi Kitao"}]
 dependencies = []
-classifiers = ["Development Status :: 4 - Beta", "Programming Language :: Python :: 3", "Operating System :: OS Independent"]
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent"]
 
 [project.urls]
-Homepage = "https://github.com/kitao/metro-notation"
+Homepage = "https://kitao.github.io/metro-notation/"
+Repository = "https://github.com/kitao/metro-notation"
 
 [project.optional-dependencies]
 pdf = ["playwright>=1.49,<2"]
@@ -25,14 +26,15 @@ dev = ["build>=1.2", "pypdf>=5,<7", "ruff==0.16.8"]
 metro-notation = "metronotation.cli:main"
 
 [tool.setuptools]
-packages = ["metronotation", "metronotation.assets", "metronotation.reference"]
+packages = ["metronotation", "metronotation.reference"]
+include-package-data = false
 package-dir = {"metronotation.reference" = "data/tribox-cfop-b-1.0"}
 
 [tool.setuptools.dynamic]
 version = {attr = "metronotation.__version__"}
 
 [tool.setuptools.package-data]
-metronotation = ["assets/*.css"]
+metronotation = ["assets/*.css", "assets/fonts/*.ttf", "assets/fonts/*.txt", "assets/fonts/*.md"]
 "metronotation.reference" = ["*.md"]
 
 [tool.ruff]

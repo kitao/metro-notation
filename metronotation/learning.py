@@ -14,8 +14,8 @@ IDIOMS = {
     ("U'", "L'", "U", "L"): "Sexy move (inverse mirrored)",
     ("R", "U'", "R'", "U"): "Reverse sexy move",
     ("L'", "U", "L", "U'"): "Reverse sexy move (mirrored)",
-    ("F", "R'", "F'", "R"): "Hedgehammer",
-    ("F'", "L", "F", "L'"): "Hedgehammer (mirrored)",
+    ("F", "R'", "F'", "R"): "Hedgeslammer",
+    ("F'", "L", "F", "L'"): "Hedgeslammer (mirrored)",
     ("R", "U", "R'", "F'"): "J trigger",
     ("L'", "U'", "L", "F"): "J trigger (mirrored)",
     ("R", "U", "R'", "U"): "Half Sune",
@@ -31,6 +31,8 @@ F2L_INSERTIONS = {("R", "U", "R'"), ("R", "U'", "R'"), ("L'", "U", "L"), ("L'", 
 FOUR_MOVE_UNITS = {
     ("R", "U", "R'", "U'"),
     ("R", "U'", "R'", "U"),
+    ("R", "U'", "R'", "U'"),
+    ("L'", "U", "L", "U"),
     ("U", "R", "U'", "R'"),
     ("U'", "R", "U", "R'"),
     ("L'", "U'", "L", "U"),
@@ -42,17 +44,25 @@ FOUR_MOVE_UNITS = {
 
 READING_PHRASES = {
     "F2L-05": ("U2 R U R'", "U2 R U' R'"),
+    "F2L-23": ("U2", "R U' R' U'", "R U' R' U", "R U' R'"),
     "F2L-34": ("U R' D'", "R U' R'", "D R"),
     "F2L-38": ("R U' R'", "U' R U R'", "U2 R U' R'"),
     "F2L-40": ("r U' r'", "U2 r U r'", "R U R'"),
     "F2L-41": ("R U' R'", "r U' r'", "U2 r U r'"),
     "OLL-02": ("R' F' r U2'", "L' U2 l U2'", "R' F R"),
+    "OLL-03": ("r'", "R2 U R'", "U r U2' r'", "U M'"),
+    "OLL-04": ("l", "L2' U' L", "U' l' U2 l", "U' M'"),
+    "OLL-11": ("U r'", "R2 U R'", "U R U2' R'", "U M'"),
+    "OLL-12": ("U' l", "L2' U' L", "U' L' U2 L", "U' M'"),
     "OLL-14": ("R' F R", "U R' F' R", "F U' F'"),
     "OLL-15": ("r' U' M'", "U' R U", "r' U r"),
     "OLL-18": ("r U' r'", "F U F U'", "R U R' U'", "F'"),
     "OLL-21": ("R U R' U", "R U' R' U", "R U2' R'"),
     "OLL-22": ("R U2' R2'", "U' R2 U' R2'", "U2' R"),
+    "OLL-23": ("R2' D'", "R U2 R' D", "R U2 R"),
+    "OLL-24": ("U'", "r U R' U'", "r' F R F'"),
     "OLL-25": ("F R' F' r", "U R U' r'"),
+    "OLL-28": ("r U R' U'", "R r'", "U R U' R'"),
     "OLL-34": ("U' R U R2'", "U' R' F R", "U R U' F'"),
     "OLL-35": ("R U2' R2'", "F R F'", "R U2' R'"),
     "OLL-36": ("R U R2'", "F' U' F", "U R2 U2' R'"),
@@ -60,6 +70,7 @@ READING_PHRASES = {
     "OLL-52": ("R' F' U' F", "U' R U R'", "U R"),
     "OLL-55": ("R' F R", "U R U'", "R2' F' R2", "U' R' U", "R U R'"),
     "PLL-Aa": ("l' U R' D2", "R U' R' D2", "R l"),
+    "PLL-E": ("R' U' R' D'", "R U' R' D", "R U R' D'", "R U R' D", "R2"),
     "PLL-F": ("R' U' F'", "R U R' U'", "R' F R2", "U' R'", "U' R U R'", "U R"),
     "PLL-Ga": ("R2 U R' U", "R' U' R U'", "R2 U'", "D R' U R D'"),
     "PLL-Gb": ("R' U' R U", "D' R2 U R' U", "R U' R U'", "R2' D"),
@@ -118,7 +129,7 @@ def learning_units(record):
     """Whole four-move units take precedence over embedded F2L insertions."""
     tokens = tuple(m.text for m in record.moves)
     occupied = set(idiom_tokens(record))
-    boundaries = {*record.regrips}
+    boundaries = {*record.regrips, *reading_breaks(record)}
     spans = []
     patterns = [(4, FOUR_MOVE_UNITS)]
     if record.category == "F2L":
