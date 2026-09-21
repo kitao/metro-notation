@@ -2,7 +2,7 @@
 
 **Metro Notation** turns Rubik's Cube algorithms into metro-style diagrams, making move sequences easier to remember as shapes.
 
-**路線図記法（Metro Notation）**は、ルービックキューブの手順を図形で表し、一連の動きを形で覚えるための記法です。
+**路線図記法**（Metro Notation）は、ルービックキューブの手順を図形で表し、一連の動きを形で覚えるための記法です。
 
 ## PDF
 
