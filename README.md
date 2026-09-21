@@ -10,7 +10,8 @@
 
 ## PNG
 
-Click an image to open the high-resolution version. / 画像をクリックすると高解像度版が開きます。
+Click an image to open the high-resolution version.<br>
+画像をクリックすると高解像度版が開きます。
 
 <a href="https://kitao.github.io/metro-notation/images/f2l.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/f2l.png" width="49%" alt="F2L"></a>
 <a href="https://kitao.github.io/metro-notation/images/oll-01-30.png"><img src="https://kitao.github.io/metro-notation/images/thumbnails/oll-01-30.png" width="49%" alt="OLL 01–30"></a>
