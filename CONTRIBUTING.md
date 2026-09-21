@@ -60,7 +60,7 @@ and PDF content.
 Inspect all four sheets at full-page and reading sizes. Check column alignment,
 row spacing, color distinction, endpoint openings and text bounds. Include
 T / H / Aa, OLL 14 / 25 / 37 / 41 / 42 and F2L 7 / 8 / 26 / 37 in close-ups.
-Repeat the visual check on the deployed PDF after publishing.
+Repeat the visual check on the published PDF.
 
 ## Update the distribution
 
@@ -69,7 +69,7 @@ checks both the generated and published PDFs, and retains the generated files
 as the `metro-notation` artifact for seven days.
 
 Review those files, then copy them into `sheets/` and commit them with the source
-change. The README links directly to the PDF download and full PNGs.
+change. The README links to the PDF viewer and full PNGs.
 Keep tagged release attachments unchanged. Intermediate HTML is
 built in a temporary directory and is not distributed.
 

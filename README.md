@@ -2,19 +2,13 @@
 
 **Metro Notation** turns Rubik's Cube algorithms into metro-style diagrams, making move sequences easier to remember as shapes.
 
-**Metro Notation**は、ルービックキューブの手順を路線図のような図形で表す記法です。一連の動きを形で覚えられます。
+**路線図記法（Metro Notation）**は、ルービックキューブの手順を図形で表し、一連の動きを形で覚えるための記法です。
 
 ## PDF
 
-**[Download PDF (4 pages)](https://github.com/kitao/metro-notation/raw/refs/heads/main/sheets/metro-notation.pdf)**
-
-**[PDFをダウンロード（全4ページ）](https://github.com/kitao/metro-notation/raw/refs/heads/main/sheets/metro-notation.pdf)**
+[metro-notation.pdf](sheets/metro-notation.pdf)
 
 ## PNG
-
-Click an image to open the high-resolution version.
-
-画像をクリックすると高解像度版が開きます。
 
 <a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/f2l.png"><img src="sheets/thumbnails/f2l.png" width="49%" alt="F2L"></a>
 <a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/oll-01-30.png"><img src="sheets/thumbnails/oll-01-30.png" width="49%" alt="OLL 01–30"></a>
@@ -22,9 +16,11 @@ Click an image to open the high-resolution version.
 <a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/oll-31-57.png"><img src="sheets/thumbnails/oll-31-57.png" width="49%" alt="OLL 31–57"></a>
 <a href="https://raw.githubusercontent.com/kitao/metro-notation/main/sheets/pll.png"><img src="sheets/thumbnails/pll.png" width="49%" alt="PLL"></a>
 
-## Source / 出典
+## Credits / クレジット
 
-[tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)
+Metro Notation was created by [Takashi Kitao](https://github.com/kitao). The algorithms are from [tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973).
+
+路線図記法の考案者は[Takashi Kitao](https://github.com/kitao)です。回転手順は[tribox CFOP 手順表 B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)から転記しています。
 
 ## License / ライセンス
 
