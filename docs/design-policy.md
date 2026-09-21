@@ -60,8 +60,8 @@ thickness is measured perpendicular to the track, including diagonal segments.
 | Learn first dot | radius 3.24; `#38b000`; at least 14 clear units before the cube |
 | Footer | 10.5; below the frame, aligned right |
 
-On screen, scale each complete sheet to the available width, preserving its
-columns, margins and legend. Use the same layout in HTML and PDF.
+Distribute the four-page PDF. HTML/SVG is the rendering source; its local preview
+keeps the same columns, margins and legend as the PDF.
 
 Long cases wrap between complete routes at the same scale. OLL 41 and 42 use two
 rows, with the cube centered beside the sequence. H-perm's routes and captions sit

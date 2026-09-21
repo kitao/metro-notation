@@ -6,8 +6,7 @@
 
 ## Sheets / 手順表
 
-- HTML: [F2L](https://kitao.github.io/metro-notation/f2l.html) · [OLL 01–30](https://kitao.github.io/metro-notation/oll-01-30.html) · [OLL 31–57](https://kitao.github.io/metro-notation/oll-31-57.html) · [PLL](https://kitao.github.io/metro-notation/pll.html)
-- PDF: [All 4 pages / 全4ページ](https://kitao.github.io/metro-notation/metro-notation.pdf)
+**[PDF (4 pages / 全4ページ)](https://kitao.github.io/metro-notation/metro-notation.pdf)**
 
 ## Source / 出典
 

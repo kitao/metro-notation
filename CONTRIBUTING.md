@@ -1,6 +1,7 @@
 # Development
 
-Python 3.10 or later is required. HTML generation uses only the standard library.
+Python 3.10 or later is required. The published document is a four-page PDF.
+HTML and SVG are intermediate formats for rendering and local inspection.
 
 ```sh
 python -m pip install -e .
@@ -64,10 +65,10 @@ python scripts/check_pdf.py _site/metro-notation.pdf
 python -m http.server 8769 --directory _site
 ```
 
-The README links directly to `f2l.html`, `oll-01-30.html`, `oll-31-57.html`,
-`pll.html` and the four-page `metro-notation.pdf`. The website root and
-`metro-notation.html` show all four sheets. Run **Publish cheat sheets** in
-GitHub Actions to deploy `_site/`.
+The README links directly to `metro-notation.pdf`. The website root redirects to
+that PDF. Only the PDF, redirect and `.nojekyll` are published; intermediate HTML
+is built in a temporary directory. Run **Publish cheat sheets** in GitHub Actions
+to deploy `_site/`.
 
 To build the Python package, run `python -m build`. Its bundled data includes
 the master, CSS, fonts and font licenses. Keep the version in

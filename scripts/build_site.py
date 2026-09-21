@@ -4,6 +4,7 @@
 import argparse
 from pathlib import Path
 import sys
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -27,20 +28,20 @@ def main():
         parser.error("Choose a separate generated-output directory")
     output.mkdir(parents=True, exist_ok=True)
     records = load_master()
-    html = output / "metro-notation.html"
-    document = render_html(records)
-    html.write_text(document, encoding="utf-8")
-    (output / "index.html").write_text(document, encoding="utf-8")
-    for filename, batch in (
-        ("f2l.html", [r for r in records if r.category == "F2L"]),
-        ("oll-01-30.html", [r for r in records if r.category == "OLL" and int(r.id) <= 30]),
-        ("oll-31-57.html", [r for r in records if r.category == "OLL" and int(r.id) > 30]),
-        ("pll.html", [r for r in records if r.category == "PLL"]),
-    ):
-        (output / filename).write_text(render_html(batch), encoding="utf-8")
-    export_pdf(html, output / "metro-notation.pdf")
+    with TemporaryDirectory(prefix="metro-notation-") as temporary:
+        html = Path(temporary) / "metro-notation.html"
+        html.write_text(render_html(records), encoding="utf-8")
+        export_pdf(html, output / "metro-notation.pdf")
+    (output / "index.html").write_text(
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta http-equiv="refresh" content="0;url=metro-notation.pdf">'
+        "<title>Metro Notation</title>"
+        '<link rel="canonical" href="metro-notation.pdf"></head>'
+        '<body><a href="metro-notation.pdf">Metro Notation PDF</a></body></html>\n',
+        encoding="utf-8",
+    )
     (output / ".nojekyll").write_text("", encoding="utf-8")
-    print(f"Site: {output} (algorithm sheets and PDF)")
+    print(f"Site: {output} (PDF and direct redirect)")
     return 0
 
 

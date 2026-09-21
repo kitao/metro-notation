@@ -2,7 +2,7 @@
 
 ## 1.0 (unreleased)
 
-- Link directly to four individual HTML sheets and one four-page PDF; preserve the same layout in both formats.
+- Publish one four-page PDF, linked directly from the README and website. Keep HTML/SVG as the rendering pipeline.
 - Simplify the bilingual README and consolidate development and design documentation.
 
 - Review all 119 reading groups; protect extraction/insertion units, wide R/U
