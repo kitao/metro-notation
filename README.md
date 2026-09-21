@@ -6,9 +6,9 @@ Metro-map cheat sheets for **41 F2L · 57 OLL · 21 PLL** cases.
 
 ### [View the cheat sheets →](https://kitao.github.io/metro-notation/)
 
-[Download PDF](https://kitao.github.io/metro-notation/metro-notation.pdf) · [日本語](#日本語)
+[Download PDF](https://kitao.github.io/metro-notation/metro-notation.pdf)
 
-## More
+### More
 
 - [Source algorithms](data/tribox-cfop-b-1.0/README.md) · [Notation guide](docs/notation.md)
 - [Design policy](docs/design-policy.md) · [Verification](docs/verification.md)
@@ -18,8 +18,6 @@ Created by **Takashi Kitao**. Algorithms from [tribox CFOP Sheet B-1.0](https://
 Software: [MIT](LICENSE). Fonts: [SIL OFL](metronotation/assets/fonts/README.md). Original sheets and photographs are excluded.
 
 ---
-
-## 日本語
 
 **キューブの手順を、図形として覚える。**
 
