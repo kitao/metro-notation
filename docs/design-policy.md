@@ -1,157 +1,123 @@
-# Design policy — Metro Notation 1.0
+# Design specification
 
-This is the visual contract for future changes. The goal is a useful cube cheat
-sheet with the calm structure of a classic transit map: something worth keeping
-on a desk or a wall. Memorability, correct execution and beauty must support each
-other. Attractive geometry never justifies changing an algorithm.
+Metro Notation presents cube algorithms as memorable shapes, using the clarity
+and restrained visual style of a transit map. The algorithm is authoritative;
+the drawing expresses its movements and rhythm.
 
-## Priority and hierarchy
+## Reading order
 
-1. Preserve the exact photo master and source regrips.
-2. Make the case and the route readable at the intended physical size.
-3. Keep familiar move units intact; use memorable shapes without inventing pauses.
-4. Align repeated elements and balance the complete page.
-5. Keep decoration subordinate to meaning.
+- Cases run down each column, then continue at the top of the next column.
+- Within a case, routes run left to right. Each starts at a yellow station and
+  ends at an ordinary station.
+- Routes are primary. Move notation sits below them; case IDs and PLL names sit
+  below the recognition cubes.
+- A solid green dot to the left of a cube marks the source's Learn first selection.
+- Each sheet carries its category title, Metro Notation version, compact legend
+  and attribution. The overview contains no study controls or decorative panels.
 
-The sheet is an overview, not a learning dashboard. No checkboxes, progress
-controls, badges, goal symbols, filled panels or explanatory paragraphs.
-Route diagrams are primary; move captions sit below them, and case IDs / PLL
-names sit below cubes. Routes read left to right. Cases read down a column, then
-continue at the top of the next column.
+## Movement notation
 
-Every page has `Cube Algorithms: <category>` above `METRO NOTATION 1.0`.
-The subtitle comes from the software version. Keep the category in the title,
-not isolated at the opposite edge. The compact pictorial key sits to its right.
+One grid interval is a quarter turn. The 2 and 3 suffixes retain two and three
+intervals; primes reverse direction, including on half turns. Captions preserve
+source spelling, including lowercase wide moves and R3.
 
-## Measured geometry
-
-Values are native SVG units unless stated otherwise. Do not scale individual
-cases to make them fit. Horizontal, vertical and diagonal strokes share the same
-perpendicular thickness; diagonal steps encode an axis and may be longer.
-
-| Element | Value / rule | Reason |
+| Unprimed moves | Direction | Track |
 | --- | --- | --- |
-| Frame | 1440 × 1006 | Shared composition coordinates |
-| Paper | A3 landscape; 6 mm outside the frame on every side | Consistent physical margins |
-| Horizontal content inset | 24 | Align title, columns and frame |
-| Main title | 28; baseline 44 | Visible hierarchy without dominating |
-| Subtitle | 11; baseline 66; letter spacing 1.6 | Compact identity and version |
-| Body top | 92; first visible route begins about 98 | Distinct separation below the header |
-| Last ordinary case box | ends at 982 | 24-unit lower inset, optically near the title's upper inset |
-| Columns | four × 330 for F2L/OLL; three × 448 for PLL | Stable left origins |
-| Column gutters | 24 | Separate algorithms without shrinking them |
-| Row rhythm | equal pitch within each page; distribute spare height between rows | Avoid a large unused lower margin |
-| Cube–route gap | 24 | Separate recognition from execution |
-| Quarter-turn step | 24 | Same movement scale everywhere |
-| Single track | 3.6 | Same thickness in every direction |
-| Wide track | two 0.96 rails, 1.68 clear channel | Two layers, not a decorative hollow line |
-| Middle track | 0.72 | Deliberately thin: the middle layer |
-| Start | outer radius 3.24, yellow inner radius 2.28 | Identify direction without arrowheads |
-| Ordinary station | outer radius 1.8, white inner radius 1.08 | Quarter-turn count and endpoints |
-| Endpoint opening | at least 1.20 between visible ink outlines | Consistent gaps despite radii / angles |
-| Learn first | solid green circle, radius 3.24, left of cube | Same size as Start; no star / shield / double ring |
-| Priority gutter | at least 14 clear units before the cube | Avoid clipping and crowding |
-| Footer | 10.5; outside frame, lower right | Attribution does not distort body spacing |
+| R / U / F | up / right / down-right | Charcoal `#242424` |
+| L / D / B | down / left / up-left | Blue `#0099d6` |
+| M / E / S | down / left / down-right | Thin green `#139136` |
+| r / l / u / d / f / b | corresponding face direction | Two parallel rails |
+| x / y / z | up / right / down-right | Orange `#e36a00`, separate route |
 
-The first row omits unused height above its tallest route. Long cases wrap only
-between existing routes, without shrinking. Currently OLL 41 and 42 use two rows;
-the cube is centered beside the combined sequence. H-perm's routes and captions
-sit 16 units lower than its case label, occupying empty space rather than
-protruding upward. Verify at least 12 units of clearance above Ja.
+Color identifies the layer; monochrome reproduction loses this distinction.
+Intermediate white stations count quarter turns. The double track represents
+moving two layers; the thin track represents the middle layer.
 
-Screen and print use the same native drawing geometry. Narrow screens retain
-whole cases in one column; wide screens retain the page's column order. The
-four-page gallery uses vector previews from the actual PDF, not resampled PNGs.
+## Geometry and layout
 
-## Color and typography
+Values below are native SVG units. Every case uses the same scale. Stroke
+thickness is measured perpendicular to the track, including diagonal segments.
 
-| Meaning | Color |
+| Element | Specification |
 | --- | --- |
-| Near layers: R / U / F | charcoal `#242424` |
-| Opposite layers: L / D / B | bright blue `#0099d6` |
-| Middle layers: M / E / S | green `#139136` |
-| Whole-cube rotation | orange `#e36a00` |
-| Familiar unit in move captions | orange `#c94f00`, one color for all idioms |
-| Learn first | vivid green `#38b000` |
-| Ordinary captions | slate `#4e5d65` |
-| Title / subtitle | navy `#203b75` / brick `#a43a32` |
-| Frame | blue-gray `#9eb4c2`, width 0.8 |
+| Frame | 1440 × 1006; blue-gray `#9eb4c2`, width 0.8 |
+| Paper | A3 landscape; 6 mm outside the frame on all four sides |
+| Content inset | 24 horizontally and below the last ordinary case box |
+| Title | 28; baseline 44; `Cube Algorithms: <category>` |
+| Subtitle | 11; baseline 66; letter spacing 1.6; `METRO NOTATION <version>` |
+| Body top | 92; first visible route begins around 98 |
+| Columns | four × 330 for F2L/OLL; three × 448 for PLL |
+| Column gutter | 24 |
+| Row pitch | Equal within each page; distribute spare height between rows |
+| Cube–route gap | 24 |
+| Quarter-turn step | 24 |
+| Single track | 3.6 |
+| Wide track | two 0.96 rails with a 1.68 clear channel |
+| Middle track | 0.72 |
+| Start station | outer radius 3.24; yellow inner radius 2.28 |
+| Ordinary station | outer radius 1.8; white inner radius 1.08 |
+| Endpoint opening | at least 1.20 between visible ink outlines |
+| Learn first dot | radius 3.24; `#38b000`; at least 14 clear units before the cube |
+| Footer | 10.5; below the frame, aligned right |
 
-No unexplained color categories. Track color means a layer; orange **text** means
-a familiar unit, not the photo's finger-hint colors. Color remains necessary for
-reading opposite layers: do not claim monochrome or color-vision accessibility
-without separate validation. Inspect black / blue at reduced size, not just as
-large swatches. Keep the two actual narrow rails and the thin middle track.
+On screen, scale each complete sheet to the available width, preserving its
+columns, margins and legend. Use the same layout in HTML and PDF.
 
-Titles use embedded Cabin Medium / SemiBold; captions, labels and credits use
-embedded Arimo Regular. These static fonts preserve the transit-signage character
-and the same metrics across platforms, including offline use. Each PDF must embed
-all three typefaces without system-font substitution. Source files and SIL OFL
-licenses are [bundled with the assets](../metronotation/assets/fonts/README.md).
-Check actual PDF text bounds after a font change. Do not assume
-character counts equal proportional text widths. Never simplify lowercase `l`,
-`R3` or primes for typographic convenience.
+Long cases wrap between complete routes at the same scale. OLL 41 and 42 use two
+rows, with the cube centered beside the sequence. H-perm's routes and captions sit
+16 units below its case label, with at least 12 units of clearance above Ja.
 
-## Legend and recognition diagrams
+Titles use Cabin Medium / SemiBold. Captions and labels use Arimo Regular.
+Embed the fonts in HTML and PDF to retain their metrics. Title color is
+`#203b75`, subtitle `#a43a32`, captions `#4e5d65`, footer `#68777d`.
+Familiar move units use one orange text color, `#c94f00`.
 
-The first slot stacks Start above Learn first without equals signs. Then show
-six physical mappings: near one layer, opposite one layer, middle, near two
-layers, opposite two layers, whole cube. Every example runs upward, including
-its cube arrows: R, L', M', r, l', x. Equal signs have the same visible gap on
-both sides. Black and blue double rails must **both** appear; users must not have
-to infer an undocumented combination. Keep the key on every sheet, beside the
-title, and distinct from algorithm rows. Screen and print slots are both 124 wide.
+## Route grouping
 
-F2L uses the 41 fixed photo-reviewed blue/red/white/gray masks. No extra yellow,
-orange or green face colors. The two visible side centers read blue then red.
-Hidden-side tiles are 14 × 14 rotated squares aligned with the relevant cube
-edge, with a 2.5 perpendicular gap and a 1.3 charcoal outline matching face tiles.
-A continuous charcoal body fills sticker gaps; no white pinholes at corners.
+- Preserve all source regrips as route boundaries. Ra's initial U remains separate.
+- Keep four-move triggers intact, including their caption spacing. Recognize them
+  before shorter insertions inside them; R U' R' U must not become 3+1.
+- Adjacent complete units can share one shape. Use an em-space between the units
+  in its caption. There is no fixed four-move limit.
+- Sune and Anti-Sune keep their seven-move identity across 3+4 reading shapes.
+  OLL 25 and 37 use 4+4.
+- Allow loops and p/q/の shapes when an inset endpoint leaves a clear opening.
+  Calculate that opening from the actual station radius and nearby line geometry.
+- Split interior intersections, retracing, and repeated collinear moves of the
+  same style. U U must remain distinguishable from U2.
+- Give whole-cube rotations their own route.
 
-OLL top patterns have independent photo data. OLL side stickers and PLL diagrams
-are reconstructed examples, not complete copies of the photo artwork. Original
-PLL permutation arrows and detailed grip directions are not yet transcribed.
-Do not describe them as photo-identical or conceal that review boundary.
+The [grouping table](rhythm-review.md) records all 119 cases. Additional graphical
+breaks organize reading; only the original regrip annotations specify a grip change.
 
-## Rhythm and movement
+## Legend and recognition cubes
 
-A yellow origin begins each route. The ordinary terminal station ends it.
-Closed loops, p/q and の shapes are allowed when insetting an endpoint creates
-a clear opening. Measure **ink-to-ink** distance using actual circle radii,
-track thickness and the neighboring geometry, including diagonal edges.
-Do not use one fixed center offset. Interior intersections or retracing require
-another route. Quarter-turn stations remain on the original grid.
+The legend sits beside the title. Its first slot stacks Start above Learn first,
+without equals signs. Six equal-width slots follow, pairing a track with a cube:
+R, L', M', r, l', x. All examples point upward. Slots are 124 wide, with 17 units
+of visible space on each side of the equals sign.
 
-Source regrips are mandatory route breaks, even if joining looks attractive.
-In particular, Ra's initial U stays separate. Whole-cube rotations get their own
-route. OLL 25 and 37 read as 4+4. There is no arbitrary four-move route cap.
+F2L uses the fixed photo masks in blue, red, white and gray, with blue/red visible
+side centers. A continuous charcoal body fills the sticker gaps. Hidden tiles
+are 14 × 14 rotated squares aligned to the cube edge, with a 2.5 perpendicular
+gap and a 1.3 charcoal outline. OLL top masks also come from the photographs;
+OLL sides and PLL diagrams are computed from the algorithms.
 
-Four-move named triggers and protected basic insertions stay intact. Recognize
-a whole four-move unit before an embedded three-move insertion; do not turn
-R U' R' U into 3+1. Adjacent complete units can share one shape. When they do,
-use a modest en-space in the caption. A graphical break is not a regrip command.
-Sune / Anti-Sune retain their seven-move identity across 3+4 reading shapes.
-See [all 119 groupings](rhythm-review.md); changes must preserve source spelling.
+## Attribution
 
-## Attribution and distribution
-
-Footer order is author, project URL in parentheses, then the algorithm source:
+Place this outside the frame, at the lower right:
 
 `© 2020–2026 Takashi Kitao (github.com/kitao/metro-notation) | Algorithm source: tribox CFOP Sheet B-1.0`
 
-The visible URL may omit the scheme; its link must use HTTPS. Link tribox to the
-official B-1.0 product. Do not imply tribox endorsement. Full selection/production
-credits and the software license belong in the bilingual README, not a MIT badge.
+Use HTTPS for the project link and the official tribox product page for the source.
+Source records belong with the [algorithm data](../data/tribox-cfop-b-1.0/README.md).
 
-## Change review
+## Visual review
 
-After a change, check the **entire four-page composition**, not only the changed
-case. Check native size, reduced full-page view, and enlarged problem shapes.
-Look for unused bands, drifting columns, unequal gutters, text clipping, false
-contacts, inconsistent line weight, weak black/blue distinction, and source drift.
-A passing test is evidence for its assertion, not aesthetic or ergonomic approval.
-Use [the maintenance checks](maintaining.md) and record limitations honestly.
+Review all four sheets together, each full page, and enlarged difficult cases.
+Check the balance above the title and below the last row; header/body separation;
+column origins and row rhythm; cube/route spacing; footer clearance; endpoint
+openings; line weights; and blue/charcoal distinction at reduced size.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for build and check commands.
 
-Reference: [ZEROPERZERO interview](https://dailyportalz.jp/kiji/170530199751).
-The relevant principle is to let the subject's structure create its visual
-identity. Do not rotate or bend cube routes merely to decorate the page.
+Design reference: [ZEROPERZERO interview](https://dailyportalz.jp/kiji/170530199751).

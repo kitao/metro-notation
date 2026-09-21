@@ -1,37 +1,20 @@
-# Metro Notation 1.0
+# Metro Notation
 
-**Remember cube algorithms as shapes.**
+**Metro Notation** turns Rubik's Cube algorithms into metro-style diagrams, making move sequences easier to remember as shapes.
 
-Metro-map cheat sheets for **41 F2L · 57 OLL · 21 PLL** cases.
+**Metro Notation**は、ルービックキューブの手順を路線図のような図形で表す記法です。一連の動きを形で覚えられます。
 
-### [View the cheat sheets →](https://kitao.github.io/metro-notation/)
+## Sheets / 手順表
 
-[Download PDF](https://kitao.github.io/metro-notation/metro-notation.pdf)
+- HTML: [F2L](https://kitao.github.io/metro-notation/f2l.html) · [OLL 01–30](https://kitao.github.io/metro-notation/oll-01-30.html) · [OLL 31–57](https://kitao.github.io/metro-notation/oll-31-57.html) · [PLL](https://kitao.github.io/metro-notation/pll.html)
+- PDF: [All 4 pages / 全4ページ](https://kitao.github.io/metro-notation/metro-notation.pdf)
 
-### More
+## Source / 出典
 
-- [Source algorithms](data/tribox-cfop-b-1.0/README.md) · [Notation guide](docs/notation.md)
-- [Design policy](docs/design-policy.md) · [Verification](docs/verification.md)
-- [Generate locally / contribute](docs/maintaining.md) · [Changelog](CHANGELOG.md)
+[tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)
 
-Created by **Takashi Kitao**. Algorithms from [tribox CFOP Sheet B-1.0](https://store.tribox.com/products/detail.php?product_id=3973), selected by 野村優希・田中隆喜・清野克己; produced by げぶげぶ (tribox).
-Software: [MIT](LICENSE). Fonts: [SIL OFL](metronotation/assets/fonts/README.md). Original sheets and photographs are excluded.
+## License / ライセンス
 
----
+The source code is licensed under the [MIT License](LICENSE). Bundled fonts use the [SIL Open Font License](metronotation/assets/fonts/README.md).
 
-**キューブの手順を、図形として覚える。**
-
-**F2L 41件・OLL 57件・PLL 21件**を路線図のようにまとめたチートシートです。
-
-### [チートシートを見る →](https://kitao.github.io/metro-notation/)
-
-[PDFをダウンロード](https://kitao.github.io/metro-notation/metro-notation.pdf)
-
-### 詳しく知る・変更する
-
-- [元の手順・出典](data/tribox-cfop-b-1.0/README.md) · [記法ガイド](docs/notation.md)
-- [デザイン方針](docs/design-policy.md) · [検証結果](docs/verification.md)
-- [手元で生成・開発する](docs/maintaining.md) · [変更履歴](CHANGELOG.md)
-
-制作：**Takashi Kitao**。手順：[tribox CFOP 手順表 B-1.0](https://store.tribox.com/products/detail.php?product_id=3973)。手順選定：野村優希・田中隆喜・清野克己。企画製作：げぶげぶ (tribox)。
-ソフトウェア：[MIT](LICENSE)。フォント：[SIL OFL](metronotation/assets/fonts/README.md)。原紙・写真は対象に含みません。
+ソースコードは[MIT License](LICENSE)、同梱フォントは[SIL Open Font License](metronotation/assets/fonts/README.md)で公開しています。

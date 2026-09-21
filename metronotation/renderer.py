@@ -570,15 +570,11 @@ def render_legend(scale):
             )
         )
     parts = [svg_open(1440, 100, "How to read the diagrams", "notation-key")]
-    screen = ['<aside class="screen-key" aria-label="How to read the diagrams">']
     for i, item in enumerate(items):
         parts.append(
             f'<svg x="{552 + i * 124}" y="14" width="124" height="64" viewBox="0 0 124 64">{item}</svg>'
         )
-        screen.append(
-            f'<svg class="key-item" viewBox="0 0 124 64" role="img" aria-label="Notation key item">{item}</svg>'
-        )
-    return "".join(parts) + "</svg>" + "".join(screen) + "</aside>"
+    return "".join(parts) + "</svg>"
 
 
 def page_identity(category, batch):
@@ -597,11 +593,6 @@ def page_identity(category, batch):
         svg_open(1440, 24, "Attribution", "sheet-footer")
         + '<text x="1440" y="16" font-size="10.5" text-anchor="end">© 2020–2026 Takashi Kitao ('
         + '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>) | Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></text></svg>'
-    )
-    heading += f'<header class="screen-heading"><h1>Cube Algorithms: {escape(label)}</h1><p class="project-kind">METRO NOTATION {escape(__version__)}</p></header>'
-    footer += (
-        '<footer class="screen-footer"><span>© 2020–2026 Takashi Kitao ('
-        '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>) | Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></span></footer>'
     )
     return heading, footer
 

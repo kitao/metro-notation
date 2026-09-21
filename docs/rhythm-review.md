@@ -1,22 +1,18 @@
-# 手順のまとまりの確認 — Metro Notation 1.0
+# 手順の区切り
 
-119手順の現行の分割を記録します。元手順のトークンは変更していません。持ち替え26か所を必須の区切りとして保持しています。
+路線の区切りと、各手順に含まれる定番動作の一覧です。
 
-短いトリガーと、スーン系の7手の手順を区別します。4手のトリガー内部に3＋1の字間を入れず、スーン系は7手の名称を保ちつつ図形は3＋4に分けています。長い連結は反復・挿入・セットアップと復帰のまとまりを確認して分割しています。すべての指使いを実演検証したという意味ではなく、追加した表示上の区切りは持ち替えを指示するものではありません。
+## 規則
 
-参照: [Cube Tools — Common Triggers](https://bradleykh.github.io/CubeTools/triggers.html)、[CubeSkills — OLL](https://www.cubeskills.com/uploads/pdf/tutorials/oll-algorithms.pdf)。照合に使い、写真の手順を別の手順に置き換えていません。
+- 原紙の持ち替え26か所を必ず区切ります。
+- 4手のトリガー内部に3＋1の字間を入れません。
+- スーン系は7手の単位を保ち、図形では3＋4に分けます。
+- 取り出し・挿入・準備と復帰のまとまりを優先します。
+- 同じ辺の往復や交差を避けるため、図形を分割する場合があります。
 
-色: 定番手順の文字はすべて同じオレンジです。名前は図形・回転記号に付く補助情報としてHTMLに保持します。
+原紙にない区切りは、読みやすくするための分割です。定番動作の文字色はオレンジに統一しています。
 
-## 区切りを決める基準
-
-- 原紙の持ち替えは、図形として連結できても必ず区切ります。Ra冒頭のU、OLL 41の7手目直前、Y後半の持ち替えも含みます。
-- 短い定番動作の内部を割らず、F2Lはペアの取り出しと最後の挿入を読み取れるようにします。準備のU/U2が前後のまとまりと同じ図形になることは許容します。
-- スーン系は7手の同じ手順として認識しつつ、図形は3＋4で読めます。OLL 41は原紙に途中の持ち替えがあるため、この規則より持ち替えを優先します。
-- 前面のF/F'など、準備と復帰の1手は意図的に独立できます。単独の1手を減らすために定番動作を途中で切りません。
-- 交差・往復によって同じ辺を重ねてしまう場合は分割します。図形をつなぐために元の回転をMなどへ書き換えません。
-
-## 個別に確認した境界
+## 個別の指定
 
 | 対象 | 採用したまとまりと理由 |
 | --- | --- |
@@ -33,9 +29,10 @@
 | PLL Ra | 冒頭Uの後の持ち替えを維持。その後は4＋4＋4＋3。 |
 | PLL Ub | R3を原紙どおり保持。R'への短縮を理由に区切りを変えません。 |
 
-参考の括弧は [CubeSkills OLL](https://www.cubeskills.com/uploads/pdf/tutorials/oll-algorithms.pdf)・[PLL](https://www.cubeskills.com/uploads/pdf/tutorials/pll-algorithms.pdf)・[F2L](https://www.cubeskills.com/uploads/pdf/tutorials/f2l.pdf) と照合しています。別の持ち方・手順の括弧を、そのまま本マスターへ移してはいません。Hedgeslammerは[Common Triggers](https://bradleykh.github.io/CubeTools/triggers.html)で使われる名称に揃えています。
 
-## 全119件の出力
+参考：[Common Triggers](https://bradleykh.github.io/CubeTools/triggers.html)、CubeSkillsの[F2L](https://www.cubeskills.com/uploads/pdf/tutorials/f2l.pdf)・[OLL](https://www.cubeskills.com/uploads/pdf/tutorials/oll-algorithms.pdf)・[PLL](https://www.cubeskills.com/uploads/pdf/tutorials/pll-algorithms.pdf)。
+
+## 全119件
 
 | ケース | 路線の区切り | 検出した定番手順 | 個別に区切りを指定 |
 |---|---|---|---|

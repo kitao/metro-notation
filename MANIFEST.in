@@ -1,4 +1,4 @@
-include LICENSE CHANGELOG.md
+include LICENSE CHANGELOG.md CONTRIBUTING.md
 recursive-include data/tribox-cfop-b-1.0 *.md
 recursive-include metronotation/assets *.css *.ttf *.txt *.md
 recursive-include tests *.py

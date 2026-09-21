@@ -10,7 +10,6 @@ sys.path.insert(0, str(ROOT))
 from metronotation.catalog import load_master
 from metronotation.pdf import export_pdf
 from metronotation.renderer import render_html
-from scripts.build_review import build_gallery
 
 
 def main():
@@ -29,11 +28,19 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     records = load_master()
     html = output / "metro-notation.html"
-    html.write_text(render_html(records), encoding="utf-8")
-    pdf = export_pdf(html, output / "metro-notation.pdf")
-    build_gallery(pdf, "index.html")
+    document = render_html(records)
+    html.write_text(document, encoding="utf-8")
+    (output / "index.html").write_text(document, encoding="utf-8")
+    for filename, batch in (
+        ("f2l.html", [r for r in records if r.category == "F2L"]),
+        ("oll-01-30.html", [r for r in records if r.category == "OLL" and int(r.id) <= 30]),
+        ("oll-31-57.html", [r for r in records if r.category == "OLL" and int(r.id) > 30]),
+        ("pll.html", [r for r in records if r.category == "PLL"]),
+    ):
+        (output / filename).write_text(render_html(batch), encoding="utf-8")
+    export_pdf(html, output / "metro-notation.pdf")
     (output / ".nojekyll").write_text("", encoding="utf-8")
-    print(f"Site: {output} (HTML, PDF, four vector previews; not published)")
+    print(f"Site: {output} (algorithm sheets and PDF)")
     return 0
 
 

@@ -2,6 +2,9 @@
 
 ## 1.0 (unreleased)
 
+- Link directly to four individual HTML sheets and one four-page PDF; preserve the same layout in both formats.
+- Simplify the bilingual README and consolidate development and design documentation.
+
 - Review all 119 reading groups; protect extraction/insertion units, wide R/U
   units and E-perm repetition while retaining every source regrip.
 - Embed licensed Cabin and Arimo typefaces for consistent offline HTML and PDF.
