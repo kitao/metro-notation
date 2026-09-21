@@ -49,6 +49,9 @@ colors, line widths and double-rail separation. It also checks:
 All four PDF sheets are rendered for visual review. Numeric checks do not replace
 inspection of alignment, optical balance, small-size clarity and whitespace.
 The 1.0 render was reviewed as four complete sheets and in the browser gallery.
+The deployed PDF was downloaded and all four rendered pages reviewed again;
+its extracted text and embedded fonts pass the same audit. The published HTML
+matches the locally verified HTML byte for byte.
 Browser measurements at 1,440 and 694 px found no case-text or drawing overflow;
 the wide layout retained equal 330-unit F2L/OLL and 448-unit PLL columns.
 The four-sheet gallery also fits a 390 px viewport without horizontal overflow.

@@ -2,9 +2,7 @@
 
 **Remember cube algorithms as shapes.**
 
-A metro-map cheat sheet for **41 F2L · 57 OLL · 21 PLL** cases.
-Follow each route from its yellow start; the move notation sits below it.
-Browse all four sheets online or print the PDF on A3 landscape paper.
+Metro-map cheat sheets for **41 F2L · 57 OLL · 21 PLL** cases.
 
 ### [View the cheat sheets →](https://kitao.github.io/metro-notation/)
 
@@ -26,8 +24,6 @@ Software: [MIT](LICENSE). Fonts: [SIL OFL](metronotation/assets/fonts/README.md)
 **キューブの手順を、図形として覚える。**
 
 **F2L 41件・OLL 57件・PLL 21件**を路線図のようにまとめたチートシートです。
-黄色い始点からたどり、下の回転記号で確認できます。
-全4枚をWebで閲覧でき、PDFをA3横で印刷して使えます。
 
 ### [チートシートを見る →](https://kitao.github.io/metro-notation/)
 
