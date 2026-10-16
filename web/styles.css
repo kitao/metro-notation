@@ -97,12 +97,6 @@ a:focus-visible {
   background: white;
 }
 
-footer {
-  margin-top: 32px;
-  border-top: 1px solid var(--border);
-  padding-top: 16px;
-}
-
 @media (max-width: 480px) {
   main {
     padding: 24px 16px;
