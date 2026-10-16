@@ -61,7 +61,7 @@ a:focus-visible {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
@@ -73,6 +73,9 @@ a:focus-visible {
 
 .badges img {
   display: block;
+  width: auto;
+  height: 20px;
+  object-fit: contain;
 }
 
 .sheet-row {
