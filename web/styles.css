@@ -46,6 +46,7 @@ p {
 a {
   color: var(--link);
   text-decoration: none;
+  scroll-margin-block: 24px;
 }
 
 a:hover {
@@ -53,8 +54,8 @@ a:hover {
 }
 
 a:focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: 4px;
+  outline: 1px solid #8b949e;
+  outline-offset: 3px;
 }
 
 .badges {
