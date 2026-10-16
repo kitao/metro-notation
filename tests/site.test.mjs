@@ -35,6 +35,15 @@ test('publication contains only the page, style, favicons, and unchanged reviewe
     );
   }
   const html = await readFile(join(site, 'index.html'), 'utf8');
+  assert.equal((html.match(/class="badges"/g) || []).length, 1);
+  assert.equal((html.match(/alt="GitHub stars"/g) || []).length, 1);
+  assert.equal((html.match(/alt="GitHub Sponsors"/g) || []).length, 1);
+  assert.equal((html.match(/alt="Patreon"/g) || []).length, 1);
+  assert.equal((html.match(/alt="Support me on Ko-fi"/g) || []).length, 1);
+  assert.match(
+    html,
+    /name="description" content="Metro Notation represents Rubik's Cube algorithms as metro-style diagrams\. Their shapes help you remember the moves\."/,
+  );
   assert.equal((html.match(/class="sheet-row"/g) || []).length, 2);
   assert.equal((html.match(/<a href="sheets\/[^"]+"><img/g) || []).length, 4);
   assert.match(html, /<p lang="ja">/);
@@ -63,6 +72,13 @@ test('README text remains the page source and unexpected images stop the build',
   assert.match(rendered, /<p lang="ja">説明です。<\/p>/);
   assert.throws(
     () => renderReadme('<img src="algorithms/photos/private.png">'),
+    /unexpected sheet/,
+  );
+  assert.throws(
+    () =>
+      renderReadme(
+        '<img data-src="https://img.shields.io/badge/ok" src="algorithms/photos/private.png">',
+      ),
     /unexpected sheet/,
   );
 });

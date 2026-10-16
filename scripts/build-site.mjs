@@ -31,11 +31,18 @@ export function renderReadme(readme) {
   return markdown
     .parse(readme)
     .replace(/<img\b[^>]*>/g, (image) => {
-      const source = image.match(/src="sheets\/([^"]+)"/);
-      if (!source || !SHEETS.includes(source[1]) || !source[1].endsWith('.png')) {
+      const source = image.match(/\ssrc="([^"]+)"/)?.[1];
+      if (
+        source?.startsWith('https://img.shields.io/') ||
+        source === 'https://ko-fi.com/img/githubbutton_sm.svg'
+      ) {
+        return image;
+      }
+      const sheet = source?.match(/^sheets\/([^/]+)$/)?.[1];
+      if (!sheet || !SHEETS.includes(sheet) || !sheet.endsWith('.png')) {
         throw new Error('README contains an unexpected sheet image');
       }
-      return `<a href="sheets/${source[1]}">${image.replace(/ width="[^"]*"/, '')}</a>`;
+      return `<a href="sheets/${sheet}">${image.replace(/ width="[^"]*"/, '')}</a>`;
     })
     .replace(/<p>([^]*?)<\/p>/g, (paragraph, content) => {
       if (content.includes('<img ')) return `<p class="sheet-row">${content}</p>`;
@@ -53,15 +60,17 @@ export async function buildSite(root = ROOT, { preview = false } = {}) {
     const readme = await readFile(join(root, 'README.md'), 'utf8');
     const template = await readFile(join(root, 'web/index.html'), 'utf8');
     const title = readme.match(/^# (.+)$/m)?.[1];
-    const description = readme.split('\n\n')[1]?.replaceAll('**', '');
+    const description = new Marked()
+      .lexer(readme)
+      .find((token) => token.type === 'paragraph')
+      ?.text.replaceAll('**', '');
     if (!title || !description) throw new Error('README needs a title and description');
     const page = (content, pageTitle = title) =>
       template
         .replace('{{title}}', escapeAttribute(pageTitle))
         .replace('{{description}}', escapeAttribute(description))
         .replace('{{content}}', content);
-    const badges = await readFile(join(root, 'web/badges.html'), 'utf8');
-    const home = renderReadme(readme).replace('</h1>', () => `</h1>\n${badges}`);
+    const home = renderReadme(readme);
     await writeFile(join(site, 'index.html'), page(home));
     await writeFile(
       join(temporary, '404.html'),

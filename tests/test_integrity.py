@@ -11,6 +11,7 @@ import re
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -697,6 +698,37 @@ class Integrity(unittest.TestCase):
             original = master.read_bytes()
             self.assertEqual(main(["-o", str(master)]), 2)
             self.assertEqual(master.read_bytes(), original)
+
+    def test_sheet_build_protects_reviewed_distribution(self):
+        from scripts import build_sheets
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            sheets = root / "sheets"
+            sheets.mkdir()
+            reviewed = sheets / "metro-notation.pdf"
+            reviewed.write_bytes(b"reviewed distribution")
+            alias = root / "reviewed-alias"
+            alias.symlink_to(sheets, target_is_directory=True)
+            destinations = [root, sheets, sheets / "nested", alias]
+            capitalized = Path(str(sheets).swapcase())
+            if capitalized.exists():
+                destinations.append(capitalized)
+            for destination in destinations:
+                with (
+                    self.subTest(destination=destination),
+                    patch.object(build_sheets, "ROOT", root),
+                    patch.object(build_sheets, "export_pdf") as export,
+                    patch.object(build_sheets, "export_pngs"),
+                    patch("sys.argv", ["build_sheets.py", "--output", str(destination)]),
+                    contextlib.redirect_stderr(io.StringIO()),
+                ):
+                    with self.assertRaises(SystemExit) as failure:
+                        build_sheets.main()
+                    self.assertEqual(failure.exception.code, 2)
+                    export.assert_not_called()
+                    self.assertEqual(reviewed.read_bytes(), b"reviewed distribution")
+            self.assertFalse((sheets / "nested").exists())
 
 
 if __name__ == "__main__":

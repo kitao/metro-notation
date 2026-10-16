@@ -18,12 +18,15 @@ def main():
     parser.add_argument("--output", type=Path, default=ROOT / "output")
     args = parser.parse_args()
     output = args.output.resolve()
-    # Keep generated sheets away from source directories and reference photos.
-    if (
-        output == ROOT
-        or ROOT in output.parents
-        and output.parts[len(ROOT.parts)]
-        in {"algorithms", "src", "docs", "tests", "scripts", ".git", ".github"}
+    # Keep local builds away from sources and the reviewed distribution.
+    protected = [
+        ROOT / name
+        for name in ("algorithms", "src", "docs", "tests", "scripts", "sheets", ".git", ".github")
+    ]
+    ancestors = (output, *output.parents)
+    if (output.exists() and output.samefile(ROOT)) or any(
+        source.exists() and any(parent.exists() and parent.samefile(source) for parent in ancestors)
+        for source in protected
     ):
         parser.error("Choose a separate generated-output directory")
     output.mkdir(parents=True, exist_ok=True)

@@ -1,5 +1,12 @@
 # Metro Notation
 
+<div class="badges" role="navigation" aria-label="Source code and support">
+  <a href="https://github.com/kitao/metro-notation"><img src="https://img.shields.io/github/stars/kitao/metro-notation?style=social" alt="GitHub stars" height="20" loading="lazy" decoding="async"></a>
+  <a href="https://github.com/sponsors/kitao"><img src="https://img.shields.io/github/sponsors/kitao?label=Sponsor%20me&amp;logo=github%20sponsors&amp;style=social" alt="GitHub Sponsors" height="20" loading="lazy" decoding="async"></a>
+  <a href="https://www.patreon.com/tkitao"><img src="https://img.shields.io/badge/Support%20me%20on%20Patreon-000000?style=social&amp;logo=patreon" alt="Patreon" height="20" loading="lazy" decoding="async"></a>
+  <a href="https://ko-fi.com/H2H27VDKD"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on Ko-fi" height="20" loading="lazy" decoding="async"></a>
+</div>
+
 **Metro Notation** represents Rubik's Cube algorithms as metro-style diagrams. Their shapes help you remember the moves.
 
 **路線図記法**（Metro Notation）は、ルービックキューブの回転手順を路線図のように表す記法です。図の形が、手順を覚える手がかりになります。
