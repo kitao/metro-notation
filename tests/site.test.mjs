@@ -9,7 +9,7 @@ import { cloudflare } from '../scripts/cloudflare.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 
-test('publication contains only the page, style, and unchanged reviewed sheets', async (t) => {
+test('publication contains only the page, style, favicons, and unchanged reviewed sheets', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'metro-site-test-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const name of ['README.md', 'web', 'sheets']) {
@@ -20,7 +20,13 @@ test('publication contains only the page, style, and unchanged reviewed sheets',
   const output = await buildSite(root);
   assert.deepEqual((await readdir(output)).sort(), ['404.html', '_headers', 'metro-notation']);
   const site = join(output, 'metro-notation');
-  assert.deepEqual((await readdir(site)).sort(), ['index.html', 'sheets', 'styles.css']);
+  assert.deepEqual((await readdir(site)).sort(), [
+    'favicon.png',
+    'favicon.svg',
+    'index.html',
+    'sheets',
+    'styles.css',
+  ]);
   assert.deepEqual((await readdir(join(site, 'sheets'))).sort(), [...SHEETS].sort());
   for (const name of SHEETS) {
     assert.deepEqual(

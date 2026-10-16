@@ -70,7 +70,9 @@ export async function buildSite(root = ROOT, { preview = false } = {}) {
         'Page not found · Metro Notation',
       ),
     );
-    await cp(join(root, 'web/styles.css'), join(site, 'styles.css'));
+    for (const name of ['styles.css', 'favicon.svg', 'favicon.png']) {
+      await cp(join(root, 'web', name), join(site, name));
+    }
     // Publish the reviewed distribution files, never locally regenerated sheets or source photographs.
     for (const name of SHEETS) {
       await cp(join(root, 'sheets', name), join(site, 'sheets', name));
