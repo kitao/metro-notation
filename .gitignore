@@ -7,6 +7,12 @@ __pycache__/
 # Local generated sheets
 output/
 
+# Local website builds and Cloudflare tooling
+dist/
+node_modules/
+.wrangler/
+.site-*/
+
 # Test and editor caches
 .pytest_cache/
 .ruff_cache/

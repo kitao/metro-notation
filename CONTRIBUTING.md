@@ -74,3 +74,51 @@ Keep tagged release attachments unchanged. Intermediate HTML is
 built in a temporary directory and is not distributed.
 
 Keep the version in `src/metronotation/__init__.py` and `CHANGELOG.md` in sync.
+
+## Website
+
+The website is served at `https://kitao.dev/metro-notation/` using Cloudflare
+Workers Static Assets. It uses the README as its page content and copies the
+five reviewed files from `sheets/` unchanged. Page layout lives in `web/`;
+`dist/` is generated and excluded from Git.
+
+The page uses kitao.dev's shared Noto Sans JP stylesheet at
+`/assets/fonts/noto-sans-jp.css` for English and Japanese. These fonts belong to
+the `kitao-dev` Worker and are not included in this project's public build.
+
+Use Node.js 24 or later:
+
+```sh
+npm ci
+npm test
+npm run preview
+```
+
+Open `http://127.0.0.1:4175/metro-notation/`. The preview uses the Cloudflare
+runtime, including its redirects, headers, and 404 behavior. The four PNGs
+provide an overview; opening an image does not provide a separate zoom viewer.
+Keep the `kitao-dev` repository alongside this one for local preview. Its
+`assets/fonts/` is copied into the preview build so fonts load from the same
+origin. The normal build and deployment omit that local copy.
+
+After reviewing the page and explicitly approving publication, run locally:
+
+```sh
+npm run deploy
+```
+
+Deployment runs the website checks and build first. Authentication uses existing
+OAuth credentials protected by the OS keychain and stops if that storage is
+unavailable; API token/key environment variables are rejected. Do not use
+plaintext credential files. GitHub Actions checks and builds the website without
+deploying it or storing Cloudflare credentials.
+
+The suffix wildcard in `kitao.dev/metro-notation*` also matches query strings on
+the slashless URL, as in the Keynote setup. Static Assets redirects these to
+`/metro-notation/` while preserving the query string. This avoids a separate
+zone redirect rule. Files are published only inside the `metro-notation/`
+directory; other paths have no matching assets and return 404.
+
+After publication, check the page and all five sheet links, compare the public
+files with `sheets/`, and verify the trailing-slash redirect and unknown-path 404s.
+Verify that the existing Pyxel, Playload, and Keynote pages still work.
