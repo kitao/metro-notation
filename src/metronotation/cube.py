@@ -2,7 +2,7 @@
 
 import re
 
-TOKEN = re.compile(r"([RLUDFBMESrludfbxyz])([23]?)(\'?)\Z")
+TOKEN = re.compile(r"([RLUDFBMESrludfbxyz])([23]?)('?)")
 FACE_NORMALS = {
     "R": (1, 0, 0),
     "L": (-1, 0, 0),
@@ -71,39 +71,6 @@ def apply(cube, token, inverse=False):
             normal = rotate(normal, axis, turns)
         result[pos, normal] = color
     return result
-
-
-def run_moves(moves):
-    cube = solved_cube()
-    for move in moves.split():
-        cube = apply(cube, move)
-    return cube
-
-
-def self_check():
-    original = solved_cube()
-    assert len(original) == 54
-    for face in MOVES:
-        assert run_moves(" ".join([face] * 4)) == original
-        assert run_moves(f"{face} {face}'") == original
-        assert run_moves(f"{face}2") == run_moves(f"{face}2'")
-        assert run_moves(f"{face}3") == run_moves(f"{face}'")
-    for left, right in (
-        ("r", "R M'"),
-        ("l", "L M"),
-        ("u", "U E'"),
-        ("d", "D E"),
-        ("f", "F S"),
-        ("b", "B S'"),
-        ("x", "R M' L'"),
-        ("y", "U E' D'"),
-        ("z", "F S B'"),
-    ):
-        assert run_moves(left) == run_moves(right), (left, right)
-    # R sends the UF-side sticker at URF to the back side of URB.
-    r = run_moves("R")
-    assert r[((1, 1, -1), (0, 0, -1))] == "U"
-    assert r[((1, 1, -1), (0, 1, 0))] == "F"
 
 
 def starting_state(tokens):

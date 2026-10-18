@@ -18,13 +18,13 @@
 ## PNG
 
 <p>
-  <img src="sheets/f2l.png" width="49%" alt="F2L">
-  <img src="sheets/oll-01-30.png" width="49%" alt="OLL 01–30">
+  <a href="sheets/f2l.png"><img src="sheets/f2l.png" width="49%" alt="F2L"></a>
+  <a href="sheets/oll-01-30.png"><img src="sheets/oll-01-30.png" width="49%" alt="OLL 01–30"></a>
 </p>
 
 <p>
-  <img src="sheets/oll-31-57.png" width="49%" alt="OLL 31–57">
-  <img src="sheets/pll.png" width="49%" alt="PLL">
+  <a href="sheets/oll-31-57.png"><img src="sheets/oll-31-57.png" width="49%" alt="OLL 31–57"></a>
+  <a href="sheets/pll.png"><img src="sheets/pll.png" width="49%" alt="PLL"></a>
 </p>
 
 ## Credits / クレジット

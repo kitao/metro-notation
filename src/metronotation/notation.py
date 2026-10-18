@@ -1,15 +1,16 @@
 """Lossless move parsing and deterministic, collision-free route grouping."""
 
+import math
 from dataclasses import dataclass
 from functools import lru_cache
-import math
-import re
+from itertools import pairwise
+
+from .cube import TOKEN
 
 START_RADIUS = 0.135
 STATION_RADIUS = 0.075
 ENDPOINT_GAP = 0.05
 
-PATTERN = re.compile(r"([RLUDFB]w|[RLUDFBMESrludfbxyz])([23]?)(\'?)")
 BASE_DIRECTION = {
     "R": (0, -1),
     "L": (0, 1),
@@ -35,11 +36,11 @@ class Move:
 
     @property
     def wide(self):
-        return self.face in "rludfb" or self.face.endswith("w")
+        return self.face in "rludfb"
 
     @property
     def base(self):
-        return self.face[0].upper() if self.wide else self.face
+        return self.face.upper() if self.wide else self.face
 
     @property
     def direction(self):
@@ -54,29 +55,16 @@ class Move:
             return "slice"
         return "far" if self.base in "LDB" else "near"
 
-    @property
-    def cube_token(self):
-        face = self.face[0].lower() if self.face.endswith("w") else self.face
-        return face + (str(self.count) if self.count != 1 else "") + ("'" if self.prime else "")
-
 
 def parse_moves(text):
-    """Accept compact and spaced notation; normalize prime glyphs only."""
-    text = text.replace("′", "'").replace("’", "'")
+    """Read the master's space-separated notation, keeping every token as written."""
     result = []
-    offset = 0
-    while offset < len(text):
-        if text[offset].isspace():
-            offset += 1
-            continue
-        match = PATTERN.match(text, offset)
+    for token in text.split():
+        match = TOKEN.fullmatch(token)
         if match is None:
-            raise ValueError(
-                f"Unrecognized move at character {offset + 1}: {text[offset : offset + 12]!r}"
-            )
+            raise ValueError(f"Unrecognized move: {token!r}")
         face, count, prime = match.groups()
-        result.append(Move(match[0], face, int(count or 1), bool(prime)))
-        offset = match.end()
+        result.append(Move(token, face, int(count or 1), bool(prime)))
     if not result:
         raise ValueError("An algorithm must contain at least one move")
     return tuple(result)
@@ -189,11 +177,11 @@ def _route_insets(moves):
 def safe_route(moves):
     # Without arrowheads, same-style collinear tokens must remain separate maps.
     # Otherwise U U and U2 would become indistinguishable.
-    for a, b in zip(moves, moves[1:]):
+    for a, b in pairwise(moves):
         if a.direction == b.direction and a.layer == b.layer and a.wide == b.wide:
             return False
     points = trace(moves)
-    segments = list(zip(points, points[1:]))
+    segments = list(pairwise(points))
     # Endpoint contacts are readable with a small opening; interior crossings
     # and retracing must still be split.
     start_inset, end_inset = route_insets(moves)
@@ -255,9 +243,9 @@ def group_moves(moves, boundaries=(), max_moves=None, measure=None, fits=None, p
             cost = (
                 1 + suffix_cost[0],
                 int(end - start == 1) + suffix_cost[1],
-                # Ignore floating-point noise when widths are visually identical.
-                # Python versions use different summation algorithms; tied routes
-                # must keep the same deterministic longer-first choice everywhere.
+                # Widths are float sums whose last bits depend on the order of
+                # additions; rounding keeps visually identical routes tied, so the
+                # longer-first choice below decides them deterministically.
                 round((measure(candidate) if measure else 0) + suffix_cost[2], 6),
             )
             group = tuple((i, moves[i]) for i in range(start, end))

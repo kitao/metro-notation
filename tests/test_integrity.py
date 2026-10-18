@@ -1,35 +1,101 @@
-"""Data loss, geometry ambiguity, source mistakes and CLI boundaries."""
+"""Integrity of the algorithm data, the rendered geometry and the build and check scripts."""
 
+import base64
 import contextlib
 import hashlib
-from html.parser import HTMLParser
-from html import unescape
+import importlib.util
 import io
 import math
-from pathlib import Path
 import re
+import shutil
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
 import xml.etree.ElementTree as ET
+from dataclasses import replace
+from html import unescape
+from html.parser import HTMLParser
+from itertools import pairwise
+from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from metronotation import renderer
 from metronotation.catalog import Algorithm, load_master, read_markdown
 from metronotation.cli import main
-from metronotation.cube import self_check, apply, solved_cube
-from metronotation.notation import parse_moves, group_moves, safe_route, route_insets
+from metronotation.cube import MOVES, apply, solved_cube, starting_state
+from metronotation.learning import (
+    IDIOMS,
+    idiom_tokens,
+    learning_breaks,
+    learning_units,
+    sequence_tokens,
+)
+from metronotation.notation import (
+    group_moves,
+    parse_moves,
+    point_segment_distance,
+    route_insets,
+    safe_route,
+)
+from metronotation.pdf import IMAGE_PATHS, export_pdf
 from metronotation.renderer import (
-    render_html,
+    BODY_TOP,
+    UNIT,
     cube_svg,
-    route_svg,
     diagram_groups,
     layer_cube,
-    UNIT,
+    render_html,
+    render_legend,
+    route_svg,
 )
-from scripts.check_algorithms import read_records, check_structure, up_face
+from metronotation.typography import stylesheet
+
+
+def f2l_mask(cube):
+    """The rule behind the fixed F2L masks: photo-style roles, not physical face colors."""
+    centers = {normal: color for (pos, normal), color in cube.items() if pos == normal}
+    slots = [
+        side
+        for side in (-1, 1)
+        if any(
+            color != centers[normal]
+            for (pos, normal), color in cube.items()
+            if pos[0] == side and pos[2] == 1 and pos[1] in (-1, 0)
+        )
+    ]
+    if len(slots) != 1:
+        raise ValueError("F2L diagram needs exactly one unfinished front slot")
+    side = slots[0]
+    front, flank, down = (centers[n] for n in ((0, 0, 1), (side, 0, 0), (0, -1, 0)))
+    roles = {front: "B" if side == 1 else "R", flank: "R" if side == 1 else "B", down: "W"}
+    target = {front, flank}
+    pieces = {}
+    for (pos, _), color in cube.items():
+        pieces.setdefault(pos, set()).add(color)
+    mask = {}
+    for (pos, normal), color in cube.items():
+        active = pieces[pos] in (target, target | {down})
+        slot = pos[0] == side and pos[2] == 1 and pos[1] in (-1, 0)
+        show = active or (pos[1] < 1 and not slot and normal[1] == 0)
+        mask[pos, normal] = roles.get(color, ".") if show else "."
+    return side, mask
+
+
+def load_script(name):
+    """Import scripts/<name>.py by path: scripts/ holds commands, not a package."""
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+check_algorithms = load_script("check_algorithms")
+check_structure = check_algorithms.check_structure
+read_records = check_algorithms.read_records
+up_face = check_algorithms.up_face
 
 
 class Document(HTMLParser):
@@ -47,9 +113,8 @@ class Document(HTMLParser):
             self.tokens[self.active], self.steps[self.active], self.grips[self.active] = [], [], []
         if self.active and "data-index" in a:
             self.tokens[self.active].append((int(a["data-index"]), a["data-move"]))
-        if self.active and "data-step" in a:
             self.steps[self.active].append(
-                (int(a["data-step"]), a["data-direction"], int(a["data-turns"]), a["data-layer"])
+                (int(a["data-index"]), a["data-direction"], int(a["data-turns"]), a["data-layer"])
             )
         if self.active and "data-before" in a:
             self.grips[self.active].append(int(a["data-before"]))
@@ -64,27 +129,26 @@ class Integrity(unittest.TestCase):
     def setUpClass(cls):
         cls.records = load_master()
 
-    def test_all119_exact_source_tokens_through_html_and_svg(self):
+    def test_all_119_exact_source_tokens_through_html_and_svg(self):
         # Independent extraction from Markdown, including R3 and prime direction.
         expected = {
             r.kind + "-" + r.id: r.moves for k in ("F2L", "OLL", "PLL") for r in read_records(k)
         }
         self.assertEqual(len(expected), 119)
-        for lang in ("en", "ja"):
-            doc = Document(render_html(self.records, lang))
-            self.assertEqual(set(doc.cards), set(expected))
-            self.assertEqual(len(doc.cards), 119)
-            for record in self.records:
-                with self.subTest(lang=lang, case=record.key):
-                    self.assertEqual(doc.tokens[record.key], list(enumerate(expected[record.key])))
-                    self.assertEqual(
-                        doc.steps[record.key],
-                        [
-                            (i, f"{m.direction[0]},{m.direction[1]}", m.count, m.layer)
-                            for i, m in enumerate(record.moves)
-                        ],
-                    )
-                    self.assertEqual(doc.grips[record.key], sorted(record.regrips))
+        doc = Document(render_html(self.records))
+        self.assertEqual(set(doc.cards), set(expected))
+        self.assertEqual(len(doc.cards), 119)
+        for record in self.records:
+            with self.subTest(case=record.key):
+                self.assertEqual(doc.tokens[record.key], list(enumerate(expected[record.key])))
+                self.assertEqual(
+                    doc.steps[record.key],
+                    [
+                        (i, f"{m.direction[0]},{m.direction[1]}", m.count, m.layer)
+                        for i, m in enumerate(record.moves)
+                    ],
+                )
+                self.assertEqual(doc.grips[record.key], sorted(record.regrips))
 
     def test_photo_reviewed_master_spelling_is_unchanged(self):
         # Freeze the 2026-09-21 photo review, including case order and exact
@@ -97,9 +161,9 @@ class Integrity(unittest.TestCase):
 
     def test_photo_reviewed_annotations_are_unchanged(self):
         # P1/P3/P4/P5/P6 review: 117 colored hints, 26 regrips and 18
-        # priority marks. Guard their exact positions, not only their counts.
+        # Learn first marks. Guard their exact positions, not only their counts.
         reviewed = "".join(
-            f"{r.key}\t{sorted(r.hints.items())}\t{sorted(r.regrips.items())}\t{r.beginner}\n"
+            f"{r.key}\t{sorted(r.hints.items())}\t{sorted(r.regrips.items())}\t{r.learn_first}\n"
             for r in self.records
         )
         self.assertEqual(
@@ -107,28 +171,41 @@ class Integrity(unittest.TestCase):
             "62dea3a692f3a66dcc2c8d272b048fe3e0b66e46da53c586d49e3efe39da96ff",
         )
 
-    def test_cube_conventions_and_all_stage_invariants(self):
-        self_check()
-        for kind in ("F2L", "OLL", "PLL"):
-            for record in read_records(kind):
-                with self.subTest(case=(kind, record.id)):
-                    self.assertIsNone(check_structure(record))
+    def test_cube_conventions(self):
+        def run(moves):
+            cube = solved_cube()
+            for move in moves.split():
+                cube = apply(cube, move)
+            return cube
 
-    def test_independent_photo_top_patterns(self):
-        masks = dict(
-            re.findall(
-                r"^\| (\d{2}) \| `([01/]+)` \|$",
-                (ROOT / "algorithms/oll-patterns.md").read_text(encoding="utf-8"),
-                re.M,
-            )
-        )
-        self.assertEqual(len(masks), 57)
-        for record in read_records("OLL"):
-            self.assertEqual(up_face(record), masks[record.id], record.id)
+        solved = solved_cube()
+        self.assertEqual(len(solved), 54)
+        for face in MOVES:
+            with self.subTest(face=face):
+                self.assertEqual(run(" ".join([face] * 4)), solved)
+                self.assertEqual(run(f"{face} {face}'"), solved)
+                self.assertEqual(run(f"{face}2"), run(f"{face}2'"))
+                self.assertEqual(run(f"{face}3"), run(f"{face}'"))
+        for wide, parts in (
+            ("r", "R M'"),
+            ("l", "L M"),
+            ("u", "U E'"),
+            ("d", "D E"),
+            ("f", "F S"),
+            ("b", "B S'"),
+            ("x", "R M' L'"),
+            ("y", "U E' D'"),
+            ("z", "F S B'"),
+        ):
+            self.assertEqual(run(wide), run(parts), wide)
+        # R moves the URF corner to URB: its U sticker faces back and its F sticker faces up.
+        self.assertEqual(run("R")[(1, 1, -1), (0, 0, -1)], "U")
+        self.assertEqual(run("R")[(1, 1, -1), (0, 1, 0)], "F")
+        self.assertEqual(starting_state(["R", "U"]), run("U' R'"))
 
-    def test_photo_f2l_stickers_solve_forward(self):
-        # Start with independently transcribed visible/hidden source stickers,
-        # not an inverse of the algorithm under test. Gray stickers stay unknown.
+    def test_reviewed_f2l_stickers_solve_forward(self):
+        # Start from the fixed stickers reviewed against the photographs (see
+        # f2l-patterns.md) and run each algorithm forward. Gray stickers stay unknown.
         for record in self.records[:41]:
             diagram = record.recognition
             roles = {
@@ -141,18 +218,15 @@ class Integrity(unittest.TestCase):
             }
             cube.update({(p, n): color for (p, n), color in solved_cube().items() if p == n})
             for move in record.moves:
-                cube = apply(cube, move.cube_token)
+                cube = apply(cube, move.text)
             centers = {normal: color for (pos, normal), color in cube.items() if pos == normal}
             self.assertTrue(
                 all(color == centers[normal] for (pos, normal), color in cube.items()), record.key
             )
 
     def test_legend_covers_every_used_track_style(self):
-        from metronotation.renderer import render_legend
-
         ns = {"s": "http://www.w3.org/2000/svg"}
-        legend = render_legend(1).split("<aside", 1)[0]
-        root = ET.fromstring(legend)
+        root = ET.fromstring(render_legend())
         represented = set()
         for edge in root.findall(".//s:g[@data-move]", ns):
             move = parse_moves(edge.get("data-move"))[0]
@@ -168,28 +242,56 @@ class Integrity(unittest.TestCase):
         self.assertEqual(set(highlights), {"#c94f00"})
 
     def test_known_transcription_errors_are_detected(self):
+        # check_algorithms.py applies these checks to all 119 cases; here they must catch
+        # errors that were actually made or are easy to make while transcribing.
         f2l = next(r for r in read_records("F2L") if r.id == "26")
+        self.assertIsNone(check_structure(f2l))
         f2l.moves[2] = "R'"
         self.assertIsNotNone(check_structure(f2l))
         rb = next(r for r in read_records("PLL") if r.id == "Rb")
+        self.assertIsNone(check_structure(rb))
         del rb.moves[8]
         self.assertIsNotNone(check_structure(rb))
+        oll = next(r for r in read_records("OLL") if r.id == "25")
+        self.assertEqual(up_face(oll), "110/111/011")
+        oll.moves.insert(0, "U")
+        self.assertNotEqual(up_face(oll), "110/111/011")
 
     def test_state_equivalence_does_not_erase_direction(self):
         for a, b in [("U2", "U2'"), ("R3", "R'")]:
             ma, mb = parse_moves(a)[0], parse_moves(b)[0]
             self.assertEqual(apply(solved_cube(), a), apply(solved_cube(), b))
             self.assertNotEqual((ma.direction, ma.count), (mb.direction, mb.count))
-            self.assertNotEqual(
-                render_html([Algorithm("CUSTOM", "1", (ma,))]),
-                render_html([Algorithm("CUSTOM", "1", (mb,))]),
-            )
+            # The drawn track runs the other way (or farther), not only the caption.
+            ns = {"s": "http://www.w3.org/2000/svg"}
+            tracks = []
+            for move in (ma, mb):
+                line = ET.fromstring(route_svg(((0, move),))).find(".//s:line", ns)
+                tracks.append(
+                    tuple(float(line.get(f"{k}2")) - float(line.get(f"{k}1")) for k in "xy")
+                )
+            self.assertNotEqual(*tracks)
 
     def test_parser_and_rejection(self):
-        moves = parse_moves("r U2′ R3 Rw’ l2'")
-        self.assertEqual([m.text for m in moves], ["r", "U2'", "R3", "Rw'", "l2'"])
-        self.assertEqual(moves[3].cube_token, "r'")
-        for bad in ("", "R4", "R''", "1", "R ? U", "…", "R2x4", "(R U)", "<script>"):
+        moves = parse_moves("r U2' R3 R' l2'")
+        self.assertEqual([m.text for m in moves], ["r", "U2'", "R3", "R'", "l2'"])
+        # Only the master's spaced ASCII notation is read, as check_algorithms.py accepts it:
+        # no compact runs, Rw-style wide moves or typographic primes.
+        for bad in (
+            "",
+            "R3R'",
+            "R4",
+            "R''",
+            "1",
+            "R ? U",
+            "…",
+            "R2x4",
+            "(R U)",
+            "<script>",
+            "Rw",
+            "R′",
+            "R’",
+        ):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 parse_moves(bad)
 
@@ -213,8 +315,6 @@ class Integrity(unittest.TestCase):
                 self.assertTrue(len(g) == 1 or all(m.layer != "rotation" for _, m in g))
 
     def test_rendered_endpoint_ink_clearance(self):
-        from metronotation.notation import point_segment_distance
-
         ns = {"s": "http://www.w3.org/2000/svg"}
         for record in self.records:
             for group in diagram_groups(record):
@@ -250,14 +350,8 @@ class Integrity(unittest.TestCase):
                     self.assertGreaterEqual(
                         min(gaps), 1.2 - 1e-3, (record.key, [m.text for _, m in group])
                     )
-        oll25 = next(r for r in self.records if r.key == "OLL-25")
-        self.assertEqual([len(g) for g in diagram_groups(oll25)], [4, 4])
-        oll37 = next(r for r in self.records if r.key == "OLL-37")
-        self.assertEqual([len(g) for g in diagram_groups(oll37)], [4, 4])
 
     def test_sune_family_keeps_source_and_phrase_boundaries(self):
-        from metronotation.learning import sequence_tokens
-
         for key, name in (
             ("OLL-27", "Sune"),
             ("OLL-26", "Sune (mirrored)"),
@@ -271,7 +365,7 @@ class Integrity(unittest.TestCase):
         ub = next(r for r in self.records if r.key == "PLL-Ub")
         self.assertFalse(sequence_tokens(ub))
 
-    def test_reviewed_motor_phrases_and_required_geometric_splits(self):
+    def test_reading_phrases_and_required_geometric_splits(self):
         expected = {
             "F2L-09": [4, 3],
             "F2L-10": [4, 3],
@@ -282,7 +376,9 @@ class Integrity(unittest.TestCase):
             "OLL-12": [2, 3, 4, 2],
             "OLL-23": [2, 4, 3],
             "OLL-24": [1, 4, 4],
+            "OLL-25": [4, 4],
             "OLL-28": [4, 1, 1, 4],
+            "OLL-37": [4, 4],
             "PLL-E": [4, 4, 4, 4, 1],
             "PLL-T": [4, 4, 2, 4],
         }
@@ -295,11 +391,15 @@ class Integrity(unittest.TestCase):
         # them into retracing strokes or silently replace R r' by a slice move.
         self.assertFalse(safe_route(parse_moves("R r'")))
         self.assertFalse(safe_route(parse_moves("R U R' D R2")))
+        # Phrases that no longer spell the master stop rendering instead of misplacing breaks.
+        record = next(r for r in self.records if r.key == "F2L-05")
+        with (
+            patch.dict("metronotation.learning.READING_PHRASES", {"F2L-05": ("U2 R U R'",)}),
+            self.assertRaisesRegex(ValueError, "F2L-05: reading phrases differ from source"),
+        ):
+            render_html([record])
 
     def test_typefaces_are_embedded_for_offline_use(self):
-        import base64
-        from metronotation.typography import stylesheet
-
         css = stylesheet()
         encoded = re.findall(r"data:font/ttf;base64,([A-Za-z0-9+/=]+)", css)
         self.assertEqual(len(encoded), 3)
@@ -313,26 +413,51 @@ class Integrity(unittest.TestCase):
         self.assertEqual(css.count("SIL OPEN FONT LICENSE Version 1.1"), 2)
         self.assertNotRegex(css, r"url\(['\"]?https?://")
 
+    def test_caption_advances_match_the_bundled_arimo(self):
+        from fontTools.ttLib import TTFont
+
+        font = TTFont(ROOT / "src/metronotation/assets/fonts/arimo-regular.ttf")
+        glyphs, em = font.getBestCmap(), font["head"].unitsPerEm
+        for char, advance in renderer.MOVE_ADVANCE.items():
+            with self.subTest(char):
+                self.assertAlmostEqual(advance, font["hmtx"][glyphs[ord(char)]][0] / em, places=3)
+        # Every caption character has an advance, including the spaces between moves and units.
+        used = {char for r in load_master() for move in r.moves for char in move.text}
+        used |= {" ", "\u2002"}
+        self.assertLessEqual(used, set(renderer.MOVE_ADVANCE))
+
+    def test_bundled_fonts_match_their_pinned_originals(self):
+        fonts = ROOT / "src/metronotation/assets/fonts"
+        table = dict(
+            re.findall(
+                r"^\| `([\w-]+\.ttf)` \|.*\| `([0-9a-f]{64})` \|$",
+                (fonts / "README.md").read_text(),
+                re.MULTILINE,
+            )
+        )
+        self.assertEqual(sorted(table), sorted(path.name for path in fonts.glob("*.ttf")))
+        for name, digest in table.items():
+            with self.subTest(name):
+                self.assertEqual(hashlib.sha256((fonts / name).read_bytes()).hexdigest(), digest)
+
     def test_minimal_overview_and_uniform_geometry(self):
         html = render_html(self.records)
         self.assertNotRegex(html, r"<(?:input|button|select|script|marker)\b")
         self.assertNotIn("stroke-dasharray", html)
-        self.assertNotIn("#f5f6f6", html)
         self.assertEqual(html.count('class="sheet-heading"'), 4)
         self.assertEqual(html.count('class="sheet-footer"'), 4)
         self.assertEqual(len(re.findall('class="case-label"', html)), 119)
-        beginner_keys = {r.key for r in self.records if r.beginner}
+        learn_first = {r.key for r in self.records if r.learn_first}
         self.assertEqual(
-            beginner_keys,
+            learn_first,
             {
                 *(f"OLL-{n:02}" for n in (21, 22, 23, 24, 25, 26, 27, 43, 44, 45)),
                 *(f"PLL-{n}" for n in ("Aa", "Ab", "H", "T", "Ua", "Ub", "Y", "Z")),
             },
         )
-        self.assertEqual(html.count('class="beginner-mark"'), 18)
-        self.assertEqual(len(set(re.findall(r'data-scale="([^"]+)"', html))), 1)
+        self.assertEqual(html.count('class="learn-first-mark"'), 18)
         # Each column has a fixed origin; DOM/source order reads downward.
-        for sheet in re.findall(r"<section\b.*?</section>", html, re.S):
+        for sheet in re.findall(r"<section\b.*?</section>", html, re.DOTALL):
             columns = {}
             for attrs in re.findall(r"<article ([^>]+)>", sheet):
                 col = int(re.search(r'data-column="(\d+)"', attrs)[1])
@@ -402,13 +527,12 @@ class Integrity(unittest.TestCase):
                     count += 1
         self.assertEqual(count, 1208)
 
-    def test_native_sheet_bounds_and_priority_clearance(self):
+    def test_native_sheet_bounds_and_learn_first_clearance(self):
         html = render_html(self.records)
-        self.assertEqual(set(re.findall(r'data-scale="([^"]+)"', html)), {"1.00000000"})
         ns = {"s": "http://www.w3.org/2000/svg"}
-        for sheet in re.findall(r"<section\b.*?</section>", html, re.S):
+        for sheet in re.findall(r"<section\b.*?</section>", html, re.DOTALL):
             bounds = []
-            for attrs, body in re.findall(r"<article ([^>]+)>(.*?)</article>", sheet, re.S):
+            for attrs, body in re.findall(r"<article ([^>]+)>(.*?)</article>", sheet, re.DOTALL):
                 key = re.search(r'data-key="([^"]+)"', attrs)[1]
                 coords = {
                     k: float(v) for k, v in re.findall(r"(left|top|width|height):([\d.]+)%", attrs)
@@ -440,7 +564,7 @@ class Integrity(unittest.TestCase):
                     self.assertGreaterEqual(min(cx, cy), 0, key)
                     self.assertLessEqual(cx + cw, w + 0.01, key)
                     self.assertLessEqual(cy + ch, h + 0.01, key)
-                mark = root.find('s:svg[@class="beginner-mark"]', ns)
+                mark = root.find('s:svg[@class="learn-first-mark"]', ns)
                 if mark is not None:
                     self.assertEqual(len(mark.findall("s:circle", ns)), 1, key)
                     cube = root.find('s:svg[@class="cube-svg"]', ns)
@@ -453,22 +577,22 @@ class Integrity(unittest.TestCase):
     def test_equal_columns_and_baseline_grid(self):
         html = render_html(self.records)
         wrapped = []
-        for sheet in re.findall(r"<section\b.*?</section>", html, re.S):
-            pitch = float(re.search(r"--row-pitch:([\d.]+)", sheet)[1])
-            first_height = float(re.search(r"--first-row:([\d.]+)", sheet)[1])
-            body_top = float(re.search(r"--body-top:([\d.]+)", sheet)[1])
-            row_count = int(re.search(r"--row-count:(\d+)", sheet)[1]) + 1
+        for sheet in re.findall(r"<section\b.*?</section>", html, re.DOTALL):
+            pitch = float(re.search(r'data-row-pitch="([\d.]+)"', sheet)[1])
+            first_height = float(re.search(r'data-first-row="([\d.]+)"', sheet)[1])
+            row_count = int(re.search(r'data-rows="(\d+)"', sheet)[1])
+            body_top = BODY_TOP
             body_height = first_height + (row_count - 1) * pitch
             self.assertEqual(body_top, 92)
             self.assertAlmostEqual(1006 - (body_top + body_height), 24)
             widths = set()
             column_x = {}
-            for attrs, body in re.findall(r"<article ([^>]+)>(.*?)</article>", sheet, re.S):
+            for attrs, body in re.findall(r"<article ([^>]+)>(.*?)</article>", sheet, re.DOTALL):
                 span = int(re.search(r'data-span="(\d+)"', attrs)[1])
                 row = int(re.search(r'data-row="(\d+)"', attrs)[1])
                 col = int(re.search(r'data-column="(\d+)"', attrs)[1])
                 key = re.search(r'data-key="([^"]+)"', attrs)[1]
-                widths.add(float(re.search(r"--cell-width:([\d.]+)", attrs)[1]))
+                widths.add(float(re.search(r"width:([\d.]+)%", attrs)[1]) * 14.4)
                 column_x[col] = float(re.search(r"left:([\d.]+)%", attrs)[1]) * 14.4
                 top = float(re.search(r"top:([\d.]+)%", attrs)[1]) * 10.06
                 self.assertAlmostEqual(
@@ -490,7 +614,7 @@ class Integrity(unittest.TestCase):
                     wrapped.append(key)
             self.assertEqual(len(widths), 1)
             origins = list(column_x.values())
-            for a, b in zip(origins, origins[1:]):
+            for a, b in pairwise(origins):
                 self.assertAlmostEqual(b - a, next(iter(widths)) + 24, places=4)
         self.assertEqual(set(wrapped), {"OLL-41", "OLL-42"})
 
@@ -516,13 +640,11 @@ class Integrity(unittest.TestCase):
                 coords = re.findall(r"-?\d+(?:\.\d+)?", path.get("d"))
                 self.assertEqual(float(coords[3]) > float(coords[1]), down)
 
-    def test_named_idioms_and_h_perm_clearance(self):
-        from metronotation.learning import IDIOMS
-
+    def test_named_idioms_and_pll_h_clearance(self):
         html = render_html(self.records)
         matches = 0
         for record in self.records:
-            body = re.search(r'data-key="' + record.key + r'">(.*?)</article>', html, re.S)[1]
+            body = re.search(f'data-key="{record.key}"[^>]*>(.*?)</article>', html, re.DOTALL)[1]
             marked = {}
             for name, start, index, token in re.findall(
                 r'<tspan data-idiom="([^"]+)" data-idiom-start="(\d+)" data-idiom-index="(\d+)"[^>]*>(.*?)</tspan>',
@@ -553,7 +675,7 @@ class Integrity(unittest.TestCase):
         ns = {"s": "http://www.w3.org/2000/svg"}
         cards = {
             re.search(r'data-key="([^"]+)"', attrs)[1]: (attrs, ET.fromstring(body))
-            for attrs, body in re.findall(r"<article ([^>]+)>(.*?)</article>", html, re.S)
+            for attrs, body in re.findall(r"<article ([^>]+)>(.*?)</article>", html, re.DOTALL)
         }
 
         def shape_vertical_extent(key):
@@ -574,9 +696,6 @@ class Integrity(unittest.TestCase):
         )
 
     def test_f2l_recognition_colors_and_hidden_stickers(self):
-        from metronotation.renderer import f2l_display
-        from metronotation.cube import starting_state
-
         ns = {"s": "http://www.w3.org/2000/svg"}
         expected_hidden = {
             1: 0,
@@ -628,7 +747,7 @@ class Integrity(unittest.TestCase):
             )
             # Independently retain the fixed photo-reviewed values while checking
             # the cube-model mask, including the edge-only left slot in case 26.
-            side, mask = f2l_display(starting_state([m.cube_token for m in record.moves]))
+            side, mask = f2l_mask(starting_state([m.text for m in record.moves]))
             self.assertEqual(side, diagram.side, record.key)
             for position, color in diagram.colors.items():
                 self.assertEqual(mask[position], color, (record.key, position))
@@ -641,10 +760,10 @@ class Integrity(unittest.TestCase):
             centers.sort(key=lambda p: sum(float(v.split(",")[0]) for v in p.get("points").split()))
             self.assertEqual([p.get("data-color") for p in centers], ["B", "R"], record.key)
         self.assertEqual(self.records[25].recognition.side, -1)
+        with self.assertRaises(ValueError):
+            cube_svg(replace(self.records[0], recognition=None))
 
     def test_learning_units_survive_visual_grouping(self):
-        from metronotation.learning import learning_units, learning_breaks, idiom_tokens
-
         protected = 0
         for record in self.records:
             cuts = {g[0][0] for g in diagram_groups(record)}
@@ -674,61 +793,250 @@ class Integrity(unittest.TestCase):
             raw.replace("転記済", "要確認", 1),
             raw.replace("P3:U", "P999:U", 1),
             raw.replace("`U R U' R'`", "`U ?`", 1),
+            # Only "—" means no finger hint; other placeholders must not hide missing hints.
+            raw.replace("| P3:U' |", "| 未照合 |", 1),
         ):
             with self.assertRaises(ValueError):
                 read_markdown(bad, "F2L")
 
-    def test_escaped_labels(self):
-        record = Algorithm("CUSTOM", "<script>alert(1)</script>", parse_moves("R"))
-        document = render_html([record], title="</title><script>alert(1)</script>")
-        self.assertNotIn("<script>alert(1)</script>", document)
+    def test_stretched_pitch_must_keep_the_planned_rows(self):
+        planned = (80, 110, 128)
+        case_lines = renderer.case_lines
 
-    def test_cli_protects_master_and_handles_selection(self):
+        def rewrapped(record, width, pitch):
+            # Pretend the stretched pitch wraps the last case of a column onto one more row.
+            lines = case_lines(record, width, pitch)
+            if pitch in planned:
+                return lines
+            *rest, (groups, span) = lines
+            return (*rest, (groups, span + 1))
+
+        render_html(self.records[:41])
+        with patch.object(renderer, "case_lines", rewrapped), self.assertRaises(ValueError):
+            render_html(self.records[:41])
+
+    def test_escaped_labels(self):
+        record = Algorithm("PLL", "<script>alert(1)</script>", parse_moves("R"))
+        self.assertNotIn("<script>alert(1)</script>", render_html([record]))
+
+    def test_cli_handles_selection_and_protects_master_and_reviewed_sheets(self):
         with (
-            tempfile.TemporaryDirectory() as temp,
+            tempfile.TemporaryDirectory() as temporary,
             contextlib.redirect_stdout(io.StringIO()),
-            contextlib.redirect_stderr(io.StringIO()),
+            contextlib.redirect_stderr(io.StringIO()) as errors,
         ):
-            output = Path(temp) / "study.html"
+            root = Path(temporary).resolve()
+            output = root / "study.html"
             self.assertEqual(main(["--case", "PLL-Ub", "-o", str(output)]), 0)
             self.assertEqual(Document(output.read_text(encoding="utf-8")).cards, ["PLL-Ub"])
             self.assertEqual(main(["--case", "PLL-nonexistent", "-o", str(output)]), 2)
-            self.assertEqual(main(["-o", str(output), "--pdf", str(output)]), 2)
-            master = ROOT / "algorithms/f2l.md"
-            original = master.read_bytes()
-            self.assertEqual(main(["-o", str(master)]), 2)
-            self.assertEqual(master.read_bytes(), original)
+            # One file spelled two ways is refused before any HTML is written or PDF printed.
+            fresh, printed = root / "fresh.html", []
+            with patch("metronotation.pdf.export_pdf", lambda *paths: printed.append(paths)):
+                self.assertEqual(main(["-o", str(fresh), "--pdf", f"{root}/x/../fresh.html"]), 2)
+            self.assertIn("HTML and PDF output paths must differ", errors.getvalue())
+            self.assertFalse(fresh.exists())
+            self.assertEqual(printed, [])
+            # Printing itself refuses to replace its source, which a case variant can name
+            # only once the HTML exists.
+            with self.assertRaisesRegex(ValueError, "must differ"):
+                export_pdf(output, output)
+            # Stand-ins for the master and the reviewed sheets keep the repository untouched.
+            (root / "algorithms").mkdir()
+            (root / "sheets").mkdir()
+            master = root / "algorithms/f2l.md"
+            master.write_text("master", encoding="utf-8")
+            sheet = root / "sheets/metro-notation.pdf"
+            sheet.write_bytes(b"reviewed")
+            (root / "master-link.md").symlink_to(master)
+            (root / "master-hard-link.md").hardlink_to(master)
+            attempts = [
+                ["-o", str(master)],
+                ["-o", str(root / "master-link.md")],
+                ["-o", str(root / "master-hard-link.md")],
+                ["-o", str(output), "--pdf", str(sheet)],
+            ]
+            capitalized = Path(str(master).swapcase())
+            if capitalized.exists():  # Only case-insensitive file systems can alias by case.
+                attempts.append(["-o", str(capitalized)])
+            # A stub stands in for Chromium, so only the destination check can stop the PDF.
+            with (
+                patch("metronotation.cli.ROOT", root),
+                patch("metronotation.cli.ALGORITHMS", root / "algorithms"),
+                patch("metronotation.pdf.export_pdf", lambda html, pdf: pdf.write_bytes(b"new")),
+            ):
+                for argv in attempts:
+                    with self.subTest(argv=argv):
+                        self.assertEqual(main(argv), 2)
+            self.assertEqual(master.read_text(encoding="utf-8"), "master")
+            self.assertEqual(sheet.read_bytes(), b"reviewed")
 
-    def test_sheet_build_protects_reviewed_distribution(self):
-        from scripts import build_sheets
+    def test_sheet_build_writes_output_without_following_links(self):
+        build_sheets = load_script("build_sheets")
+
+        def export_pdf(html, pdf):
+            pdf.write_bytes(b"new pdf")
+
+        def export_pngs(pdf, directory):
+            for path in IMAGE_PATHS:
+                (directory / path).write_bytes(b"new png")
 
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary).resolve()
-            sheets = root / "sheets"
-            sheets.mkdir()
-            reviewed = sheets / "metro-notation.pdf"
-            reviewed.write_bytes(b"reviewed distribution")
-            alias = root / "reviewed-alias"
-            alias.symlink_to(sheets, target_is_directory=True)
-            destinations = [root, sheets, sheets / "nested", alias]
-            capitalized = Path(str(sheets).swapcase())
-            if capitalized.exists():
-                destinations.append(capitalized)
-            for destination in destinations:
-                with (
-                    self.subTest(destination=destination),
-                    patch.object(build_sheets, "ROOT", root),
-                    patch.object(build_sheets, "export_pdf") as export,
-                    patch.object(build_sheets, "export_pngs"),
-                    patch("sys.argv", ["build_sheets.py", "--output", str(destination)]),
-                    contextlib.redirect_stderr(io.StringIO()),
-                ):
-                    with self.assertRaises(SystemExit) as failure:
-                        build_sheets.main()
-                    self.assertEqual(failure.exception.code, 2)
-                    export.assert_not_called()
-                    self.assertEqual(reviewed.read_bytes(), b"reviewed distribution")
-            self.assertFalse((sheets / "nested").exists())
+            root = Path(temporary)
+            (root / "sheets").mkdir()
+            reviewed = [root / "sheets/metro-notation.pdf", root / "sheets/f2l.png"]
+            for path in reviewed:
+                path.write_bytes(b"reviewed")
+            output = root / "output"
+            with (
+                patch.object(build_sheets, "ROOT", root),
+                patch.object(build_sheets, "export_pdf", export_pdf),
+                patch.object(build_sheets, "export_pngs", export_pngs),
+                patch("sys.argv", ["build_sheets.py"]),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                # Symlinked output directories are refused.
+                output.symlink_to(root / "sheets", target_is_directory=True)
+                with self.assertRaises(SystemExit):
+                    build_sheets.main()
+                output.unlink()
+                # Symlinked files are replaced, not written through.
+                output.mkdir()
+                (output / "metro-notation.pdf").symlink_to(reviewed[0])
+                (output / "f2l.png").symlink_to(reviewed[1])
+                self.assertEqual(build_sheets.main(), 0)
+            for path in reviewed:
+                self.assertEqual(path.read_bytes(), b"reviewed")
+            files = sorted(p.relative_to(output) for p in output.rglob("*") if not p.is_dir())
+            self.assertEqual(files, sorted([Path("metro-notation.pdf"), *IMAGE_PATHS]))
+            for path in files:
+                self.assertFalse((output / path).is_symlink(), path)
+            self.assertEqual((output / "metro-notation.pdf").read_bytes(), b"new pdf")
+
+    def test_pdf_check_rejects_wrong_text_fonts_and_margins(self):
+        from pypdf import PdfReader
+        from pypdf.generic import NameObject
+
+        check_sheets = load_script("check_sheets")
+        pdf = ROOT / "sheets/metro-notation.pdf"
+        batches = check_sheets.page_batches(self.records)
+        check_sheets.check_pdf(PdfReader(pdf), batches)
+        swapped = [list(batch) for batch in batches]
+        swapped[3][:2] = swapped[3][1::-1]
+        with self.assertRaisesRegex(ValueError, "label or move order"):
+            check_sheets.check_pdf(PdfReader(pdf), swapped)
+        reader = PdfReader(pdf)
+        font = next(iter(reader.pages[0]["/Resources"]["/Font"].values())).get_object()
+        font[NameObject("/BaseFont")] = NameObject("/AAAAAA+Helvetica")
+        with self.assertRaisesRegex(ValueError, "substituted fonts"):
+            check_sheets.check_pdf(reader, batches)
+        reader = PdfReader(pdf)
+        font = next(iter(reader.pages[0]["/Resources"]["/Font"].values())).get_object()
+        descriptor = font["/DescendantFonts"][0].get_object()["/FontDescriptor"].get_object()
+        del descriptor["/FontFile2"]
+        with self.assertRaisesRegex(ValueError, "unembedded font"):
+            check_sheets.check_pdf(reader, batches)
+        reader = PdfReader(pdf)
+        reader.pages[1].mediabox.right = float(reader.pages[1].mediabox.right) + 1
+        with self.assertRaisesRegex(ValueError, "unequal frame margins"):
+            check_sheets.check_pdf(reader, batches)
+        reader = PdfReader(pdf)
+        reader.pages[1].mediabox.right = float(reader.pages[1].mediabox.right) + 10
+        with self.assertRaisesRegex(ValueError, "not A3 landscape"):
+            check_sheets.check_pdf(reader, batches)
+
+    def test_pdf_check_rejects_extra_pages_annotations_forms_and_misplaced_parts(self):
+        from pypdf import PdfReader, PdfWriter
+        from pypdf.annotations import Text
+        from pypdf.generic import NameObject, TextStringObject
+
+        check_sheets = load_script("check_sheets")
+        pdf = ROOT / "sheets/metro-notation.pdf"
+        batches = check_sheets.page_batches(self.records)
+
+        def edited(change):
+            writer = PdfWriter(clone_from=pdf)
+            change(writer)
+            output = io.BytesIO()
+            writer.write(output)
+            return PdfReader(output)
+
+        with self.assertRaisesRegex(ValueError, "expected 4 pages"):
+            check_sheets.check_pdf(edited(lambda w: w.add_blank_page()), batches)
+        note = Text(text="note", rect=(10, 10, 30, 30))
+        with self.assertRaisesRegex(ValueError, "unexpected annotations"):
+            check_sheets.check_pdf(
+                edited(lambda w: w.add_annotation(page_number=0, annotation=note)), batches
+            )
+        reader = PdfReader(pdf)
+        reader.get_fields = lambda: {"name": {}}
+        with self.assertRaisesRegex(ValueError, "unexpected form fields"):
+            check_sheets.check_pdf(reader, batches)
+
+        def retarget(writer):
+            link = writer.pages[0]["/Annots"][0].get_object()["/A"]
+            link[NameObject("/URI")] = TextStringObject("https://example.invalid/")
+
+        with self.assertRaisesRegex(ValueError, "unexpected link targets"):
+            check_sheets.check_pdf(edited(retarget), batches)
+        frame_and_footer = check_sheets.frame_and_footer
+
+        def footer_inside_frame(page):
+            frames = frame_and_footer(page)[0]
+            (_, y1), (_, y2) = frames[0]
+            return frames, [min(y1, y2) + 10]
+
+        for found, message in (
+            (lambda page: ([], frame_and_footer(page)[1]), "expected one page frame"),
+            (lambda page: (frame_and_footer(page)[0], []), "bottom outer margin"),
+            (footer_inside_frame, "bottom outer margin"),
+        ):
+            with (
+                patch.object(check_sheets, "frame_and_footer", found),
+                self.assertRaisesRegex(ValueError, message),
+            ):
+                check_sheets.check_pdf(PdfReader(pdf), batches)
+
+    def test_grouping_check_reports_a_stale_table(self):
+        update_grouping = load_script("update_grouping")
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "docs").mkdir()
+            table = root / "docs/grouping.md"
+            current = (ROOT / "docs/grouping.md").read_text(encoding="utf-8")
+            table.write_text(current.replace("| OLL-25 |", "| OLL-25 (stale) |"), encoding="utf-8")
+            with (
+                patch.object(update_grouping, "ROOT", root),
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
+                with patch("sys.argv", ["update_grouping.py", "--check"]):
+                    self.assertEqual(update_grouping.main(), 1)
+                with patch("sys.argv", ["update_grouping.py"]):
+                    self.assertEqual(update_grouping.main(), 0)
+                with patch("sys.argv", ["update_grouping.py", "--check"]):
+                    self.assertEqual(update_grouping.main(), 0)
+            self.assertEqual(table.read_text(encoding="utf-8"), current)
+
+    @unittest.skipUnless(shutil.which("pdftoppm"), "the sheet check needs Poppler")
+    def test_sheet_check_rejects_images_that_do_not_match(self):
+        check_sheets = load_script("check_sheets")
+        with tempfile.TemporaryDirectory() as temporary:
+            sheets = Path(temporary) / "sheets"
+            shutil.copytree(ROOT / "sheets", sheets)
+            # The reviewed sheets pass, and every image rendered from the PDF is compared.
+            reference = check_sheets.check_images(sheets)
+            self.assertEqual(
+                reference, {path: (sheets / path).read_bytes() for path in IMAGE_PATHS}
+            )
+            # Another page in place of PLL's, the last image checked.
+            shutil.copy(sheets / "f2l.png", sheets / "pll.png")
+            with self.assertRaisesRegex(ValueError, r"pll\.png: image does not match"):
+                check_sheets.check_images(sheets)
+            shutil.copy(ROOT / "sheets/pll.png", sheets / "pll.png")
+            reference[Path("pll.png")] = b"another drawing"
+            with self.assertRaisesRegex(ValueError, r"pll\.png: drawing differs"):
+                check_sheets.check_images(sheets, reference)
 
 
 if __name__ == "__main__":

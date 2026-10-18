@@ -1,41 +1,36 @@
-#!/usr/bin/env python3
-"""Build the four-page PDF and four 300 dpi PNGs."""
+"""Build the four-page PDF, four 300 dpi PNGs in output/."""
 
 import argparse
-from pathlib import Path
+import os
 import sys
+from pathlib import Path
 from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from metronotation.catalog import load_master
-from metronotation.pdf import export_pdf, export_pngs
+from metronotation.pdf import IMAGE_PATHS, export_pdf, export_pngs
 from metronotation.renderer import render_html
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "output")
-    args = parser.parse_args()
-    output = args.output.resolve()
-    # Keep local builds away from sources and the reviewed distribution.
-    protected = [
-        ROOT / name
-        for name in ("algorithms", "src", "docs", "tests", "scripts", "sheets", ".git", ".github")
-    ]
-    ancestors = (output, *output.parents)
-    if (output.exists() and output.samefile(ROOT)) or any(
-        source.exists() and any(parent.exists() and parent.samefile(source) for parent in ancestors)
-        for source in protected
-    ):
-        parser.error("Choose a separate generated-output directory")
-    output.mkdir(parents=True, exist_ok=True)
+    argparse.ArgumentParser(description=__doc__).parse_args()
+    output = ROOT / "output"
+    # A symlinked output directory could point at the reviewed sheets/.
+    if output.is_symlink():
+        raise SystemExit(f"{output} must be a directory, not a symlink")
+    output.mkdir(exist_ok=True)
     records = load_master()
-    with TemporaryDirectory(prefix="metro-notation-") as temporary:
-        html = Path(temporary) / "metro-notation.html"
+    # Build beside the destination, then move each finished file into place. Replacing the
+    # directory entry never writes through an existing symlink or hard link.
+    with TemporaryDirectory(prefix=".build-", dir=output) as temporary:
+        temporary = Path(temporary)
+        html = temporary / "metro-notation.html"
         html.write_text(render_html(records), encoding="utf-8")
-        export_pdf(html, output / "metro-notation.pdf")
-    export_pngs(output / "metro-notation.pdf", output)
+        export_pdf(html, temporary / "metro-notation.pdf")
+        export_pngs(temporary / "metro-notation.pdf", temporary)
+        for path in (Path("metro-notation.pdf"), *IMAGE_PATHS):
+            os.replace(temporary / path, output / path)
     print(f"Sheets: {output} (PDF and four PNGs)")
     return 0
 

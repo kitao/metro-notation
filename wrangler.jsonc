@@ -4,15 +4,10 @@
   "compatibility_date": "2026-10-06",
   "workers_dev": false,
   "preview_urls": false,
-  // The suffix wildcard also matches a query on the slashless URL so Static
-  // Assets can redirect it to /metro-notation/ without a separate zone rule.
-  "routes": [
-    { "pattern": "kitao.dev/metro-notation*", "zone_name": "kitao.dev" },
-    { "pattern": "kitao.dev/metro-notation/*", "zone_name": "kitao.dev" },
-  ],
-  "assets": {
-    "directory": "./dist",
-    "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page",
+  "routes": [{ "pattern": "kitao.dev/metro-notation*", "zone_name": "kitao.dev" }],
+  "assets": { "directory": "./dist" },
+  "build": {
+    "command": "node scripts/build-site.mjs",
+    "watch_dir": ["README.md", "web", "sheets"],
   },
 }

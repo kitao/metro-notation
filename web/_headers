@@ -1,0 +1,8 @@
+/metro-notation*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'none'; script-src https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://img.shields.io https://ko-fi.com; connect-src 'self' https://cloudflareinsights.com; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+# The sheets open in the browsers' image and PDF viewers, whose styles the policy would block.
+/metro-notation/sheets/*
+  ! Content-Security-Policy

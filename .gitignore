@@ -14,8 +14,11 @@ node_modules/
 .site-*/
 
 # Test and editor caches
+test-results/
 .pytest_cache/
 .ruff_cache/
 .coverage
 htmlcov/
 .DS_Store
+# Claude Code's personal settings, which Prettier would otherwise reformat
+.claude/settings.local.json

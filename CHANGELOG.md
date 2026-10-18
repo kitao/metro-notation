@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Organize the repository around the sheets, canonical algorithms, renderer and
+  specifications. Check that published PDF and PNG drawings match the build.
+
 ## 1.0 — 2026-09-21
 
 - Redesign all four sheets with consistent route geometry, compact illustrated
@@ -11,8 +16,6 @@
   concise English/Japanese README.
 - Replace the legacy renderer with HTML/SVG and a reproducible PDF/PNG build.
   Record the design specification and verify source data, cube states and output.
-- Organize the repository around the sheets, canonical algorithms, renderer and
-  specifications. Check that published PDF and PNG drawings match the build.
 
 ## 0.8.0
 - Modified OLL algorithms

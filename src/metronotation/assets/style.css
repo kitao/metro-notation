@@ -1,6 +1,13 @@
 /* One coordinate system: every sheet, track and station uses the same scale. */
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: white; }
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: white;
+}
 .sheet {
   position: relative;
   width: 1440px;
@@ -8,36 +15,82 @@ html, body { margin: 0; padding: 0; background: white; }
   aspect-ratio: 420 / 297;
   margin: 0 auto;
 }
-.sheet + .sheet { margin-top: 24px; }
-.sheet-content { position: absolute; inset: 2.020202% 1.428571%; }
-.sheet-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.case { position: absolute; }
-.notation-key { position: absolute; left: 0; top: 0; display: block; width: 100%; height: auto; }
-.sheet-heading, .sheet-footer { position: absolute; left: 0; display: block; width: 100%; height: auto; }
-.sheet-heading { top: 0; }
-.sheet-footer { bottom: -2.105263%; }
-.sheet-heading text { fill: #203b75; }
-.sheet-footer text { fill: #68777d; }
-svg text { font-family: "Arimo", sans-serif; fill: #4e5d65; }
+.sheet + .sheet {
+  margin-top: 24px;
+}
+.sheet-content {
+  position: absolute;
+  inset: 2.020202% 1.428571%;
+}
+.sheet-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.case {
+  position: absolute;
+}
+.notation-key {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sheet-heading,
+.sheet-footer {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sheet-heading {
+  top: 0;
+}
+.sheet-footer {
+  bottom: -2.105263%;
+}
+.sheet-heading text {
+  fill: #203b75;
+}
+.sheet-footer text {
+  fill: #68777d;
+}
+svg text {
+  font-family: 'Arimo', sans-serif;
+  fill: #4e5d65;
+}
 .sheet-heading .sheet-title {
-  font-family: "Cabin", sans-serif;
+  font-family: 'Cabin', sans-serif;
   font-size: 28px;
-  line-height: 32px;
   font-weight: 500;
-  letter-spacing: .1px;
+  letter-spacing: 0.1px;
 }
 .sheet-heading .notation-signature {
-  font-family: "Cabin", sans-serif;
+  font-family: 'Cabin', sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1.6px;
   fill: #a43a32;
-  color: #a43a32;
 }
-.case-map { display: block; width: 100%; height: 100%; }
-@page { size: A3 landscape; margin: 0; }
+.case-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+@page {
+  size: A3 landscape;
+  margin: 0;
+}
 @media print {
-  body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
   .sheet {
     width: 420mm;
     height: 297mm;
@@ -47,13 +100,25 @@ svg text { font-family: "Arimo", sans-serif; fill: #4e5d65; }
     break-after: page;
     break-inside: avoid;
   }
-  .sheet-content { inset: 6mm; }
-  .sheet-footer { bottom: -6mm; }
-  .sheet + .sheet { margin-top: 0; }
-  .sheet:last-child { break-after: auto; }
+  .sheet-content {
+    inset: 6mm;
+  }
+  .sheet-footer {
+    bottom: -6mm;
+  }
+  .sheet + .sheet {
+    margin-top: 0;
+  }
+  .sheet:last-child {
+    break-after: auto;
+  }
 }
-
 @media screen {
-  body { padding: 12px; background: #eef1f3; }
-  .sheet { background: white; }
+  body {
+    padding: 12px;
+    background: #eef1f3;
+  }
+  .sheet {
+    background: white;
+  }
 }

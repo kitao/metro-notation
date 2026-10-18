@@ -9,4 +9,5 @@ Unmodified, static TrueType files from the font authors.
 | `arimo-regular.ttf` | [Original](https://github.com/googlefonts/arimo/blob/4a6255f269916ae7ad3fc2706b0935e7621396b8/fonts/ttf/Arimo-Regular.ttf) | [SIL OFL 1.1](arimo-license.txt) | `41b22bc8f0b51f932825d37bc55b5eb6ba67dfe599a626e4aff2b43b624f9f8c` |
 
 Cabin is used for titles; Arimo for move notation and labels. Both are embedded
-in HTML and PDF with their SIL OFL copyright and license notices.
+in HTML with their SIL OFL copyright and license notices, and in PDF as subsets
+that keep the copyright notices.

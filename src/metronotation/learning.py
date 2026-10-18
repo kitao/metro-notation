@@ -3,8 +3,6 @@
 This module defines reading aids, not verified fingertrick instructions.
 """
 
-from .catalog import SOURCE
-
 IDIOMS = {
     ("R", "U", "R'", "U'"): "Sexy move",
     ("R'", "F", "R", "F'"): "Sledgehammer",
@@ -112,7 +110,7 @@ def sequence_tokens(record):
 
 def reading_breaks(record):
     result = set()
-    phrases = READING_PHRASES.get(record.key) if record.source == SOURCE else None
+    phrases = READING_PHRASES.get(record.key)
     if phrases:
         if " ".join(phrases).split() != [m.text for m in record.moves]:
             raise ValueError(f"{record.key}: reading phrases differ from source")

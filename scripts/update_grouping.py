@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
-"""Keep the published 119-case reading table synchronized with actual output."""
+"""Keep the route grouping table in docs/grouping.md synchronized with the renderer."""
 
 import argparse
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -14,7 +13,9 @@ from metronotation.renderer import diagram_groups
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--check", action="store_true", help="Fail instead of writing when the table is stale"
+    )
     args = parser.parse_args()
     path = ROOT / "docs/grouping.md"
     old = path.read_text(encoding="utf-8")
@@ -23,7 +24,8 @@ def main():
         "| ケース | 路線の区切り | 検出した定番手順 | 個別に区切りを指定 |",
         "|---|---|---|---|",
     ]
-    for record in load_master():
+    records = load_master()
+    for record in records:
         groups = " ／ ".join(
             "`" + " ".join(m.text for _, m in g) + "`" for g in diagram_groups(record)
         )
@@ -42,7 +44,7 @@ def main():
             return 1
     else:
         path.write_text(new, encoding="utf-8")
-    print("Grouping table: 119 cases match the renderer")
+    print(f"Grouping table: {len(records)} cases match the renderer")
     return 0
 
 

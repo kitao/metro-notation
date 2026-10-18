@@ -1,26 +1,21 @@
-#!/usr/bin/env python3
 """Check the photo transcription without simplifying or replacing its moves.
 
 Only the standard library is used. Structural cube checks detect some copying
-errors, not every wrong case, AUF, finger direction, or annotation. Photo review
+errors, not every wrong case, AUF, finger direction or annotation. Photo review
 is always required. Uncertain rows are never evaluated as complete algorithms.
 """
 
-from __future__ import annotations
-
 import argparse
 import hashlib
+import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
-import re
 
-
-ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "algorithms"
-import sys
-
-sys.path.insert(0, str(ROOT / "src"))
-from metronotation.cube import TOKEN, apply, solved_cube, self_check
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from metronotation import ALGORITHMS
+from metronotation.catalog import CASE_IDS
+from metronotation.cube import TOKEN, starting_state
 
 
 @dataclass
@@ -35,7 +30,7 @@ class Record:
 
 def read_records(kind):
     records = []
-    for line in (DATA / f"{kind.lower()}.md").read_text(encoding="utf-8").splitlines():
+    for line in (ALGORITHMS / f"{kind.lower()}.md").read_text(encoding="utf-8").splitlines():
         if not line.startswith("| "):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
@@ -47,15 +42,8 @@ def read_records(kind):
     return records
 
 
-def starting_cube(record):
-    cube = solved_cube()
-    for move in reversed(record.moves):
-        cube = apply(cube, move, inverse=True)
-    return cube
-
-
 def up_face(record):
-    cube = starting_cube(record)
+    cube = starting_state(record.moves)
     center = cube[((0, 1, 0), (0, 1, 0))]
     return "/".join(
         "".join("1" if cube[((x, 1, z), (0, 1, 0))] == center else "0" for x in (-1, 0, 1))
@@ -64,20 +52,19 @@ def up_face(record):
 
 
 def check_structure(record):
-    cube = starting_cube(record)
+    cube = starting_state(record.moves)
     centers = {normal: color for (pos, normal), color in cube.items() if pos == normal}
     wrong = {pos for (pos, normal), color in cube.items() if color != centers[normal]}
     lower = {pos for pos in wrong if pos[1] < 1}
     if record.kind in ("OLL", "PLL"):
         if lower:
             return f"inverse state disrupts F2L: {sorted(lower)}"
-        if record.kind == "PLL":
-            if any(
-                color != centers[(0, 1, 0)]
-                for (pos, normal), color in cube.items()
-                if normal == (0, 1, 0)
-            ):
-                return "inverse state has an unoriented U face"
+        if record.kind == "PLL" and any(
+            color != centers[(0, 1, 0)]
+            for (pos, normal), color in cube.items()
+            if normal == (0, 1, 0)
+        ):
+            return "inverse state has an unoriented U face"
     else:
         # A single unsolved F2L pair may occupy one bottom corner and one
         # middle-layer edge. The other three slots and the cross must survive.
@@ -98,15 +85,14 @@ def main():
         "--photos", action="store_true", help="Also verify the six original photograph checksums"
     )
     args = parser.parse_args()
-    self_check()
     errors = []
     if args.photos:
-        source = (DATA / "README.md").read_text(encoding="utf-8")
+        source = (ALGORITHMS / "README.md").read_text(encoding="utf-8")
         photographs = re.findall(r"\| P[1-6] \| \[photos/([^\]]+)\].*?`([0-9a-f]{64})`", source)
         if len(photographs) != 6:
             errors.append("Expected six original photo checksums")
         for filename, digest in photographs:
-            path = DATA / "photos" / filename
+            path = ALGORITHMS / "photos" / filename
             if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
                 errors.append(f"Original photograph changed or missing: {filename}")
         if not errors:
@@ -114,21 +100,17 @@ def main():
     pending = []
     face_rows = re.findall(
         r"^\| (\d{2}) \| `([01]{3}/[01]{3}/[01]{3})` \|$",
-        (DATA / "oll-patterns.md").read_text(encoding="utf-8"),
+        (ALGORITHMS / "oll-patterns.md").read_text(encoding="utf-8"),
         re.MULTILINE,
     )
     faces = dict(face_rows)
     if len(face_rows) != 57 or set(faces) != {f"{n:02}" for n in range(1, 58)}:
         errors.append("OLL: incomplete or duplicate photo face data")
-    for kind, expected in (
-        ("F2L", {f"{n:02}" for n in range(1, 42)}),
-        ("OLL", {f"{n:02}" for n in range(1, 58)}),
-        ("PLL", set("Aa Ab E F Ga Gb Gc Gd H Ja Jb Na Nb Ra Rb T Ua Ub V Y Z".split())),
-    ):
+    for kind, expected in CASE_IDS.items():
         records = read_records(kind)
         ids = [record.id for record in records]
         if set(ids) != expected or len(ids) != len(expected):
-            errors.append(f"{kind}: missing, duplicate, or unexpected IDs")
+            errors.append(f"{kind}: missing, duplicate or unexpected IDs")
         checked = 0
         for record in records:
             label = f"{kind} {record.id}"
@@ -155,8 +137,8 @@ def main():
     for error in errors:
         print(f"ERROR: {error}")
     print("Pending photo confirmation: " + (", ".join(pending) or "none"))
-    print("Checked OLL U-face patterns against 57 photo transcriptions.")
-    print("Checks do not prove side faces, finger direction, or complete photo fidelity.")
+    print(f"Compared OLL U-face patterns with {len(faces)} photo transcriptions.")
+    print("Checks do not prove side faces, finger direction or complete photo fidelity.")
     return 1 if errors or (args.require_complete and pending) else 0
 
 

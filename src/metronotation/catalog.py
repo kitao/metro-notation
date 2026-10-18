@@ -1,13 +1,19 @@
-"""Read the canonical Markdown without duplicating the master in code or JSON."""
+"""Read the algorithms from the canonical Markdown master."""
 
-from dataclasses import dataclass, field, replace
 import re
+from dataclasses import dataclass, field, replace
 
 from . import ALGORITHMS
 from .notation import Move, parse_moves
 from .recognition import Recognition, load_f2l_diagrams
 
 SOURCE = "https://store.tribox.com/products/detail.php?product_id=3973"
+CASE_IDS = {
+    "F2L": {f"{i:02}" for i in range(1, 42)},
+    "OLL": {f"{i:02}" for i in range(1, 58)},
+    "PLL": {"Aa", "Ab", "E", "F", "Ga", "Gb", "Gc", "Gd", "H", "Ja", "Jb"}
+    | {"Na", "Nb", "Ra", "Rb", "T", "Ua", "Ub", "V", "Y", "Z"},
+}
 
 
 @dataclass(frozen=True)
@@ -18,12 +24,10 @@ class Algorithm:
     hints: dict[int, str] = field(default_factory=dict)
     regrips: dict[int, str] = field(default_factory=dict)
     notes: str = ""
-    source_lines: tuple[str, ...] = ()
-    source: str = "User algorithms"
     recognition: Recognition | None = None
 
     @property
-    def beginner(self):
+    def learn_first(self):
         """The source sheet's young-leaf marker, not an inferred difficulty score."""
         return "若葉" in self.notes
 
@@ -66,7 +70,7 @@ def read_markdown(text, category):
             raise ValueError(f"{category} {id_}: malformed move column")
         moves = parse_moves(" ".join(source_lines))
         hints = {}
-        if colors not in ("—", "未照合"):
+        if colors != "—":
             for item in colors.split(";"):
                 match = re.fullmatch(r"\s*([PT])(\d+):(.+?)\s*", item)
                 if not match:
@@ -82,9 +86,7 @@ def read_markdown(text, category):
             if not 0 <= index < len(moves) or index in regrips:
                 raise ValueError(f"{category} {id_}: invalid regrip position")
             regrips[index] = "left" if hand else "regrip"
-        records.append(
-            Algorithm(category, id_, moves, hints, regrips, notes, source_lines, source=SOURCE)
-        )
+        records.append(Algorithm(category, id_, moves, hints, regrips, notes))
     if not records:
         raise ValueError(f"{category}: no algorithm rows found")
     return records
@@ -92,11 +94,7 @@ def read_markdown(text, category):
 
 def load_master():
     result = []
-    for category, expected in (
-        ("F2L", {f"{i:02}" for i in range(1, 42)}),
-        ("OLL", {f"{i:02}" for i in range(1, 58)}),
-        ("PLL", set("Aa Ab E F Ga Gb Gc Gd H Ja Jb Na Nb Ra Rb T Ua Ub V Y Z".split())),
-    ):
+    for category, expected in CASE_IDS.items():
         records = read_markdown(
             (ALGORITHMS / (category.lower() + ".md")).read_text(encoding="utf-8"), category
         )

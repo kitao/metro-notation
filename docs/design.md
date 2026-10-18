@@ -62,9 +62,9 @@ thickness is measured perpendicular to the track, including diagonal segments.
 
 Distribute the four-page PDF and PNG images rendered from it at 300 dpi.
 Keep the PDF and four PNGs in `sheets/`. The README displays those PNGs at a
-reduced size, using GitHub's automatic links to its image viewer.
+reduced size.
 HTML/SVG is the rendering source; its local preview
-keeps the same columns, margins and legend as the PDF.
+keeps the same margins and legend as the PDF.
 
 Long cases wrap between complete routes at the same scale. OLL 41 and 42 use two
 rows, with the cube centered beside the sequence. H-perm's routes and captions sit
@@ -97,14 +97,14 @@ breaks organize reading; only the original regrip annotations specify a grip cha
 
 The legend sits beside the title. Its first slot stacks Start above Learn first,
 without equals signs. Six equal-width slots follow, pairing a track with a cube:
-R, L', M', r, l', x. All examples point upward. Slots are 124 wide, with 17 units
+R, L', M', r, l', x. All examples point upward. Slots are 124 wide, with 14 units
 of visible space on each side of the equals sign.
 
 F2L uses the fixed photo masks in blue, red, white and gray, with blue/red visible
 side centers. A continuous charcoal body fills the sticker gaps. Hidden tiles
 are 14 × 14 rotated squares aligned to the cube edge, with a 2.5 perpendicular
-gap and a 1.3 charcoal outline. OLL top masks also come from the photographs;
-OLL sides and PLL diagrams are computed from the algorithms.
+gap and a 1.3 charcoal outline. OLL and PLL diagrams are computed from the algorithms;
+the OLL top faces are checked against masks from the photographs.
 
 ## Attribution
 

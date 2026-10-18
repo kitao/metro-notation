@@ -1,15 +1,16 @@
 """Minimal reference sheets, faithful to the original metro-map visual language."""
 
-from html import escape
 import math
+from html import escape
 
 from . import __version__
-from .typography import stylesheet
 from .catalog import SOURCE
-from .learning import idiom_tokens, learning_breaks, learning_units, reading_breaks, sequence_tokens
 from .cube import starting_state
-from .notation import group_moves, trace, parse_moves, route_insets, START_RADIUS, STATION_RADIUS
+from .learning import idiom_tokens, learning_breaks, learning_units, reading_breaks, sequence_tokens
+from .notation import START_RADIUS, STATION_RADIUS, group_moves, parse_moves, route_insets, trace
+from .typography import stylesheet
 
+# Track colors by layer, then cube face colors and the other inks.
 COLORS = {"near": "#242424", "far": "#0099d6", "slice": "#139136", "rotation": "#e36a00"}
 FACE_COLORS = {
     "U": "#ffe500",
@@ -19,52 +20,60 @@ FACE_COLORS = {
     "B": "#00a841",
     "L": "#ffa400",
 }
+START_COLOR = "#ffd700"
+LEARN_FIRST_COLOR = "#38b000"
+IDIOM_COLOR = "#c94f00"
+UNKNOWN_COLOR = "#d4d4d4"
+CUBE_BODY_COLOR = "#303638"
 UNIT = 24
 PAD = 6
 TRACK = UNIT * 0.15
 RAIL_GAP = UNIT * 0.07
 ORIGIN_RADIUS = UNIT * START_RADIUS
-PRIORITY_COLOR = "#38b000"
 PAGE_INSET = 24
 BODY_TOP = 92
 BOTTOM_INSET = 24
 BODY_HEIGHT = 870
+COLUMN_GAP = 24
+# Columns of a full sheet. A selection of fewer cases gets wider columns but keeps the
+# grouping these widths give, so its diagrams match the sheets.
+SHEET_COLUMNS = {"F2L": 4, "OLL": 4, "PLL": 3}
+# Routes start to the right of the cube and the case label.
+ROUTE_X = 92
 
 
-IDIOM_COLOR = "#c94f00"
+# Advances in em of the bundled Arimo (metrics compatible with Arial), so captions wrap
+# only where the printed text needs it.
+MOVE_ADVANCE = {
+    "R": 0.722,
+    "L": 0.556,
+    "U": 0.722,
+    "D": 0.722,
+    "F": 0.611,
+    "B": 0.667,
+    "M": 0.833,
+    "E": 0.667,
+    "S": 0.667,
+    "r": 0.333,
+    "l": 0.222,
+    "u": 0.556,
+    "d": 0.556,
+    "f": 0.278,
+    "b": 0.556,
+    "x": 0.5,
+    "y": 0.5,
+    "z": 0.5,
+    "2": 0.556,
+    "3": 0.556,
+    "'": 0.191,
+    " ": 0.278,
+    # The en space that separates learning units in a caption.
+    "\u2002": 0.5,
+}
 
 
-# Arimo advances in em (compatible with Arial); proportional widths avoid gratuitous line wrapping.
-MOVE_ADVANCE = dict(
-    zip(
-        "RLUDFBMESrludfbxyz23' w",
-        (
-            0.722,
-            0.556,
-            0.722,
-            0.722,
-            0.611,
-            0.667,
-            0.833,
-            0.667,
-            0.667,
-            0.333,
-            0.222,
-            0.556,
-            0.556,
-            0.278,
-            0.556,
-            0.5,
-            0.5,
-            0.5,
-            0.556,
-            0.556,
-            0.191,
-            0.278,
-            0.722,
-        ),
-    )
-)
+def column_width(count):
+    return (1440 - 2 * PAGE_INSET - COLUMN_GAP * (count - 1)) / count
 
 
 def svg_open(width, height, title, cls=""):
@@ -78,7 +87,7 @@ def route_size(group, caption_breaks=()):
     caption_width = (
         sum(MOVE_ADVANCE[c] for c in " ".join(m.text for _, m in group)) * 10.5
         + 4
-        + extra_gaps * (0.5 - 0.278) * 10.5
+        + extra_gaps * (MOVE_ADVANCE["\u2002"] - MOVE_ADVANCE[" "]) * 10.5
     )
     return max(caption_width, max(1, max(xs) - min(xs)) * UNIT + 2 * PAD), max(
         1, max(ys) - min(ys)
@@ -120,7 +129,7 @@ def route_svg(group, caption_breaks=()):
         attrs = f'x1="{a[0]:.6f}" y1="{a[1]:.6f}" x2="{b[0]:.6f}" y2="{b[1]:.6f}"'
         width_ = UNIT * 0.03 if move.layer == "slice" else TRACK
         parts.append(
-            f'<g data-index="{index}" data-move="{escape(move.text, quote=True)}" data-step="{index}" data-direction="{dx},{dy}" data-turns="{move.count}" data-layer="{move.layer}">'
+            f'<g data-index="{index}" data-move="{escape(move.text, quote=True)}" data-direction="{dx},{dy}" data-turns="{move.count}" data-layer="{move.layer}">'
         )
         if move.wide:
             # Draw two actual rails. A white overpaint can erase both thin rails
@@ -139,16 +148,11 @@ def route_svg(group, caption_breaks=()):
                 f'<line {attrs} stroke="{color}" stroke-width="{width_:g}" stroke-linecap="butt"/>'
             )
         parts.append("</g>")
-
-        def station(p):
-            dots[p] = color
-
-        station(a)
-        station(b)
+        dots[a] = dots[b] = color
         # Quarter-turn stations are evenly spaced even when a loop end is inset.
         raw_a = point(x - dx * move.count, y - dy * move.count)
         for q in range(1, move.count):
-            station((raw_a[0] + dx * UNIT * q, raw_a[1] + dy * UNIT * q))
+            dots[raw_a[0] + dx * UNIT * q, raw_a[1] + dy * UNIT * q] = color
     for (cx, cy), color in dots.items():
         parts.append(
             f'<circle cx="{cx:.6f}" cy="{cy:.6f}" r="{UNIT * STATION_RADIUS:g}" fill="{color}"/>'
@@ -158,15 +162,18 @@ def route_svg(group, caption_breaks=()):
     parts.append(
         f'<circle class="origin" cx="{sx:.6f}" cy="{sy:.6f}" r="{ORIGIN_RADIUS:g}" fill="{color}"/>'
     )
-    parts.append(f'<circle cx="{sx:.6f}" cy="{sy:.6f}" r="{UNIT * 0.095:g}" fill="#ffd700"/>')
+    parts.append(f'<circle cx="{sx:.6f}" cy="{sy:.6f}" r="{UNIT * 0.095:g}" fill="{START_COLOR}"/>')
     return "".join(parts) + "</svg>"
 
 
 def cube_svg(record):
-    cube = starting_state([move.cube_token for move in record.moves])
-    center = cube[((0, 1, 0), (0, 1, 0))]
     if record.category == "F2L":
-        return isometric_cube(cube, record.key, record.recognition)
+        # F2L shows the fixed diagram reviewed against the photographs.
+        if record.recognition is None:
+            raise ValueError(f"{record.key}: F2L needs its recognition diagram")
+        return isometric_cube(record.recognition, record.key)
+    cube = starting_state([move.text for move in record.moves])
+    center = cube[((0, 1, 0), (0, 1, 0))]
     positions = (
         [((x, 1, -1), (0, 0, -1)) for x in (-1, 0, 1)]
         + [((1, 1, z), (1, 0, 0)) for z in (-1, 0, 1)]
@@ -188,12 +195,17 @@ def cube_svg(record):
     for position in positions:
         color = cube[position]
         fill = (
-            ("#ffe500" if color == center else "#d4d4d4")
+            (FACE_COLORS["U"] if color == center else UNKNOWN_COLOR)
             if record.category == "OLL"
             else ("white" if position[1] == (0, 1, 0) else FACE_COLORS[normal_face[centers[color]]])
         )
         colors.append(
-            ("#58656b" if fill == "#ffe500" else ("#d4d4d4" if fill == "white" else fill), fill)
+            (
+                "#58656b"
+                if fill == FACE_COLORS["U"]
+                else (UNKNOWN_COLOR if fill == "white" else fill),
+                fill,
+            )
         )
     return top_cube(colors, record.key)
 
@@ -212,44 +224,20 @@ def top_cube(colors, title):
         else:
             x, y, w, h = 18 + (i - 12) % 3 * 23, 18 + (i - 12) // 3 * 23, 20, 20
         parts.append(
-            f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="0" fill="{fill}" stroke="{stroke}" stroke-width="1.2"/>'
+            f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{fill}" stroke="{stroke}" stroke-width="1.2"/>'
         )
     return "".join(parts) + "</svg>"
 
 
-def f2l_display(cube):
-    """Photo-style recognition mask, separate from physical cube face colors."""
-    centers = {normal: color for (pos, normal), color in cube.items() if pos == normal}
-    slots = [
-        side
-        for side in (-1, 1)
-        if any(
-            color != centers[normal]
-            for (pos, normal), color in cube.items()
-            if pos[0] == side and pos[2] == 1 and pos[1] in (-1, 0)
-        )
-    ]
-    if len(slots) != 1:
-        raise ValueError("F2L diagram needs exactly one unfinished front slot")
-    side = slots[0]
-    front, flank, down = (centers[n] for n in ((0, 0, 1), (side, 0, 0), (0, -1, 0)))
-    roles = {front: "B" if side == 1 else "R", flank: "R" if side == 1 else "B", down: "W"}
-    target = {front, flank}
-    pieces = {}
-    for (pos, normal), color in cube.items():
-        pieces.setdefault(pos, set()).add(color)
-    mask = {}
-    for (pos, normal), color in cube.items():
-        active = pieces[pos] in (target, target | {down})
-        slot = pos[0] == side and pos[2] == 1 and pos[1] in (-1, 0)
-        show = active or (pos[1] < 1 and not slot and normal[1] == 0)
-        mask[pos, normal] = roles.get(color, ".") if show else "."
-    return side, mask
-
-
-def isometric_cube(cube, title, recognition=None):
-    side, mask = (recognition.side, recognition.colors) if recognition else f2l_display(cube)
-    palette = {"B": "#0866ef", "R": "#f03225", "W": "#ffffff", ".": "#d4d4d4"}
+def isometric_cube(recognition, title):
+    side, mask = recognition.side, recognition.colors
+    # Photo-style roles: blue and red mark the slot's faces, white the bottom, gray the rest.
+    palette = {
+        "B": FACE_COLORS["F"],
+        "R": FACE_COLORS["R"],
+        "W": FACE_COLORS["D"],
+        ".": UNKNOWN_COLOR,
+    }
 
     def project(p):
         x, y, z = p
@@ -290,7 +278,7 @@ def isometric_cube(cube, title, recognition=None):
             ]
             coords = " ".join(f"{x:g},{y:g}" for x, y in corners)
             parts.append(
-                f'<polygon class="hidden-sticker" data-position="{tuple(pos)}" data-normal="{normal}" data-color="{role}" points="{coords}" fill="{palette[role]}" stroke="#303638" stroke-width="1.3" stroke-linejoin="round"/>'
+                f'<polygon class="hidden-sticker" data-position="{tuple(pos)}" data-normal="{normal}" data-color="{role}" points="{coords}" fill="{palette[role]}" stroke="{CUBE_BODY_COLOR}" stroke-width="1.3" stroke-linejoin="round"/>'
             )
     # One continuous body under all stickers prevents white pinholes where
     # the separately outlined tile corners meet.
@@ -306,7 +294,7 @@ def isometric_cube(cube, title, recognition=None):
         )
     ]
     coords = " ".join(f"{x:g},{y:g}" for x, y in outline)
-    parts.append(f'<polygon class="cube-body" points="{coords}" fill="#303638"/>')
+    parts.append(f'<polygon class="cube-body" points="{coords}" fill="{CUBE_BODY_COLOR}"/>')
     for normal, axes in (((0, 1, 0), (0, 2)), ((0, 0, 1), (0, 1)), ((side, 0, 0), (2, 1))):
         fixed = next(i for i, v in enumerate(normal) if v)
         for row in (-1, 0, 1):
@@ -323,7 +311,7 @@ def isometric_cube(cube, title, recognition=None):
                 role = mask.get((tuple(pos), normal), ".")
                 coords = " ".join(f"{x:g},{y:g}" for x, y in corners)
                 parts.append(
-                    f'<polygon class="face-sticker" data-position="{tuple(pos)}" data-normal="{normal}" data-color="{role}" points="{coords}" fill="{palette[role]}" stroke="#303638" stroke-width="1.3" stroke-linejoin="round"/>'
+                    f'<polygon class="face-sticker" data-position="{tuple(pos)}" data-normal="{normal}" data-color="{role}" points="{coords}" fill="{palette[role]}" stroke="{CUBE_BODY_COLOR}" stroke-width="1.3" stroke-linejoin="round"/>'
                 )
     return "".join(parts) + "</svg>"
 
@@ -336,8 +324,8 @@ def diagram_groups(record):
     cursor = 0
     boundaries = (*record.regrips, *reading_breaks(record))
     protected = learning_units(record)
-    room = 356 if record.category == "PLL" else 238
-    height_limit = {"F2L": 64, "OLL": 94, "PLL": 112}.get(record.category, 92)
+    room = column_width(SHEET_COLUMNS[record.category]) - ROUTE_X
+    height_limit = {"F2L": 64, "OLL": 94, "PLL": 112}[record.category]
 
     def extent(ms):
         return route_size(tuple(enumerate(ms)))
@@ -369,24 +357,21 @@ def case_route_size(record, group):
     return route_size(group, learning_breaks(record))
 
 
-def case_size(record):
-    groups = diagram_groups(record)
-    sizes = [case_route_size(record, group) for group in groups]
-    return 92 + sum(w for w, h in sizes) + 8 * (len(sizes) - 1), max(
-        42, *(h for w, h in sizes)
-    ) + 18
-
-
 def place_svg(svg, x, y, width, height):
     return svg.replace(
         "<svg ", f'<svg x="{x:g}" y="{y:g}" width="{width:g}" height="{height:g}" ', 1
     )
 
 
+def line_height(groups):
+    """Height of one line of routes; the cube sets the minimum."""
+    return max(42, *(route_size(g)[1] for g in groups))
+
+
 def case_lines(record, width, pitch):
     """Wrap only between intact route groups; keep every diagram at native size."""
     groups = diagram_groups(record)
-    room = width - 92
+    room = width - ROUTE_X
     best = {len(groups): (0, 0, ())}
     for start in range(len(groups) - 1, -1, -1):
         options = []
@@ -395,7 +380,7 @@ def case_lines(record, width, pitch):
             used += case_route_size(record, groups[end - 1])[0] + (8 if end > start + 1 else 0)
             if used > room + 0.001:
                 break
-            height = max(42, *(route_size(g)[1] for g in groups[start:end]))
+            height = line_height(groups[start:end])
             span = math.ceil((height + 16) / pitch)
             tail_span, tail_cost, tail = best[end]
             options.append(
@@ -411,9 +396,7 @@ def case_lines(record, width, pitch):
     return best[0][2]
 
 
-def render_case(record, cell_width, cell_height, scale, x, y, pitch, top_trim=0):
-    key = escape(record.key, quote=True)
-    lines = case_lines(record, cell_width, pitch)
+def render_case(record, lines, cell_width, cell_height, pitch, top_trim=0):
     idioms = idiom_tokens(record)
     sequences = sequence_tokens(record)
     caption_breaks = learning_breaks(record)
@@ -422,25 +405,25 @@ def render_case(record, cell_width, cell_height, scale, x, y, pitch, top_trim=0)
     baselines = [first_baseline]
     for groups, _ in lines[1:]:
         # Continuation stays closer to its own line than to the next case.
-        baselines.append(baselines[-1] + max(42, *(route_size(g)[1] for g in groups)) + 28)
-    first_center = baselines[0] - 12 - max(42, *(route_size(g)[1] for g in lines[0][0])) / 2
-    last_center = baselines[-1] - 12 - max(42, *(route_size(g)[1] for g in lines[-1][0])) / 2
+        baselines.append(baselines[-1] + line_height(groups) + 28)
+    first_center = baselines[0] - 12 - line_height(lines[0][0]) / 2
+    last_center = baselines[-1] - 12 - line_height(lines[-1][0]) / 2
     label_y = first_baseline if len(lines) == 1 else (first_center + last_center) / 2 + 33
     cube_bottom = label_y - 12
     parts.append(place_svg(cube_svg(record), 26, cube_bottom - 42, 42, 42))
-    if record.beginner:
+    if record.learn_first:
         parts.append(
-            f'<svg class="beginner-mark" x="2" y="{cube_bottom - 26:g}" width="10" height="10" viewBox="0 0 10 10" role="img" aria-label="Learn first: source priority">'
-            f'<circle cx="5" cy="5" r="{ORIGIN_RADIUS:g}" fill="{PRIORITY_COLOR}"/>'
+            f'<svg class="learn-first-mark" x="2" y="{cube_bottom - 26:g}" width="10" height="10" viewBox="0 0 10 10" role="img" aria-label="Learn first: source priority">'
+            f'<circle cx="5" cy="5" r="{ORIGIN_RADIUS:g}" fill="{LEARN_FIRST_COLOR}"/>'
             "</svg>"
         )
     label = record.id if record.category == "PLL" else f"{record.category} {record.id}"
     parts.append(
         f'<text class="case-label" x="47" y="{label_y:g}" font-size="10.5" text-anchor="middle">{escape(label)}</text>'
     )
-    for (groups, span), caption_y in zip(lines, baselines):
+    for (groups, _), caption_y in zip(lines, baselines):
         caption_y += 16 if record.key == "PLL-H" else 0
-        route_x = 92
+        route_x = ROUTE_X
         for group in groups:
             width, height = route_size(group, caption_breaks)
             first = group[0][0]
@@ -478,7 +461,7 @@ def render_case(record, cell_width, cell_height, scale, x, y, pitch, top_trim=0)
             )
             route_x += width + 8
     parts.append("</svg>")
-    return f'<article class="case" style="--cell-width:{cell_width:g}px;--cell-height:{cell_height:g}px;left:{x / 1440 * 100:.8f}%;top:{y / 1006 * 100:.8f}%;width:{cell_width / 1440 * 100:.8f}%;height:{cell_height / 1006 * 100:.8f}%" data-key="{key}">{"".join(parts)}</article>'
+    return "".join(parts)
 
 
 def layer_cube(symbol):
@@ -528,46 +511,39 @@ def layer_cube(symbol):
     return "".join(parts) + "</svg>"
 
 
-def render_legend(scale):
+def render_legend():
     """A label pair precedes six physical mappings with equal visible gaps."""
 
     def equals(cx, cy):
         return "".join(
-            f'<line x1="{cx - 3 * scale:g}" y1="{cy + dy * scale:g}" x2="{cx + 3 * scale:g}" y2="{cy + dy * scale:g}" stroke="#68777d" stroke-width="{0.8 * scale:g}"/>'
+            f'<line x1="{cx - 3:g}" y1="{cy + dy:g}" x2="{cx + 3:g}" y2="{cy + dy:g}" stroke="#68777d" stroke-width=".8"/>'
             for dy in (-1.5, 1.5)
         )
 
-    def label_pair(priority=False):
-        cy = 46 if priority else 18
-        if priority:
-            symbol = (
-                f'<circle cx="18" cy="{cy}" r="{ORIGIN_RADIUS * scale:g}" fill="{PRIORITY_COLOR}"/>'
-            )
-            edge, label = 18 + ORIGIN_RADIUS * scale, "Learn first"
+    def label_pair(learn_first=False):
+        cy = 46 if learn_first else 18
+        if learn_first:
+            symbol = f'<circle cx="18" cy="{cy}" r="{ORIGIN_RADIUS:g}" fill="{LEARN_FIRST_COLOR}"/>'
+            label = "Learn first"
         else:
             symbol = (
-                f'<circle cx="18" cy="{cy}" r="{ORIGIN_RADIUS * scale:g}" fill="{COLORS["near"]}"/>'
-                f'<circle cx="18" cy="{cy}" r="{UNIT * 0.095 * scale:g}" fill="#ffd700"/>'
+                f'<circle cx="18" cy="{cy}" r="{ORIGIN_RADIUS:g}" fill="{COLORS["near"]}"/>'
+                f'<circle cx="18" cy="{cy}" r="{UNIT * 0.095:g}" fill="{START_COLOR}"/>'
             )
-            edge, label = 18 + ORIGIN_RADIUS * scale, "Start"
-        cls = "priority-key" if priority else ""
-        return (
-            symbol
-            + f'<text class="{cls}" x="{edge + 14 * scale:g}" y="{cy + 4}" font-size="11">{label}</text>'
-        )
+            label = "Start"
+        x = 18 + ORIGIN_RADIUS + 14
+        return symbol + f'<text x="{x:g}" y="{cy + 4}" font-size="11">{label}</text>'
 
-    items = [label_pair() + label_pair(True)]
+    items = [label_pair() + label_pair(learn_first=True)]
     for symbol in ("R", "L'", "M'", "r", "l'", "x"):
         group = ((-1, parse_moves(symbol)[0]),)
         width, height = route_size(group)
-        equal_x = (width / 2 + ORIGIN_RADIUS + 17) * scale
-        cube_x = equal_x + (17 - 12.08 * 52 / 120) * scale
+        equal_x = width / 2 + ORIGIN_RADIUS + 17
+        cube_x = equal_x + 17 - 12.08 * 52 / 120
         items.append(
-            place_svg(route_svg(group), 0, 32 - height * scale / 2, width * scale, height * scale)
+            place_svg(route_svg(group), 0, 32 - height / 2, width, height)
             + equals(equal_x, 32)
-            + place_svg(
-                layer_cube(symbol), cube_x, 32 - 64 * 52 / 120 * scale, 52 * scale, 52 * scale
-            )
+            + place_svg(layer_cube(symbol), cube_x, 32 - 64 * 52 / 120, 52, 52)
         )
     parts = [svg_open(1440, 100, "How to read the diagrams", "notation-key")]
     for i, item in enumerate(items):
@@ -592,7 +568,8 @@ def page_identity(category, batch):
     footer = (
         svg_open(1440, 24, "Attribution", "sheet-footer")
         + '<text x="1440" y="16" font-size="10.5" text-anchor="end">© 2020–2026 Takashi Kitao ('
-        + '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>) | Algorithm source: <a href="https://store.tribox.com/products/detail.php?product_id=3973">tribox CFOP Sheet B-1.0</a></text></svg>'
+        + '<a href="https://github.com/kitao/metro-notation">github.com/kitao/metro-notation</a>) | Algorithm source: '
+        + f'<a href="{escape(SOURCE, quote=True)}">tribox CFOP Sheet B-1.0</a></text></svg>'
     )
     return heading, footer
 
@@ -600,10 +577,9 @@ def page_identity(category, batch):
 def column_layout(records):
     """Equal columns and a fixed baseline grid, reading down then right."""
     category = records[0].category
-    pitch = {"F2L": 80, "OLL": 110, "PLL": 128}.get(category, 108)
-    count = min(3 if category == "PLL" else 4, len(records))
-    gap = 24
-    width = (1440 - 2 * PAGE_INSET - gap * (count - 1)) / count
+    pitch = {"F2L": 80, "OLL": 110, "PLL": 128}[category]
+    count = min(SHEET_COLUMNS[category], len(records))
+    width = column_width(count)
     capacity = math.ceil(BODY_HEIGHT / pitch)
     spans = [sum(span for _, span in case_lines(r, width, pitch)) for r in records]
     candidates = []
@@ -612,8 +588,7 @@ def column_layout(records):
         if not remaining:
             if start == len(records):
                 first_height = max(
-                    max(42, *(route_size(g)[1] for g in case_lines(c[0], width, pitch)[0][0])) + 16
-                    for c in columns
+                    line_height(case_lines(c[0], width, pitch)[0][0]) + 16 for c in columns
                 )
                 if (max(loads) - 1) * pitch + first_height <= BODY_HEIGHT:
                     score = (
@@ -638,20 +613,16 @@ def column_layout(records):
     # the row rhythm. The lower frame inset then matches the title's top inset.
     if max(loads) > 1:
         pitch = (1006 - BODY_TOP - BOTTOM_INSET - first_height) / (max(loads) - 1)
-    return columns, width, pitch, max(loads), gap, first_height
+    return columns, width, pitch, loads, first_height
 
 
-def render_html(records, lang="en", title=None):
-    if lang not in ("en", "ja"):
-        raise ValueError("Supported languages: en, ja")
+def render_html(records):
     if not records or len({r.key for r in records}) != len(records):
         raise ValueError("A document needs unique, non-empty case IDs")
-    title = title or f"Cube Algorithms — Metro Notation {__version__}"
-    scale = 1.0
     sheets = []
     for category in dict.fromkeys(r.category for r in records):
         cases = [r for r in records if r.category == category]
-        limit = 21 if category == "PLL" else (30 if category == "OLL" else 44)
+        limit = {"F2L": 44, "OLL": 30, "PLL": 21}[category]
         offset, number = 0, 1
         while offset < len(cases):
             count = min(limit, len(cases) - offset)
@@ -659,44 +630,41 @@ def render_html(records, lang="en", title=None):
                 batch = cases[offset : offset + count]
                 layout = column_layout(batch)
                 if layout is not None:
-                    columns, width, pitch, row_count, column_gap, first_height = layout
+                    columns, width, pitch, loads, first_height = layout
                     break
                 count -= 1
             if not count:
                 raise ValueError("An algorithm exceeds the sheet at native size")
             cards = []
-            body_top = BODY_TOP
+            # The rows were planned before the pitch grew to fill the page; the final
+            # pitch must wrap every case the same way, or the grid would drift.
+            lines = [[case_lines(r, width, pitch) for r in column] for column in columns]
+            if [sum(n for case in column for _, n in case) for column in lines] != loads or max(
+                line_height(column[0][0][0]) + 16 for column in lines
+            ) != first_height:
+                raise ValueError(f"{category}: rows changed when the pitch was stretched")
             for col_index, column in enumerate(columns):
-                x = PAGE_INSET + col_index * (width + column_gap)
+                x = PAGE_INSET + col_index * (width + COLUMN_GAP)
                 row_index = 0
-                for r in column:
-                    span = sum(n for _, n in case_lines(r, width, pitch))
+                for r, case in zip(column, lines[col_index]):
+                    span = sum(n for _, n in case)
                     top_trim = pitch - first_height if row_index == 0 else 0
                     height = span * pitch - top_trim + (16 if r.key == "PLL-H" else 0)
-                    y = body_top + (first_height + (row_index - 1) * pitch if row_index else 0)
-                    card = render_case(r, width, height, scale, x, y, pitch, top_trim)
-                    card = card.replace(
-                        'style="',
-                        f'style="--column:{col_index + 1};--row:{row_index + 2};--span:{span};',
-                        1,
+                    y = BODY_TOP + (first_height + (row_index - 1) * pitch if row_index else 0)
+                    # Data attributes record the grid position for the layout tests.
+                    cards.append(
+                        f'<article class="case" style="left:{x / 1440 * 100:.8f}%;top:{y / 1006 * 100:.8f}%;width:{width / 1440 * 100:.8f}%;height:{height / 1006 * 100:.8f}%" data-key="{escape(r.key, quote=True)}" data-column="{col_index + 1}" data-row="{row_index + 1}" data-span="{span}">'
+                        f"{render_case(r, case, width, height, pitch, top_trim)}</article>"
                     )
-                    card = card.replace(
-                        'class="case"',
-                        f'class="case" data-column="{col_index + 1}" data-row="{row_index + 1}" data-span="{span}"',
-                        1,
-                    )
-                    cards.append(card)
                     row_index += span
             heading, footer = page_identity(category, batch)
             sheet_key = escape(f"{category}-{number}", quote=True)
-            column_css = " ".join(f"{width:g}px" for _ in columns)
             sheets.append(
-                f'<section class="sheet" style="--body-top:{body_top:g}px;--columns:{column_css};--column-gap:{column_gap:g}px;--row-pitch:{pitch}px;--first-row:{first_height}px;--row-count:{row_count - 1};--footer-row:{row_count + 2}" id="{sheet_key}" aria-label="{sheet_key}" data-columns="{len(columns)}" data-scale="{scale:.8f}" data-cases="{len(batch)}"><div class="sheet-content">{heading}{render_legend(scale)}{"".join(cards)}{footer}</div></section>'
+                f'<section class="sheet" id="{sheet_key}" aria-label="{sheet_key}" data-row-pitch="{pitch}" data-first-row="{first_height}" data-rows="{max(loads)}"><div class="sheet-content">{heading}{render_legend()}{"".join(cards)}{footer}</div></section>'
             )
             offset += count
             number += 1
-    css = stylesheet()
-    source = SOURCE if all(r.source == SOURCE for r in records) else "User algorithms"
-    return f'''<!doctype html>
-<html lang="{lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="source" content="{escape(source, quote=True)}"><title>{escape(title)}</title><style>{css}</style></head>
-<body><main>{"".join(sheets)}</main></body></html>'''
+    title = f"Cube Algorithms — Metro Notation {__version__}"
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{escape(title)}</title><style>{stylesheet()}</style></head>
+<body><main>{"".join(sheets)}</main></body></html>"""

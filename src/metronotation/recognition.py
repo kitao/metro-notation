@@ -1,7 +1,7 @@
-"""Fixed F2L recognition diagrams visually checked against the source closeups."""
+"""Fixed F2L recognition diagrams visually checked against the source close-ups."""
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 from . import ALGORITHMS
 
@@ -18,7 +18,7 @@ def load_f2l_diagrams():
     for id_, side_, u, f, s, hidden in re.findall(
         r"^\| (\d{2}) \| (-?1) \| `([BRW./]+)` \| `([BRW./]+)` \| `([BRW./]+)` \| `([^`]+)` \|$",
         text,
-        re.M,
+        re.MULTILINE,
     ):
         side = int(side_)
         if id_ in records:

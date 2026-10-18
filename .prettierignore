@@ -1,0 +1,4 @@
+# Prettier already skips everything in .gitignore. npm owns the lockfile format.
+package-lock.json
+# Markdown keeps compact tables: algorithm tables are parsed and docs/grouping.md is generated.
+*.md
