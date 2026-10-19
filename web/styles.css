@@ -58,15 +58,6 @@ a:focus-visible,
   outline: 1px solid #8b949e;
   outline-offset: 2px;
 }
-a:not(:has(img)):focus-visible {
-  text-box: trim-both cap text;
-  outline: none;
-  border: 1px solid #8b949e;
-  padding: 2px;
-  margin: -3px;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
 
 .badges {
   display: flex;
