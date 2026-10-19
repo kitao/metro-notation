@@ -173,7 +173,12 @@ test('keyboard focus shows an outline', async ({ page, browserName }) => {
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   const focused = page.locator(':focus');
   await expect(focused).toHaveAttribute('href', 'https://github.com/kitao/metro-notation');
-  expect(await focused.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
+  expect(
+    await focused.locator('img').evaluate((image) => {
+      const style = getComputedStyle(image);
+      return [style.outlineStyle, style.outlineWidth, style.outlineOffset];
+    }),
+  ).toEqual(['solid', '1px', '2px']);
 });
 
 test('Cloudflare redirects the slashless URL, serves the reviewed sheets and 404s elsewhere', async ({

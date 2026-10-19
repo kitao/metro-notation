@@ -53,9 +53,19 @@ a:hover {
   text-decoration: underline;
 }
 
-a:focus-visible {
+a:focus-visible,
+.badges a:focus-visible img {
   outline: 1px solid #8b949e;
-  outline-offset: 3px;
+  outline-offset: 2px;
+}
+a:not(:has(img)):focus-visible {
+  text-box: trim-both cap text;
+  outline: none;
+  border: 1px solid #8b949e;
+  padding: 2px;
+  margin: -3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .badges {
@@ -64,6 +74,10 @@ a:focus-visible {
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
+}
+
+.badges a:focus-visible {
+  outline: none;
 }
 
 .badges a {
