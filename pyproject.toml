@@ -1,5 +1,5 @@
 [dependency-groups]
-# Exact versions keep local and CI checks identical; pip resolves their own dependencies.
+# Pin direct tool versions for local and CI checks; pip resolves their dependencies.
 dev = ["fonttools==4.67.0", "playwright==1.63.0", "pypdf==6.21.1", "ruff==0.16.10"]
 
 [tool.ruff]

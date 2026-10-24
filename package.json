@@ -32,5 +32,10 @@
     "parse5": "8.0.1",
     "prettier": "3.9.9",
     "wrangler": "4.150.0"
+  },
+  "overrides": {
+    "miniflare": {
+      "undici": "7.30.1"
+    }
   }
 }

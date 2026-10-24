@@ -4,6 +4,8 @@
 
 - Organize the repository around the sheets, canonical algorithms, renderer and
   specifications. Check that published PDF and PNG drawings match the build.
+- Publish the README and reviewed sheets at kitao.dev/metro-notation/.
+- Update the preview server's HTTP client to fix known vulnerabilities.
 
 ## 1.0 — 2026-09-21
 

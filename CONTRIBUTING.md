@@ -92,6 +92,9 @@ npm run check
 npm run dev
 ```
 
+The `miniflare` override in `package.json` selects a patched `undici` HTTP client.
+Remove it once Miniflare's pinned dependency includes the fixes in `undici` 7.30.1.
+
 `npm run check` includes browser tests with phone emulation, which does not replace
 checks on real devices. Open `http://127.0.0.1:4177/metro-notation/`. The preview
 uses the Cloudflare runtime, including its redirects, headers, and 404 behavior.
