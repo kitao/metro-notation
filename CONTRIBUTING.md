@@ -83,6 +83,11 @@ five reviewed files from `sheets/` unchanged. Page layout lives in `web/`;
 
 The page loads Noto Sans JP from Google Fonts for English and Japanese.
 
+The OG image in `web/og.png` fits the reviewed `sheets/pll.png` into a white
+1200 × 630 canvas without cropping. After updating the PLL sheet, regenerate it
+with `node scripts/build-og.mjs` and review the image at full and thumbnail sizes.
+This uses the same Playwright Chromium installation as the website checks.
+
 Use Node.js 24 or later:
 
 ```sh

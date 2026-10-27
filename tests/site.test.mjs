@@ -47,7 +47,7 @@ const listFiles = async (directory) =>
     .map((entry) => join(entry.parentPath, entry.name).slice(directory.length + 1))
     .sort();
 
-test('publication contains only the pages, headers, style, favicons and unchanged reviewed sheets', async () => {
+test('publication contains only the pages, headers, style, favicons, preview and unchanged reviewed sheets', async () => {
   await withRoot(async (root) => {
     await mkdir(join(root, 'dist'));
     await writeFile(join(root, 'dist', 'old-private-file'), 'do not publish');
@@ -57,7 +57,7 @@ test('publication contains only the pages, headers, style, favicons and unchange
       await listFiles(output),
       [
         '_headers',
-        ...['favicon.png', 'favicon.svg', 'index.html', 'styles.css'].map((name) =>
+        ...['favicon.png', 'favicon.svg', 'index.html', 'styles.css', 'og.png'].map((name) =>
           join('metro-notation', name),
         ),
         ...SHEETS.map((name) => join('metro-notation', 'sheets', name)),

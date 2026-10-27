@@ -10,7 +10,7 @@ const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const SHEET_IMAGES = ['f2l.png', 'oll-01-30.png', 'oll-31-57.png', 'pll.png'];
 // The reviewed PDF and four PNGs in sheets/.
 export const SHEETS = ['metro-notation.pdf', ...SHEET_IMAGES];
-const WEB_FILES = ['styles.css', 'favicon.svg', 'favicon.png'];
+const WEB_FILES = ['styles.css', 'favicon.svg', 'favicon.png', 'og.png'];
 const ROUTE_FILES = ['_headers'];
 // Every file the publication is built from, relative to the root.
 export const SOURCES = [
