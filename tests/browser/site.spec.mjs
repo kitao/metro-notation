@@ -172,6 +172,15 @@ test('keyboard focus shows an outline', async ({ page, browserName }) => {
   // WebKit moves focus to links only with Alt+Tab, as in Safari's default settings.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   const focused = page.locator(':focus');
+  await expect(focused).toHaveAttribute('href', 'https://kitao.dev/');
+  await expect(focused).toHaveText('kitao.dev');
+  expect(
+    await focused.locator('span').evaluate((label) => {
+      const style = getComputedStyle(label);
+      return [style.outlineStyle, style.outlineWidth, style.outlineOffset];
+    }),
+  ).toEqual(['solid', '1px', '2px']);
+  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   await expect(focused).toHaveAttribute('href', 'https://github.com/kitao/metro-notation');
   expect(
     await focused.locator('img').evaluate((image) => {
